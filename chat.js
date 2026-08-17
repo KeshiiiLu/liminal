@@ -85,7 +85,26 @@ morePages.addEventListener("pointercancel", function () {
 
 const chatMessages = document.getElementById("chatMessages");
 
+const CHAT_STORAGE_KEY = "liminal_chat_luzhen";
+
+let chatHistory = JSON.parse(
+  localStorage.getItem(CHAT_STORAGE_KEY) || "[]"
+);
+
 let lastMessageTime = null;
+
+function saveMessage(direction, text, date) {
+  chatHistory.push({
+    direction: direction,
+    text: text,
+    time: date.toISOString()
+  });
+
+  localStorage.setItem(
+    CHAT_STORAGE_KEY,
+    JSON.stringify(chatHistory)
+  );
+}
 
 
 /* 把数字补成两位：8 → 08 */
@@ -160,7 +179,7 @@ function addTimeDivider(date) {
 
 
 /* 插入你自己发出的消息 */
-function addOutgoingMessage(text, date) {
+function addOutgoingMessage(text, date, shouldSave = true) {
   if (shouldShowTimeDivider(date)) {
     addTimeDivider(date);
   }
@@ -190,6 +209,10 @@ function addOutgoingMessage(text, date) {
 
   lastMessageTime = date;
 
+  if (shouldSave) {
+  saveMessage("outgoing", text, date);
+}
+
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -208,7 +231,7 @@ function sendMessage() {
 
   chatInput.value = "";
   chatInput.focus();
-  
+
   createTestReply();
 }
 
@@ -250,7 +273,7 @@ function hideTypingStatus() {
 
 
 /* 插入对方消息 */
-function addIncomingMessage(text, date) {
+function addIncomingMessage(text, date, shouldSave = true) {
   if (shouldShowTimeDivider(date)) {
     addTimeDivider(date);
   }
@@ -280,6 +303,10 @@ function addIncomingMessage(text, date) {
 
   lastMessageTime = date;
 
+  if (shouldSave) {
+  saveMessage("incoming", text, date);
+}
+
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -302,3 +329,20 @@ function createTestReply() {
     hideTypingStatus();
   }, delay);
 }
+
+function loadChatHistory() {
+  chatMessages.innerHTML = "";
+  lastMessageTime = null;
+
+  chatHistory.forEach(function (message) {
+    const date = new Date(message.time);
+
+    if (message.direction === "outgoing") {
+      addOutgoingMessage(message.text, date, false);
+    } else {
+      addIncomingMessage(message.text, date, false);
+    }
+  });
+}
+
+loadChatHistory();
