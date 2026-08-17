@@ -1,0 +1,552 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #f4f2ee;
+  color: #292925;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+
+/* 页面 */
+
+.address-page {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding:
+    calc(14px + env(safe-area-inset-top))
+    18px
+    calc(45px + env(safe-area-inset-bottom));
+}
+
+
+/* 顶部 */
+
+.address-header {
+  height: 58px;
+
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+
+  align-items: center;
+
+  margin-bottom: 11px;
+}
+
+.header-button,
+.add-top-button {
+  border: none;
+  background: transparent;
+
+  color: #34332f;
+}
+
+.back-button {
+  font-size: 39px;
+  font-weight: 200;
+  text-align: left;
+}
+
+.add-top-button {
+  font-size: 24px;
+  text-align: right;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 2px;
+}
+
+.header-title strong {
+  font-size: 15px;
+}
+
+.header-title span {
+  color: #9e9b94;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+}
+
+
+/* 总览 */
+
+.address-overview {
+  min-height: 135px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 22px;
+
+  margin-bottom: 14px;
+
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #393a35,
+      #252621
+    );
+
+  color: #ffffff;
+}
+
+.address-overview span {
+  color: rgba(255, 255, 255, 0.4);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+}
+
+.address-overview h1 {
+  margin:
+    7px
+    0
+    5px;
+
+  font-size: 20px;
+}
+
+.address-overview p {
+  max-width: 250px;
+
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.42);
+
+  font-size: 8px;
+  line-height: 1.6;
+}
+
+.address-overview > strong {
+  font-size: 30px;
+}
+
+
+/* 地址列表 */
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-bottom: 13px;
+}
+
+.address-card {
+  padding: 16px;
+
+  border: 1px solid #e4e1da;
+  border-radius: 19px;
+
+  background: #ffffff;
+}
+
+.address-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 9px;
+}
+
+.address-person {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.address-person strong {
+  font-size: 11px;
+}
+
+.address-label,
+.default-tag {
+  padding: 4px 7px;
+
+  border-radius: 8px;
+
+  background: #efede8;
+
+  color: #89867f;
+
+  font-size: 7px;
+}
+
+.default-tag {
+  background: #e4ebe4;
+
+  color: #667067;
+}
+
+.address-main {
+  margin:
+    0
+    0
+    6px;
+
+  color: #5f5c56;
+
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.address-phone {
+  color: #aaa79f;
+
+  font-size: 8px;
+}
+
+.address-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 6px;
+
+  padding-top: 12px;
+  margin-top: 12px;
+
+  border-top: 1px solid #efede8;
+}
+
+.address-action {
+  height: 30px;
+
+  padding: 0 10px;
+
+  border: 1px solid #dfdcd5;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #74716a;
+
+  font-size: 8px;
+}
+
+.address-action.primary {
+  border-color: #393a35;
+
+  background: #393a35;
+
+  color: #ffffff;
+}
+
+
+/* 空状态 */
+
+.empty-addresses {
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 30px;
+
+  border: 1px solid #e4e1da;
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  text-align: center;
+}
+
+.empty-addresses span {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #efede8;
+
+  color: #85827b;
+
+  font-size: 13px;
+}
+
+.empty-addresses strong {
+  margin-top: 4px;
+
+  font-size: 11px;
+}
+
+.empty-addresses p {
+  margin: 0;
+
+  color: #aaa79f;
+
+  font-size: 8px;
+}
+
+
+/* 新增按钮 */
+
+.add-address-button {
+  width: 100%;
+  height: 45px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #393a35;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+/* 弹窗 */
+
+.address-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background: rgba(20, 20, 18, 0.32);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.address-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding:
+    9px
+    19px
+    calc(24px + env(safe-area-inset-bottom));
+
+  border-radius: 26px 26px 0 0;
+
+  background: #f8f7f4;
+}
+
+.sheet-handle {
+  width: 38px;
+  height: 4px;
+
+  margin:
+    0
+    auto
+    15px;
+
+  border-radius: 99px;
+
+  background: #d4d1ca;
+}
+
+.sheet-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 17px;
+}
+
+.sheet-heading span {
+  color: #aaa79f;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+}
+
+.sheet-heading h2 {
+  margin:
+    4px
+    0
+    0;
+
+  font-size: 18px;
+}
+
+.sheet-close {
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #ebe9e3;
+
+  color: #77746d;
+
+  font-size: 21px;
+}
+
+
+/* 表单 */
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 14px;
+}
+
+.field > span {
+  color: #85827b;
+
+  font-size: 9px;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+
+  border: 1px solid #e2dfd8;
+  border-radius: 13px;
+  outline: none;
+
+  background: #ffffff;
+
+  color: #34332f;
+
+  font-size: 11px;
+}
+
+.field input,
+.field select {
+  height: 43px;
+
+  padding: 0 12px;
+}
+
+.field textarea {
+  resize: none;
+
+  padding: 12px;
+}
+
+.default-option {
+  min-height: 63px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 11px 12px;
+
+  margin-bottom: 16px;
+
+  border-radius: 14px;
+
+  background: #ebe9e3;
+}
+
+.default-option div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.default-option strong {
+  font-size: 10px;
+}
+
+.default-option span {
+  color: #918e87;
+
+  font-size: 8px;
+}
+
+.default-option input {
+  width: 18px;
+  height: 18px;
+}
+
+.save-address-button {
+  width: 100%;
+  height: 46px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #393a35;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+@media (min-width: 700px) {
+
+  .address-page {
+    padding-top: 40px;
+  }
+
+}

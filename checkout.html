@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>确认订单 · Liminal Mall</title>
+
+  <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+
+  <main class="checkout-page">
+
+    <!-- 顶部 -->
+    <header class="checkout-header">
+
+      <button
+        class="header-button back-button"
+        onclick="history.back()"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="header-title">
+        <strong>确认订单</strong>
+        <span>LIMINAL MALL</span>
+      </div>
+
+      <div class="header-space"></div>
+
+    </header>
+
+
+    <!-- 世界 -->
+    <section class="world-badge">
+      <span>LIMINAL WORLD</span>
+      <strong>副世界订单</strong>
+    </section>
+
+
+    <!-- 收货地址 -->
+    <section class="checkout-card">
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            DELIVERY ADDRESS
+          </span>
+
+          <h2>收货地址</h2>
+        </div>
+
+       <button
+  class="text-button"
+  id="manageAddress"
+>
+  管理
+</button>
+
+      </div>
+
+
+      <button
+        class="address-card"
+        id="addressCard"
+      >
+
+        <div class="address-icon">
+          地
+        </div>
+
+        <div class="address-info">
+
+          <div class="address-name-row">
+            <strong id="addressName">
+              Keshi
+            </strong>
+
+            <span id="addressPhone">
+              默认地址
+            </span>
+          </div>
+
+          <p id="addressText">
+            暂未设置详细地址
+          </p>
+
+          <small>
+            点击以后可更换或新增收货地址
+          </small>
+
+        </div>
+
+        <b>›</b>
+
+      </button>
+
+    </section>
+
+
+    <!-- 商品 -->
+    <section class="checkout-card">
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            ORDER
+          </span>
+
+          <h2>Liminal Mall</h2>
+        </div>
+
+      </div>
+
+
+      <article class="checkout-product">
+
+        <div class="checkout-product-image">
+          <span>HOME</span>
+        </div>
+
+
+        <div class="checkout-product-info">
+
+          <strong id="checkoutProductName">
+            柔软家居毯
+          </strong>
+
+          <span id="checkoutProductOptions">
+            130 × 170 cm · 雾灰
+          </span>
+
+          <div class="product-price-row">
+
+            <strong id="checkoutUnitPrice">
+              ¥269.00
+            </strong>
+
+            <span id="checkoutQuantity">
+              × 1
+            </span>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- 礼物信息 -->
+    <section
+      class="checkout-card"
+      id="giftCard"
+      hidden
+    >
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            GIFT
+          </span>
+
+          <h2>礼物</h2>
+        </div>
+
+        <span class="gift-badge">
+          FOR TA
+        </span>
+
+      </div>
+
+
+      <div class="info-list">
+
+        <div class="info-row">
+
+          <span>收礼人</span>
+
+          <strong id="checkoutRecipient">
+            榛榛
+          </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+          <span>礼物附言</span>
+
+          <strong id="checkoutGiftMessage">
+            —
+          </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+          <span>发送到聊天</span>
+
+          <strong id="checkoutSendChat">
+            是
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 配送方式 -->
+    <section class="checkout-card">
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            DELIVERY
+          </span>
+
+          <h2>配送方式</h2>
+        </div>
+
+      </div>
+
+
+      <div class="delivery-options">
+
+        <button
+          class="delivery-option active"
+          data-delivery="standard"
+          data-delivery-name="普通配送"
+        >
+
+          <div>
+            <strong>普通配送</strong>
+            <span>预计 2–4 天送达</span>
+          </div>
+
+          <b>¥0</b>
+
+        </button>
+
+
+        <button
+          class="delivery-option"
+          data-delivery="fast"
+          data-delivery-name="加急配送"
+        >
+
+          <div>
+            <strong>加急配送</strong>
+            <span>预计次日送达</span>
+          </div>
+
+          <b>¥12</b>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- 付款账户 -->
+    <section class="checkout-card">
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            PAYMENT
+          </span>
+
+          <h2>付款账户</h2>
+        </div>
+
+      </div>
+
+
+      <div class="payment-list">
+
+        <button
+          class="payment-option active"
+          data-account="Keshi"
+        >
+
+          <span class="payment-avatar">
+            K
+          </span>
+
+          <div>
+            <strong>Keshi</strong>
+            <small>副世界 · 个人账户</small>
+          </div>
+
+          <i>✓</i>
+
+        </button>
+
+
+        <button
+          class="payment-option"
+          data-account="Lennon"
+        >
+
+          <span class="payment-avatar">
+            L
+          </span>
+
+          <div>
+            <strong>榛榛</strong>
+            <small>副世界 · 个人账户</small>
+          </div>
+
+          <i>✓</i>
+
+        </button>
+
+
+        <button
+          class="payment-option"
+          data-account="Family"
+        >
+
+          <span class="payment-avatar household-avatar">
+            家
+          </span>
+
+          <div>
+            <strong>家庭账户</strong>
+            <small>副世界 · 共同生活</small>
+          </div>
+
+          <i>✓</i>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- 买家备注 -->
+    <section class="checkout-card">
+
+      <div class="card-heading">
+
+        <div>
+          <span class="eyebrow">
+            NOTE
+          </span>
+
+          <h2>订单备注</h2>
+        </div>
+
+      </div>
+
+
+      <textarea
+        class="order-note"
+        id="orderNote"
+        rows="3"
+        placeholder="给订单留一句备注，可以不填……"
+      ></textarea>
+
+    </section>
+
+
+    <!-- 金额 -->
+    <section class="checkout-card price-card">
+
+      <div class="price-row">
+        <span>商品金额</span>
+        <strong id="subtotalPrice">
+          ¥269.00
+        </strong>
+      </div>
+
+      <div class="price-row">
+        <span>配送费</span>
+        <strong id="deliveryPrice">
+          ¥0.00
+        </strong>
+      </div>
+
+      <div class="price-divider"></div>
+
+      <div class="price-row total-row">
+        <span>合计</span>
+        <strong id="totalPrice">
+          ¥269.00
+        </strong>
+      </div>
+
+    </section>
+
+
+    <!-- 提示 -->
+    <section class="checkout-note">
+
+      <span>
+        ORDER FLOW
+      </span>
+
+      <p>
+        提交后会生成 Mall 订单。之后我们会继续接入 Wallet、物流以及聊天礼物卡。
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- 底部 -->
+  <nav class="checkout-bottom">
+
+    <div class="checkout-total">
+
+      <span>
+        合计
+      </span>
+
+      <strong id="bottomTotal">
+        ¥269.00
+      </strong>
+
+    </div>
+
+
+    <button
+      id="submitOrder"
+      class="submit-order"
+    >
+      提交订单
+    </button>
+
+  </nav>
+
+
+  <script src="checkout.js"></script>
+
+</body>
+
+</html>

@@ -9,8 +9,8 @@ body {
 }
 
 body {
-  background: #f3f2ef;
-  color: #242421;
+  background: #f4f3ef;
+  color: #282824;
 
   font-family:
     -apple-system,
@@ -19,6 +19,21 @@ body {
     "PingFang SC",
     "Microsoft YaHei",
     sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 
@@ -34,7 +49,7 @@ body {
   margin: 0 auto;
 
   padding:
-    calc(15px + env(safe-area-inset-top))
+    calc(14px + env(safe-area-inset-top))
     18px
     calc(50px + env(safe-area-inset-bottom));
 }
@@ -56,26 +71,22 @@ body {
 }
 
 .wallet-back,
-.wallet-settings {
+.wallet-more {
   border: none;
   background: transparent;
 
   color: #33332f;
-
-  cursor: pointer;
 }
 
 .wallet-back {
   font-size: 39px;
   font-weight: 200;
-
   text-align: left;
 }
 
-.wallet-settings {
+.wallet-more {
   font-size: 23px;
   letter-spacing: 2px;
-
   text-align: right;
 }
 
@@ -92,144 +103,247 @@ body {
 }
 
 .wallet-title span {
-  color: #999891;
+  color: #9b9992;
 
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
 }
 
 
 /* =========================
-   家庭成员
+   世界切换
    ========================= */
 
-.household-members {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.world-switch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 
-  margin: 8px 0 18px;
+  gap: 5px;
+
+  padding: 4px;
+
+  margin-bottom: 15px;
+
+  border-radius: 16px;
+
+  background: #e7e5df;
 }
 
-.member-avatar {
-  width: 36px;
-  height: 36px;
+.world-button {
+  height: 39px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: none;
+  border-radius: 12px;
 
-  border: 3px solid #f3f2ef;
-  border-radius: 50%;
+  background: transparent;
 
-  background: #deddd8;
+  color: #96948d;
 
-  color: #555550;
+  font-size: 12px;
+}
 
-  font-size: 11px;
+.world-button.active {
+  background: #ffffff;
+
+  color: #33322e;
   font-weight: 600;
+
+  box-shadow:
+    0 2px 9px rgba(40, 40, 35, 0.05);
 }
 
-.member-avatar.second {
-  margin-left: -10px;
-
-  background: #d4d8d3;
+.world-panel {
+  display: none;
 }
 
-.household-members > span {
-  margin-left: 9px;
-
-  color: #8f8e88;
-
-  font-size: 11px;
+.world-panel.active {
+  display: block;
 }
 
 
 /* =========================
-   余额卡
+   总览卡
    ========================= */
 
-.balance-card {
-  padding: 25px 22px 20px;
+.summary-card {
+  padding: 23px 21px 20px;
 
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 
   border-radius: 25px;
+}
+
+.main-summary {
+  border: 1px solid #dfddd6;
 
   background:
     linear-gradient(
       145deg,
-      #343531,
-      #252622
+      #edeae3,
+      #e2ded5
+    );
+}
+
+.liminal-summary {
+  background:
+    linear-gradient(
+      145deg,
+      #343530,
+      #22231f
     );
 
   color: #ffffff;
 
   box-shadow:
-    0 10px 30px rgba(25, 25, 23, 0.12);
+    0 10px 30px rgba(20, 20, 18, 0.12);
 }
 
-.balance-label {
-  color: rgba(255, 255, 255, 0.62);
+.summary-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 
-  font-size: 11px;
+  margin-bottom: 22px;
 }
 
-.balance-number {
-  margin-top: 7px;
-
-  font-size: 34px;
-  font-weight: 600;
-
-  letter-spacing: -0.03em;
-}
-
-.balance-number small {
-  margin-right: 5px;
-
-  font-size: 17px;
-  font-weight: 400;
-}
-
-.demo-note {
+.summary-top h1 {
   margin:
     5px
     0
-    22px;
+    0;
 
-  color: rgba(255, 255, 255, 0.37);
+  font-size: 17px;
+}
+
+.eyebrow {
+  color: #9d9a92;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+}
+
+.eyebrow.dark {
+  color: #aaa79f;
+}
+
+.eyebrow.light {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.account-tag {
+  padding: 5px 9px;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.60);
+
+  color: #85827b;
+
+  font-size: 8px;
+}
+
+.balance-label {
+  margin: 0;
+
+  color: #89867f;
 
   font-size: 9px;
 }
 
-.balance-summary {
+.light-label {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.main-balance {
+  margin-top: 6px;
+
+  font-size: 34px;
+  font-weight: 600;
+
+  letter-spacing: -0.035em;
+}
+
+.light-balance {
+  color: #ffffff;
+}
+
+.summary-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 
-  gap: 10px;
+  gap: 16px;
 
   padding-top: 17px;
+  margin-top: 21px;
 
-  border-top:
-    1px solid rgba(255, 255, 255, 0.11);
+  border-top: 1px solid rgba(50, 50, 45, 0.08);
 }
 
-.balance-summary div {
+.summary-stats div {
   display: flex;
   flex-direction: column;
 
   gap: 5px;
 }
 
-.balance-summary span {
-  color: rgba(255, 255, 255, 0.47);
+.summary-stats span {
+  color: #939089;
 
-  font-size: 9px;
+  font-size: 8px;
 }
 
-.balance-summary strong {
-  font-size: 12px;
-  font-weight: 500;
+.summary-stats strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.light-stats {
+  border-top-color:
+    rgba(255, 255, 255, 0.10);
+}
+
+.light-stats span {
+  color: rgba(255, 255, 255, 0.40);
+}
+
+.light-stats strong {
+  color: #ffffff;
+}
+
+
+/* =========================
+   副世界头像
+   ========================= */
+
+.member-avatars {
+  display: flex;
+}
+
+.mini-avatar {
+  width: 33px;
+  height: 33px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #30312d;
+  border-radius: 50%;
+
+  background: #e3e2dd;
+  color: #565750;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.mini-avatar.second {
+  margin-left: -9px;
+
+  background: #d0d5cf;
 }
 
 
@@ -237,70 +351,92 @@ body {
    快捷功能
    ========================= */
 
-.wallet-tools {
+.action-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 
-  gap: 8px;
+  gap: 9px;
 
-  padding: 16px 10px;
-
-  margin-bottom: 17px;
-
-  border: 1px solid #e5e4df;
-  border-radius: 21px;
-
-  background: #ffffff;
+  margin-bottom: 14px;
 }
 
-.wallet-tools button {
+.liminal-actions {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.action-card {
+  min-height: 81px;
+
   display: flex;
-  flex-direction: column;
   align-items: center;
 
-  gap: 7px;
+  gap: 11px;
 
-  padding: 0;
+  padding: 13px;
 
-  border: none;
-  background: transparent;
+  border: 1px solid #e4e2db;
+  border-radius: 18px;
 
-  color: #55554f;
+  background: #ffffff;
 
-  cursor: pointer;
+  text-align: left;
 }
 
-.tool-icon {
-  width: 39px;
-  height: 39px;
+.action-card > span {
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 13px;
+  border-radius: 12px;
 
-  background: #f1f0ec;
+  background: #efeee9;
+
+  color: #66645e;
 
   font-size: 13px;
   font-weight: 600;
 }
 
-.wallet-tools small {
-  font-size: 10px;
+.primary-action > span {
+  background: #33342f;
+  color: #ffffff;
+}
+
+.action-card div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.action-card strong {
+  font-size: 11px;
+}
+
+.action-card small {
+  color: #9a9891;
+
+  font-size: 8px;
 }
 
 
 /* =========================
-   通用区块
+   通用 Section
    ========================= */
 
 .wallet-section {
   padding: 18px;
 
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 
-  border: 1px solid #e5e4df;
+  border: 1px solid #e4e2dc;
   border-radius: 21px;
 
   background: #ffffff;
@@ -308,28 +444,204 @@ body {
 
 .section-heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 
-  margin-bottom: 15px;
+  gap: 12px;
+
+  margin-bottom: 14px;
 }
 
 .section-heading h2 {
-  margin: 0;
+  margin:
+    4px
+    0
+    0;
 
   font-size: 15px;
   font-weight: 600;
 }
 
-.section-heading button {
+.section-note {
+  color: #aaa79f;
+
+  font-size: 8px;
+}
+
+.text-button {
   border: none;
   background: transparent;
 
-  color: #999891;
+  color: #99968f;
+
+  font-size: 9px;
+}
+
+
+/* =========================
+   预计生活费
+   ========================= */
+
+.income-description {
+  margin:
+    -3px
+    0
+    13px;
+
+  color: #96938c;
+
+  font-size: 8px;
+  line-height: 1.6;
+}
+
+.expected-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.expected-item {
+  min-height: 64px;
+
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  border-bottom: 1px solid #efede8;
+}
+
+.expected-item:last-child {
+  border-bottom: none;
+}
+
+.expected-date {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #f0eee9;
+}
+
+.expected-date strong {
+  font-size: 12px;
+}
+
+.expected-date span {
+  color: #aaa79f;
+
+  font-size: 6px;
+}
+
+.expected-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.expected-info strong {
+  font-size: 11px;
+}
+
+.expected-info span {
+  color: #9d9a93;
+
+  font-size: 8px;
+}
+
+.expected-confirm {
+  height: 28px;
+
+  padding: 0 9px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f0efea;
+
+  color: #706e68;
+
+  font-size: 8px;
+}
+
+
+/* =========================
+   账户
+   ========================= */
+
+.account-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-row {
+  min-height: 63px;
+
+  display: grid;
+  grid-template-columns: 39px 1fr auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  border-bottom: 1px solid #efede8;
+}
+
+.account-row:last-child {
+  border-bottom: none;
+}
+
+.account-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #efeee9;
+
+  color: #65645e;
 
   font-size: 10px;
+  font-weight: 600;
+}
 
-  cursor: pointer;
+.household-icon {
+  background: #e5ebe4;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.account-info strong {
+  font-size: 11px;
+}
+
+.account-info span {
+  color: #9e9b94;
+
+  font-size: 8px;
+}
+
+.account-balance {
+  color: #55534e;
+
+  font-size: 10px;
 }
 
 
@@ -342,24 +654,118 @@ body {
   flex-direction: column;
 }
 
-.transaction-item {
+.transaction-row {
+  min-height: 64px;
+
   display: grid;
-  grid-template-columns: 42px 1fr auto;
+  grid-template-columns: 38px 1fr auto;
 
   align-items: center;
 
-  gap: 10px;
+  gap: 9px;
 
-  min-height: 62px;
-
-  border-bottom: 1px solid #efefec;
+  border-bottom: 1px solid #efede8;
 }
 
-.transaction-item:last-child {
+.transaction-row:last-child {
   border-bottom: none;
 }
 
 .transaction-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #f0eee9;
+
+  color: #696760;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.transaction-icon.income {
+  background: #e4ece5;
+}
+
+.transaction-text {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.transaction-text strong {
+  overflow: hidden;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-text span {
+  overflow: hidden;
+
+  color: #9e9b94;
+
+  font-size: 7px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-money {
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.transaction-money.income {
+  color: #657d69;
+}
+
+.empty-transactions {
+  padding:
+    26px
+    5px
+    18px;
+
+  color: #aaa79f;
+
+  font-size: 9px;
+  text-align: center;
+}
+
+
+/* =========================
+   评论
+   ========================= */
+
+.comment-card {
+  display: grid;
+  grid-template-columns: 39px 1fr;
+
+  gap: 11px;
+
+  padding: 17px;
+
+  margin-bottom: 14px;
+
+  border-radius: 20px;
+
+  background: #e9e7e1;
+}
+
+.comment-avatar {
   width: 37px;
   height: 37px;
 
@@ -367,140 +773,346 @@ body {
   align-items: center;
   justify-content: center;
 
-  border-radius: 12px;
+  border-radius: 50%;
 
-  font-size: 12px;
+  background: #d1d6cf;
+
+  color: #5e625b;
+
+  font-size: 10px;
   font-weight: 600;
 }
 
-.transaction-icon.income {
-  background: #e4eee7;
+.comment-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
 }
 
-.transaction-icon.expense {
-  background: #eeebe5;
+.comment-content > span {
+  color: #9d9a92;
+
+  font-size: 7px;
 }
 
-.transaction-info {
+.comment-content strong {
+  font-size: 10px;
+}
+
+.comment-content p {
+  margin: 0;
+
+  color: #8f8c84;
+
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   资产
+   ========================= */
+
+.asset-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 9px;
+}
+
+.asset-link {
+  min-height: 112px;
+
+  padding: 14px;
+
+  border-radius: 16px;
+
+  background: #f2f1ed;
+}
+
+.asset-link > span {
+  display: block;
+
+  margin-bottom: 18px;
+
+  color: #aaa79f;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.13em;
+}
+
+.asset-link strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: 11px;
+}
+
+.asset-link p {
+  margin: 0;
+
+  color: #98958e;
+
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   记账弹窗
+   ========================= */
+
+.record-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  padding-top: 80px;
+
+  background: rgba(20, 20, 18, 0.32);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.record-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+
+  overflow-y: auto;
+
+  padding:
+    9px
+    19px
+    calc(24px + env(safe-area-inset-bottom));
+
+  border-radius: 26px 26px 0 0;
+
+  background: #f8f7f4;
+}
+
+.sheet-handle {
+  width: 38px;
+  height: 4px;
+
+  margin:
+    0
+    auto
+    15px;
+
+  border-radius: 99px;
+
+  background: #d4d1ca;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.sheet-header h2 {
+  margin:
+    4px
+    0
+    0;
+
+  font-size: 18px;
+}
+
+.sheet-close {
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #ebe9e3;
+
+  color: #77746d;
+
+  font-size: 21px;
+}
+
+.type-switch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 4px;
+
+  padding: 4px;
+
+  margin-bottom: 17px;
+
+  border-radius: 14px;
+
+  background: #e9e7e1;
+}
+
+.type-button {
+  height: 37px;
+
+  border: none;
+  border-radius: 11px;
+
+  background: transparent;
+
+  color: #96938c;
+
+  font-size: 11px;
+}
+
+.type-button.active {
+  background: #ffffff;
+
+  color: #33322e;
+
+  font-weight: 600;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 14px;
+}
+
+.form-field > span {
+  color: #85827b;
+
+  font-size: 9px;
+}
+
+.form-field > input,
+.form-field > select,
+.form-field > textarea {
+  width: 100%;
+
+  border: 1px solid #e2dfd8;
+  border-radius: 13px;
+  outline: none;
+
+  background: #ffffff;
+
+  color: #34332f;
+
+  font-size: 12px;
+}
+
+.form-field > input,
+.form-field > select {
+  height: 43px;
+
+  padding: 0 12px;
+}
+
+.form-field > textarea {
+  resize: none;
+
+  padding: 12px;
+}
+
+.amount-input {
+  height: 57px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 14px;
+
+  border: 1px solid #dfddd6;
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.amount-input b {
+  margin-right: 8px;
+
+  font-size: 17px;
+}
+
+.amount-input input {
+  flex: 1;
+
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.sync-option {
+  min-height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 12px 13px;
+
+  margin-bottom: 17px;
+
+  border-radius: 15px;
+
+  background: #ebe9e3;
+}
+
+.sync-option > div {
   display: flex;
   flex-direction: column;
 
   gap: 4px;
 }
 
-.transaction-info strong {
-  font-size: 12px;
-  font-weight: 500;
+.sync-option strong {
+  font-size: 10px;
 }
 
-.transaction-info span {
-  color: #a09f98;
-
-  font-size: 9px;
-}
-
-.transaction-amount {
-  font-size: 11px;
-  font-weight: 600;
-
-  white-space: nowrap;
-}
-
-.income-text {
-  color: #61816b;
-}
-
-
-/* =========================
-   家庭资产
-   ========================= */
-
-.asset-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 10px;
-}
-
-.asset-card {
-  position: relative;
-
-  min-height: 135px;
-
-  padding: 15px;
-
-  border-radius: 17px;
-
-  background: #f4f3ef;
-}
-
-.asset-type {
-  display: block;
-
-  margin-bottom: 24px;
-
-  color: #aaa9a2;
-
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-}
-
-.asset-card strong {
-  display: block;
-
-  margin-bottom: 5px;
-
-  font-size: 15px;
-}
-
-.asset-card p {
-  margin: 0;
-
-  color: #8d8c86;
-
-  font-size: 9px;
-}
-
-.asset-status {
-  position: absolute;
-
-  right: 12px;
-  bottom: 12px;
-
-  padding: 4px 7px;
-
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #81817b;
+.sync-option span {
+  color: #918e87;
 
   font-size: 8px;
 }
 
-
-/* =========================
-   收入来源
-   ========================= */
-
-.income-tags {
-  display: flex;
-  flex-wrap: wrap;
-
-  gap: 8px;
+.sync-option input {
+  width: 18px;
+  height: 18px;
 }
 
-.income-tags span {
-  padding: 8px 12px;
+.save-transaction {
+  width: 100%;
+  height: 47px;
 
-  border-radius: 12px;
+  border: none;
+  border-radius: 15px;
 
-  background: #f1f0ec;
+  background: #33342f;
+  color: #ffffff;
 
-  color: #666660;
-
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 
@@ -509,7 +1121,242 @@ body {
    ========================= */
 
 @media (min-width: 700px) {
+
   .wallet-page {
     padding-top: 40px;
   }
+
+}
+
+/* =========================
+   消费统计
+   ========================= */
+
+.period-switch {
+  display: flex;
+
+  gap: 3px;
+
+  padding: 3px;
+
+  border-radius: 10px;
+
+  background: #efede8;
+}
+
+.period-button {
+  height: 27px;
+
+  padding: 0 9px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #99968f;
+
+  font-size: 8px;
+}
+
+.period-button.active {
+  background: #ffffff;
+
+  color: #44433e;
+  font-weight: 600;
+
+  box-shadow:
+    0 1px 5px rgba(40, 40, 35, 0.05);
+}
+
+
+/* 副世界账户筛选 */
+
+.account-filter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 5px;
+
+  margin-bottom: 18px;
+}
+
+.account-filter-button {
+  height: 31px;
+
+  border: 1px solid #e7e4dd;
+  border-radius: 10px;
+
+  background: #f5f4f0;
+
+  color: #96938c;
+
+  font-size: 8px;
+}
+
+.account-filter-button.active {
+  border-color: #3c3d38;
+
+  background: #3c3d38;
+
+  color: #ffffff;
+}
+
+
+/* 饼状图主体 */
+
+.chart-layout {
+  display: grid;
+  grid-template-columns: 145px 1fr;
+
+  align-items: center;
+
+  gap: 20px;
+
+  min-height: 155px;
+}
+
+.pie-chart {
+  position: relative;
+
+  width: 145px;
+  height: 145px;
+
+  border-radius: 50%;
+
+  background: #eceae5;
+}
+
+.pie-chart::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 31px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+.pie-center {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  pointer-events: none;
+}
+
+.pie-center span {
+  color: #aaa79f;
+
+  font-size: 7px;
+}
+
+.pie-center strong {
+  max-width: 75px;
+
+  overflow: hidden;
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* 图例 */
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.legend-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+}
+
+.legend-name {
+  min-width: 0;
+
+  overflow: hidden;
+
+  color: #77756e;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 1px;
+
+  color: #575650;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.legend-value small {
+  color: #aaa79f;
+
+  font-size: 6px;
+  font-weight: 400;
+}
+
+.chart-empty {
+  color: #aaa79f;
+
+  font-size: 8px;
+  line-height: 1.6;
+}
+
+
+/* 小屏幕 */
+
+@media (max-width: 390px) {
+
+  .chart-layout {
+    grid-template-columns: 125px 1fr;
+
+    gap: 14px;
+  }
+
+  .pie-chart {
+    width: 125px;
+    height: 125px;
+  }
+
+  .pie-chart::after {
+    inset: 27px;
+  }
+
 }

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>收货地址 · Liminal Mall</title>
+
+  <link rel="stylesheet" href="addresses.css">
+</head>
+
+<body>
+
+  <main class="address-page">
+
+    <header class="address-header">
+
+      <button
+        class="header-button back-button"
+        onclick="history.back()"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="header-title">
+        <strong>收货地址</strong>
+        <span>LIMINAL MALL</span>
+      </div>
+
+      <button
+        class="add-top-button"
+        id="addAddressTop"
+      >
+        ＋
+      </button>
+
+    </header>
+
+
+    <section class="address-overview">
+
+      <div>
+        <span>ADDRESS BOOK</span>
+        <h1>地址簿</h1>
+        <p>
+          添加和管理购物、礼物及配送使用的地址。
+        </p>
+      </div>
+
+      <strong id="addressCount">
+        0
+      </strong>
+
+    </section>
+
+
+    <section
+      class="address-list"
+      id="addressList"
+    >
+    </section>
+
+
+    <button
+      class="add-address-button"
+      id="addAddressBottom"
+    >
+      ＋ 新增收货地址
+    </button>
+
+  </main>
+
+
+  <!-- 新增 / 编辑地址 -->
+  <div
+    class="address-overlay"
+    id="addressOverlay"
+    hidden
+  >
+
+    <section class="address-sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-heading">
+
+        <div>
+          <span>ADDRESS</span>
+
+          <h2 id="sheetTitle">
+            新增地址
+          </h2>
+        </div>
+
+        <button
+          id="closeAddressSheet"
+          class="sheet-close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <label class="field">
+
+        <span>收货人</span>
+
+        <input
+          id="recipientInput"
+          type="text"
+          placeholder="例如 Keshi"
+        >
+
+      </label>
+
+
+      <label class="field">
+
+        <span>联系电话</span>
+
+        <input
+          id="phoneInput"
+          type="text"
+          inputmode="tel"
+          placeholder="可留空"
+        >
+
+      </label>
+
+
+      <label class="field">
+
+        <span>地区</span>
+
+        <input
+          id="regionInput"
+          type="text"
+          placeholder="省 / 市 / 区"
+        >
+
+      </label>
+
+
+      <label class="field">
+
+        <span>详细地址</span>
+
+        <textarea
+          id="detailInput"
+          rows="3"
+          placeholder="街道、小区、公寓、门牌等"
+        ></textarea>
+
+      </label>
+
+
+      <label class="field">
+
+        <span>地址标签</span>
+
+        <select id="labelInput">
+          <option value="家">家</option>
+          <option value="学校">学校</option>
+          <option value="公司">公司</option>
+          <option value="公寓">公寓</option>
+          <option value="其他">其他</option>
+        </select>
+
+      </label>
+
+
+      <label class="default-option">
+
+        <div>
+          <strong>设为默认地址</strong>
+          <span>结算时优先使用这个地址</span>
+        </div>
+
+        <input
+          id="defaultInput"
+          type="checkbox"
+        >
+
+      </label>
+
+
+      <button
+        class="save-address-button"
+        id="saveAddress"
+      >
+        保存地址
+      </button>
+
+    </section>
+
+  </div>
+
+
+  <script src="addresses.js"></script>
+
+</body>
+
+</html>

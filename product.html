@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>商品详情 · Liminal Mall</title>
+
+  <link rel="stylesheet" href="product.css">
+</head>
+
+<body>
+
+  <main class="product-page">
+
+    <!-- 顶部 -->
+    <header class="product-header">
+
+      <button
+        class="header-button back-button"
+        onclick="window.location.href='mall.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="header-title">
+        <strong>商品详情</strong>
+        <span>LIMINAL MALL</span>
+      </div>
+
+      <button
+        class="header-button more-button"
+        aria-label="更多"
+      >
+        ···
+      </button>
+
+    </header>
+
+
+    <!-- 商品图片 -->
+    <section class="product-gallery">
+
+      <div class="gallery-label">
+        HOME
+      </div>
+
+      <div class="gallery-mark">
+        L
+      </div>
+
+      <div class="gallery-dots">
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+      </div>
+
+    </section>
+
+
+    <!-- 商品基本信息 -->
+    <section class="product-main-info">
+
+      <div class="product-tag-row">
+        <span class="product-tag">家居</span>
+        <span class="product-tag">可送礼</span>
+      </div>
+
+      <h1>
+        柔软家居毯
+      </h1>
+
+      <p class="product-subtitle">
+        适合沙发、床边、下雨天，以及两个人一起窝着的时候。
+      </p>
+
+      <div class="product-price">
+        <small>¥</small>
+        <strong>269</strong>
+        <span>.00</span>
+      </div>
+
+    </section>
+
+
+    <!-- 购买方式 -->
+    <section class="detail-card">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="eyebrow">
+            PURCHASE MODE
+          </span>
+
+          <h2>购买方式</h2>
+        </div>
+
+      </div>
+
+
+      <div class="purchase-mode">
+
+        <button
+          class="purchase-mode-button active"
+          data-mode="self"
+        >
+          <strong>自己买</strong>
+          <span>购买后归入自己的订单</span>
+        </button>
+
+
+        <button
+          class="purchase-mode-button"
+          data-mode="gift"
+        >
+          <strong>送给 Ta</strong>
+          <span>作为礼物购买并附言</span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- 送礼设置 -->
+    <section
+      class="detail-card gift-settings"
+      id="giftSettings"
+      hidden
+    >
+
+      <div class="section-heading">
+
+        <div>
+          <span class="eyebrow">
+            GIFT
+          </span>
+
+          <h2>礼物设置</h2>
+        </div>
+
+      </div>
+
+
+      <label class="field">
+
+        <span>收礼人</span>
+
+        <select id="giftRecipient">
+
+          <option value="Lennon">
+            榛榛
+          </option>
+
+          <option value="Keshi">
+            Keshi
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <label class="field">
+
+        <span>附言</span>
+
+        <textarea
+          id="giftMessage"
+          rows="3"
+          placeholder="想和 Ta 说点什么……"
+        ></textarea>
+
+      </label>
+
+
+      <label class="gift-chat-option">
+
+        <div>
+          <strong>发送到聊天</strong>
+          <span>购买完成后生成一张礼物卡片</span>
+        </div>
+
+        <input
+          id="sendGiftToChat"
+          type="checkbox"
+          checked
+        >
+
+      </label>
+
+    </section>
+
+
+    <!-- 规格 -->
+    <section class="detail-card">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="eyebrow">
+            OPTIONS
+          </span>
+
+          <h2>选择规格</h2>
+        </div>
+
+      </div>
+
+
+      <div class="option-group">
+
+        <span class="option-title">
+          尺寸
+        </span>
+
+        <div class="option-buttons">
+
+          <button
+            class="option-button active"
+            data-option-group="size"
+          >
+            130 × 170 cm
+          </button>
+
+          <button
+            class="option-button"
+            data-option-group="size"
+          >
+            150 × 200 cm
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="option-group">
+
+        <span class="option-title">
+          款式
+        </span>
+
+        <div class="option-buttons">
+
+          <button
+            class="option-button active"
+            data-option-group="style"
+          >
+            雾灰
+          </button>
+
+          <button
+            class="option-button"
+            data-option-group="style"
+          >
+            燕麦
+          </button>
+
+          <button
+            class="option-button"
+            data-option-group="style"
+          >
+            深棕
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="quantity-row">
+
+        <div>
+          <span class="option-title">
+            数量
+          </span>
+
+          <small>
+            单次最多 9 件
+          </small>
+        </div>
+
+
+        <div class="quantity-control">
+
+          <button id="minusQuantity">
+            −
+          </button>
+
+          <span id="quantityValue">
+            1
+          </span>
+
+          <button id="plusQuantity">
+            ＋
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 配送 -->
+    <section class="detail-card">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="eyebrow">
+            DELIVERY
+          </span>
+
+          <h2>配送</h2>
+        </div>
+
+      </div>
+
+
+      <button class="delivery-row">
+
+        <div class="delivery-icon">
+          地
+        </div>
+
+        <div class="delivery-info">
+          <strong>收货地址</strong>
+          <span>下单时选择或新增地址</span>
+        </div>
+
+        <b>›</b>
+
+      </button>
+
+
+      <button class="delivery-row">
+
+        <div class="delivery-icon">
+          物
+        </div>
+
+        <div class="delivery-info">
+          <strong>普通配送</strong>
+          <span>预计 2–4 天送达</span>
+        </div>
+
+        <b>›</b>
+
+      </button>
+
+    </section>
+
+
+    <!-- 商品介绍 -->
+    <section class="detail-card">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="eyebrow">
+            DETAILS
+          </span>
+
+          <h2>商品介绍</h2>
+        </div>
+
+      </div>
+
+
+      <div class="description-list">
+
+        <div>
+          <span>材质</span>
+          <strong>柔软混纺织物</strong>
+        </div>
+
+        <div>
+          <span>适用</span>
+          <strong>沙发 / 床边 / 午睡</strong>
+        </div>
+
+        <div>
+          <span>护理</span>
+          <strong>支持低温机洗</strong>
+        </div>
+
+        <div>
+          <span>配送</span>
+          <strong>支持物流追踪</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 商品说明 -->
+    <section class="product-story">
+
+      <span>
+        LIMINAL HOME
+      </span>
+
+      <h2>
+        给日常留一点柔软。
+      </h2>
+
+      <p>
+        商品详情以后可以放真正的图片、材质信息、尺寸说明，
+        以及来自图库或网络搜索保存下来的商品图片。
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- 底部购买栏 -->
+  <nav class="product-bottom-bar">
+
+    <button class="small-action">
+
+      <span>♡</span>
+      <small>收藏</small>
+
+    </button>
+
+
+    <button
+      class="small-action"
+      onclick="window.location.href='mall.html'"
+    >
+
+      <span>袋</span>
+      <small>购物袋</small>
+
+    </button>
+
+
+    <button
+      class="cart-button"
+      id="addToCart"
+    >
+      加入购物袋
+    </button>
+
+
+    <button
+      class="buy-button"
+      id="buyNow"
+    >
+      立即购买
+    </button>
+
+  </nav>
+
+
+  <script src="product.js"></script>
+
+</body>
+
+</html>

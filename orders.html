@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>我的订单 · Liminal Mall</title>
+
+  <link rel="stylesheet" href="orders.css">
+</head>
+
+<body>
+
+  <main class="orders-page">
+
+    <!-- 顶部 -->
+    <header class="orders-header">
+
+      <button
+        class="header-button back-button"
+        onclick="window.location.href='mall.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="header-title">
+        <strong>我的订单</strong>
+        <span>LIMINAL MALL</span>
+      </div>
+
+      <button
+        class="header-button more-button"
+        aria-label="更多"
+      >
+        ···
+      </button>
+
+    </header>
+
+
+    <!-- 顶部说明 -->
+    <section class="orders-overview">
+
+      <div>
+        <span>MALL ORDERS</span>
+        <h1>购买记录</h1>
+      </div>
+
+      <div class="order-count">
+
+        <strong id="orderCount">
+          0
+        </strong>
+
+        <span>
+          orders
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- 状态筛选 -->
+    <section class="status-filter">
+
+      <button
+        class="status-button active"
+        data-status="all"
+      >
+        全部
+      </button>
+
+      <button
+        class="status-button"
+        data-status="paid"
+      >
+        待发货
+      </button>
+
+      <button
+        class="status-button"
+        data-status="shipping"
+      >
+        配送中
+      </button>
+
+      <button
+        class="status-button"
+        data-status="completed"
+      >
+        已完成
+      </button>
+
+    </section>
+
+
+    <!-- 订单列表 -->
+    <section
+      class="order-list"
+      id="orderList"
+    >
+    </section>
+
+  </main>
+
+
+  <script src="orders.js"></script>
+
+</body>
+
+</html>

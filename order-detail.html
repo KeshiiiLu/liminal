@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>订单详情 · Liminal Mall</title>
+
+  <link rel="stylesheet" href="order-detail.css">
+</head>
+
+<body>
+
+  <main class="detail-page">
+
+    <!-- 顶部 -->
+    <header class="detail-header">
+
+      <button
+        class="header-button back-button"
+        onclick="window.location.href='orders.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="header-title">
+        <strong>订单详情</strong>
+        <span>LIMINAL MALL</span>
+      </div>
+
+      <button
+        class="header-button more-button"
+        aria-label="更多"
+      >
+        ···
+      </button>
+
+    </header>
+
+
+    <!-- 找不到订单 -->
+    <section
+      class="not-found"
+      id="notFound"
+      hidden
+    >
+
+      <span>?</span>
+
+      <strong>
+        没找到这笔订单
+      </strong>
+
+      <p>
+        可能订单已经被删除，或者链接无效。
+      </p>
+
+      <button
+        onclick="window.location.href='orders.html'"
+      >
+        返回我的订单
+      </button>
+
+    </section>
+
+
+    <!-- 正常订单 -->
+    <div id="detailContent">
+
+      <!-- 订单状态 -->
+      <section class="status-hero">
+
+        <div>
+
+          <span class="hero-eyebrow">
+            ORDER STATUS
+          </span>
+
+          <h1 id="heroStatus">
+            待发货
+          </h1>
+
+          <p id="heroStatusDescription">
+            商家正在准备你的商品。
+          </p>
+
+        </div>
+
+
+        <div
+          class="hero-symbol"
+          id="heroSymbol"
+        >
+          ·
+        </div>
+
+      </section>
+
+
+      <!-- 物流 -->
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              LOGISTICS
+            </span>
+
+            <h2>物流进度</h2>
+          </div>
+
+          <span
+            class="status-tag"
+            id="logisticsTag"
+          >
+            待发货
+          </span>
+
+        </div>
+
+
+        <div
+          class="logistics-timeline"
+          id="logisticsTimeline"
+        >
+        </div>
+
+
+        <button
+          class="advance-button"
+          id="advanceLogistics"
+        >
+          更新物流状态
+        </button>
+
+        <p class="advance-note">
+          当前用于测试流程。以后可以改成自动配送状态。
+        </p>
+
+      </section>
+
+
+      <!-- 收货地址 -->
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              DELIVERY ADDRESS
+            </span>
+
+            <h2>收货信息</h2>
+          </div>
+
+        </div>
+
+
+        <div class="address-detail">
+
+          <div class="address-icon">
+            地
+          </div>
+
+
+          <div class="address-content">
+
+            <div class="address-person">
+
+              <strong id="addressRecipient">
+                Keshi
+              </strong>
+
+              <span>
+                收货人
+              </span>
+
+            </div>
+
+
+            <p id="addressText">
+              暂未设置详细地址
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- 商品 -->
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              PRODUCT
+            </span>
+
+            <h2>商品信息</h2>
+          </div>
+
+        </div>
+
+
+        <article class="product-row">
+
+          <div class="product-image">
+            <span id="productCategory">
+              HOME
+            </span>
+          </div>
+
+
+          <div class="product-info">
+
+            <strong id="productName">
+              柔软家居毯
+            </strong>
+
+            <span id="productOptions">
+              130 × 170 cm · 雾灰
+            </span>
+
+
+            <div class="product-bottom">
+
+              <strong id="unitPrice">
+                ¥269.00
+              </strong>
+
+              <span id="quantity">
+                × 1
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- 礼物 -->
+      <section
+        class="detail-card"
+        id="giftSection"
+        hidden
+      >
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              GIFT
+            </span>
+
+            <h2>礼物信息</h2>
+          </div>
+
+          <span class="gift-tag">
+            FOR TA
+          </span>
+
+        </div>
+
+
+        <div class="info-list">
+
+          <div class="info-row">
+
+            <span>收礼人</span>
+
+            <strong id="giftRecipient">
+              Keshi
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>附言</span>
+
+            <strong id="giftMessage">
+              —
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>发送到聊天</span>
+
+            <strong id="giftChat">
+              是
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- 配送与支付 -->
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              PAYMENT & DELIVERY
+            </span>
+
+            <h2>支付与配送</h2>
+          </div>
+
+        </div>
+
+
+        <div class="info-list">
+
+          <div class="info-row">
+
+            <span>付款账户</span>
+
+            <strong id="paymentAccount">
+              Keshi
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>配送方式</span>
+
+            <strong id="deliveryName">
+              普通配送
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>商品金额</span>
+
+            <strong id="subtotal">
+              ¥269.00
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>配送费</span>
+
+            <strong id="deliveryFee">
+              ¥0.00
+            </strong>
+
+          </div>
+
+
+          <div class="info-row total-info-row">
+
+            <span>实付金额</span>
+
+            <strong id="total">
+              ¥269.00
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- 订单信息 -->
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+            <span class="eyebrow">
+              ORDER INFORMATION
+            </span>
+
+            <h2>订单信息</h2>
+          </div>
+
+        </div>
+
+
+        <div class="info-list">
+
+          <div class="info-row">
+
+            <span>订单编号</span>
+
+            <strong id="orderId">
+              —
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>下单时间</span>
+
+            <strong id="createdAt">
+              —
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>订单类型</span>
+
+            <strong id="purchaseMode">
+              自用
+            </strong>
+
+          </div>
+
+
+          <div class="info-row">
+
+            <span>订单备注</span>
+
+            <strong id="orderNote">
+              无
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Wallet -->
+      <section class="wallet-link-card">
+
+        <div>
+
+          <span>
+            WALLET RECORD
+          </span>
+
+          <strong>
+            查看付款记录
+          </strong>
+
+          <p>
+            这笔订单已经同步写入副世界 Wallet。
+          </p>
+
+        </div>
+
+
+        <button
+          onclick="window.location.href='wallet.html'"
+        >
+          查看 Wallet ›
+        </button>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <script src="order-detail.js"></script>
+
+</body>
+
+</html>

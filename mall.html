@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ee">
+
+  <title>Mall · Liminal</title>
+
+  <link rel="stylesheet" href="mall.css">
+</head>
+
+<body>
+
+  <main class="mall-page">
+
+    <!-- 顶部 -->
+    <header class="mall-header">
+
+      <button
+        class="mall-back"
+        onclick="window.location.href='index.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="mall-title">
+        <strong>Liminal Mall</strong>
+        <span>HOUSEHOLD MARKET</span>
+      </div>
+
+      <button class="mall-more" aria-label="更多">
+        ···
+      </button>
+
+    </header>
+
+
+    <!-- 搜索 -->
+    <section class="mall-search">
+
+      <span class="search-icon">⌕</span>
+
+      <input
+        type="text"
+        placeholder="搜索商品、食物、礼物……"
+        readonly
+      >
+
+    </section>
+
+
+    <!-- 顶部宣传卡 -->
+    <section class="mall-hero">
+
+      <div class="hero-content">
+
+        <span class="hero-label">
+          FOR HOME
+        </span>
+
+        <h1>
+          今天想买点什么？
+        </h1>
+
+        <p>
+          衣物、食物、生活用品，以及送给彼此的小东西。
+        </p>
+
+        <button>
+          随便逛逛
+        </button>
+
+      </div>
+
+      <div class="hero-decoration">
+        M
+      </div>
+
+    </section>
+
+
+    <!-- 分类 -->
+    <section class="mall-section">
+
+      <div class="section-heading">
+        <h2>分类</h2>
+      </div>
+
+      <div class="category-grid">
+
+        <button class="category-item">
+          <span>衣</span>
+          <small>服饰</small>
+        </button>
+
+        <button class="category-item">
+          <span>食</span>
+          <small>食品</small>
+        </button>
+
+        <button class="category-item">
+          <span>餐</span>
+          <small>外卖</small>
+        </button>
+
+        <button class="category-item">
+          <span>家</span>
+          <small>家居</small>
+        </button>
+
+        <button class="category-item">
+          <span>用</span>
+          <small>日用</small>
+        </button>
+
+        <button class="category-item">
+          <span>礼</span>
+          <small>礼物</small>
+        </button>
+
+        <button class="category-item">
+          <span>数</span>
+          <small>数码</small>
+        </button>
+
+        <button class="category-item">
+          <span>···</span>
+          <small>其他</small>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- 快捷入口 -->
+    <section class="mall-shortcuts">
+
+     <a
+  class="shortcut-card shortcut-link"
+  href="orders.html"
+>
+
+  <div>
+    <span>ORDER</span>
+    <strong>我的订单</strong>
+    <small>查看购买记录</small>
+  </div>
+
+  <b>›</b>
+
+</a>
+
+
+      <div class="shortcut-card">
+
+        <div>
+          <span>GIFT</span>
+          <strong>送给 Ta</strong>
+          <small>挑一份礼物</small>
+        </div>
+
+        <b>›</b>
+
+      </div>
+
+    </section>
+
+
+    <!-- 推荐 -->
+    <section class="mall-section">
+
+      <div class="section-heading">
+        <h2>猜你喜欢</h2>
+        <button>换一批</button>
+      </div>
+
+
+      <div class="product-grid">
+
+        <article class="product-card">
+
+          <div class="product-image">
+            <span>FOOD</span>
+          </div>
+
+          <div class="product-info">
+            <strong>晚餐双人套餐</strong>
+            <p>适合一起窝在家里的晚上</p>
+
+            <div class="product-bottom">
+              <span>¥128</span>
+              <button>＋</button>
+            </div>
+          </div>
+
+        </article>
+
+
+       <a
+  class="product-card product-link"
+  href="product.html"
+>
+
+          <div class="product-image">
+            <span>HOME</span>
+          </div>
+
+          <div class="product-info">
+            <strong>柔软家居毯</strong>
+            <p>沙发、床边和下雨天</p>
+
+            <div class="product-bottom">
+              <span>¥269</span>
+              <button>＋</button>
+            </div>
+          </div>
+
+        </a>
+
+
+        <article class="product-card">
+
+          <div class="product-image">
+            <span>GIFT</span>
+          </div>
+
+          <div class="product-info">
+            <strong>小型礼物盒</strong>
+            <p>可以附上一句话</p>
+
+            <div class="product-bottom">
+              <span>¥88</span>
+              <button>＋</button>
+            </div>
+          </div>
+
+        </article>
+
+
+        <article class="product-card">
+
+          <div class="product-image">
+            <span>DAILY</span>
+          </div>
+
+          <div class="product-info">
+            <strong>家庭日用品</strong>
+            <p>一些总会用得到的东西</p>
+
+            <div class="product-bottom">
+              <span>¥199</span>
+              <button>＋</button>
+            </div>
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- 底部栏 -->
+    <nav class="mall-bottom-bar">
+
+      <button class="active">
+        <span>⌂</span>
+        <small>商城</small>
+      </button>
+
+      <button>
+        <span>♡</span>
+        <small>收藏</small>
+      </button>
+
+      <button>
+        <span>袋</span>
+        <small>购物袋</small>
+      </button>
+
+      <button onclick="window.location.href='wallet.html'">
+        <span>¥</span>
+        <small>钱包</small>
+      </button>
+
+    </nav>
+
+  </main>
+
+</body>
+</html>
