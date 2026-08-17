@@ -208,6 +208,8 @@ function sendMessage() {
 
   chatInput.value = "";
   chatInput.focus();
+  
+  createTestReply();
 }
 
 
@@ -218,3 +220,85 @@ chatInput.addEventListener("keydown", function (event) {
     sendMessage();
   }
 });
+
+/* =========================
+   测试随机回复
+   ========================= */
+
+const testReplyCards = [
+  "是",
+  "不是",
+  "不完全是",
+  "我不知道",
+  "嗯"
+];
+
+const chatPersonName = document.getElementById("chatPersonName");
+const originalPersonName = chatPersonName.textContent;
+
+
+/* 显示“对方正在输入…” */
+function showTypingStatus() {
+  chatPersonName.textContent = "对方正在输入…";
+}
+
+
+/* 恢复人物备注名 */
+function hideTypingStatus() {
+  chatPersonName.textContent = originalPersonName;
+}
+
+
+/* 插入对方消息 */
+function addIncomingMessage(text, date) {
+  if (shouldShowTimeDivider(date)) {
+    addTimeDivider(date);
+  }
+
+  const row = document.createElement("div");
+  row.className = "message-row incoming";
+
+  row.innerHTML = `
+    <div class="message-avatar">
+      L
+    </div>
+
+    <div class="message-content">
+
+      <div class="message-bubble"></div>
+
+      <div class="message-time">
+        ${formatMessageTime(date)}
+      </div>
+
+    </div>
+  `;
+
+  row.querySelector(".message-bubble").textContent = text;
+
+  chatMessages.appendChild(row);
+
+  lastMessageTime = date;
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+
+/* 随机抽一张测试卡并回复 */
+function createTestReply() {
+  showTypingStatus();
+
+  const delay = 1500 + Math.random() * 2000;
+
+  setTimeout(function () {
+    const randomIndex = Math.floor(
+      Math.random() * testReplyCards.length
+    );
+
+    const reply = testReplyCards[randomIndex];
+
+    addIncomingMessage(reply, new Date());
+
+    hideTypingStatus();
+  }, delay);
+}
