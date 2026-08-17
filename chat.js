@@ -82,3 +82,139 @@ morePages.addEventListener("pointerup", function () {
 morePages.addEventListener("pointercancel", function () {
   isDragging = false;
 });
+
+const chatMessages = document.getElementById("chatMessages");
+
+let lastMessageTime = null;
+
+
+/* 把数字补成两位：8 → 08 */
+function padNumber(number) {
+  return String(number).padStart(2, "0");
+}
+
+
+/* 每条气泡下面的小时间：精确到秒 */
+function formatMessageTime(date) {
+  const hours = padNumber(date.getHours());
+  const minutes = padNumber(date.getMinutes());
+  const seconds = padNumber(date.getSeconds());
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+
+/* 消息流中间的大时间 */
+function formatDividerTime(date) {
+  const now = new Date();
+
+  const sameYear =
+    date.getFullYear() === now.getFullYear();
+
+  const sameDay =
+    sameYear &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
+
+  const hours = padNumber(date.getHours());
+  const minutes = padNumber(date.getMinutes());
+
+  const time = `${hours}:${minutes}`;
+
+  if (sameDay) {
+    return time;
+  }
+
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  if (sameYear) {
+    return `${month}月${day}日 ${time}`;
+  }
+
+  return `${date.getFullYear()}年${month}月${day}日 ${time}`;
+}
+
+
+/* 判断这一条前面要不要出现大时间 */
+function shouldShowTimeDivider(currentTime) {
+  if (lastMessageTime === null) {
+    return true;
+  }
+
+  const difference = currentTime - lastMessageTime;
+
+  return difference >= 5 * 60 * 1000;
+}
+
+
+/* 插入中央时间 */
+function addTimeDivider(date) {
+  const divider = document.createElement("div");
+
+  divider.className = "time-divider";
+  divider.textContent = formatDividerTime(date);
+
+  chatMessages.appendChild(divider);
+}
+
+
+/* 插入你自己发出的消息 */
+function addOutgoingMessage(text, date) {
+  if (shouldShowTimeDivider(date)) {
+    addTimeDivider(date);
+  }
+
+  const row = document.createElement("div");
+  row.className = "message-row outgoing";
+
+  row.innerHTML = `
+    <div class="message-content">
+
+      <div class="message-bubble"></div>
+
+      <div class="message-time">
+        ${formatMessageTime(date)}
+      </div>
+
+    </div>
+
+    <div class="message-avatar">
+      K
+    </div>
+  `;
+
+  row.querySelector(".message-bubble").textContent = text;
+
+  chatMessages.appendChild(row);
+
+  lastMessageTime = date;
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+
+/* 发送输入框中的文字 */
+function sendMessage() {
+  const text = chatInput.value.trim();
+
+  if (text === "") {
+    return;
+  }
+
+  const now = new Date();
+
+  addOutgoingMessage(text, now);
+
+  chatInput.value = "";
+  chatInput.focus();
+}
+
+
+/* 按回车发送 */
+chatInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendMessage();
+  }
+});
