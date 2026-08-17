@@ -3,115 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f5f5f3">
+  <meta name="theme-color" content="#f4f3f0">
 
   <title>Liminal</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="home.css">
 </head>
 
 <body>
 
-  <main class="app">
+  <main class="home-shell">
 
-    <header class="topbar">
+    <header class="home-header">
       <div>
-        <p class="eyebrow">LMN</p>
+        <p class="home-eyebrow">LMN</p>
         <h1>Liminal</h1>
       </div>
 
-      <button class="avatar-button" aria-label="人物">
-        L
-      </button>
+      <div class="home-avatar">L</div>
     </header>
 
 
-    <section class="welcome">
-      <p class="welcome-label">当前连接</p>
+    <div class="desktop-pages">
 
-      <div class="person-card">
-        <div class="person-avatar">
-          L
+      <!-- =========================
+           第一页：交流
+           ========================= -->
+      <section class="desktop-page">
+
+        <div class="calendar-widget">
+
+          <div class="calendar-title">
+            <strong>2026年8月</strong>
+          </div>
+
+          <div class="calendar-week">
+            <span>日</span>
+            <span>一</span>
+            <span>二</span>
+            <span>三</span>
+            <span>四</span>
+            <span>五</span>
+            <span>六</span>
+          </div>
+
+          <div class="calendar-grid">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <span>1</span>
+
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
+            <span>7</span>
+            <span>8</span>
+
+            <span>9</span>
+            <span>10</span>
+            <span>11</span>
+            <span>12</span>
+            <span>13</span>
+            <span>14</span>
+            <span>15</span>
+
+            <span>16</span>
+
+            <span class="calendar-day today">
+              <b>17</b>
+              <small>● ●</small>
+            </span>
+
+            <span>18</span>
+            <span>19</span>
+            <span>20</span>
+            <span>21</span>
+            <span>22</span>
+
+            <span>23</span>
+            <span>24</span>
+            <span>25</span>
+            <span>26</span>
+            <span>27</span>
+            <span>28</span>
+            <span>29</span>
+
+            <span>30</span>
+            <span>31</span>
+
+          </div>
+
         </div>
 
-        <div class="person-info">
-          <strong>陆榛</strong>
-          <span>在线 · Liminal</span>
+
+        <div class="app-grid">
+
+          <div class="app-item">
+            <div class="app-icon chat-icon">聊</div>
+            <span>聊天</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon moments-icon">◌</div>
+            <span>朋友圈</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon signal-icon">···</div>
+            <span>传讯</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon tarot-icon">✦</div>
+            <span>塔罗</span>
+          </div>
+
         </div>
 
-        <span class="status-dot"></span>
-      </div>
-    </section>
+      </section>
 
 
-    <section class="quick-grid" id="chatButton">
+      <!-- =========================
+           第二页：记录与生活
+           ========================= -->
+      <section class="desktop-page">
 
-      <button class="quick-card">
-        <span class="quick-icon">💬</span>
-        <strong>聊天</strong>
-        <small>日常交流</small>
-      </button>
+        <div class="page-heading">
+          <small>RECORDS & LIFE</small>
+          <h2>生活与记录</h2>
+        </div>
 
-      <button class="quick-card" id="transmissionButton">
-        <span class="quick-icon">◌</span>
-        <strong>传讯</strong>
-        <small>随机字卡</small>
-      </button>
+        <div class="app-grid large-gap">
 
-      <button class="quick-card">
-        <span class="quick-icon">✦</span>
-        <strong>塔罗</strong>
-        <small>抽牌与记录</small>
-      </button>
+          <div class="app-item">
+            <div class="app-icon diary-icon">记</div>
+            <span>日记</span>
+          </div>
 
-      <button class="quick-card">
-        <span class="quick-icon">⌁</span>
-        <strong>时间轴</strong>
-        <small>关系档案</small>
-      </button>
+          <div class="app-item">
+            <div class="app-icon mail-icon">✉</div>
+            <span>信箱</span>
+          </div>
 
-    </section>
+          <div class="app-item">
+            <div class="app-icon timeline-icon">⌁</div>
+            <span>时间轴</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon music-icon">♫</div>
+            <span>一起听歌</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon wallet-icon">¥</div>
+            <span>钱包</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon shop-icon">袋</div>
+            <span>次元购物城</span>
+          </div>
+
+        </div>
+
+      </section>
 
 
-    <section class="section-block">
+      <!-- =========================
+           第三页：数据与系统
+           ========================= -->
+      <section class="desktop-page">
 
-      <div class="section-title">
-        <h2>最近</h2>
-        <button>查看全部</button>
-      </div>
+        <div class="page-heading">
+          <small>DATA & SYSTEM</small>
+          <h2>数据与系统</h2>
+        </div>
 
-      <div class="empty-card">
-        <span>这里以后会显示最近的聊天、传讯、信件和动态。</span>
-      </div>
+        <div class="app-grid large-gap">
 
-    </section>
+          <div class="app-item">
+            <div class="app-icon library-icon">库</div>
+            <span>语料 · 图库</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon search-icon">⌕</div>
+            <span>全局搜索</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon backup-icon">⇧</div>
+            <span>导出 · 备份</span>
+          </div>
+
+          <div class="app-item">
+            <div class="app-icon settings-icon">⚙</div>
+            <span>设置</span>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <div class="desktop-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
 
   </main>
 
-
-  <nav class="bottom-nav">
-
-    <button class="nav-item active">
-      <span>⌂</span>
-      <small>首页</small>
-    </button>
-
-    <button class="nav-item">
-      <span>◌</span>
-      <small>传讯</small>
-    </button>
-
-    <button class="nav-item">
-      <span>✦</span>
-      <small>动态</small>
-    </button>
-
-    <button class="nav-item">
-      <span>☰</span>
-      <small>更多</small>
-    </button>
-
-  </nav>
-<script src="script.js"></script>
+  <script src="home.js"></script>
 </body>
 </html>

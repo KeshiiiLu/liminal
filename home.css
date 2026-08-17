@@ -1,0 +1,393 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #f4f3f0;
+  color: #20201f;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+
+/* =========================
+   整体
+   ========================= */
+
+.home-shell {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding:
+    calc(22px + env(safe-area-inset-top))
+    0
+    calc(24px + env(safe-area-inset-bottom));
+}
+
+
+/* =========================
+   顶部
+   ========================= */
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 22px;
+
+  margin-bottom: 24px;
+}
+
+.home-eyebrow {
+  margin: 0 0 3px;
+
+  color: #989892;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.home-header h1 {
+  margin: 0;
+
+  font-size: 29px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.home-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #deddd8;
+
+  color: #555550;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================
+   横向桌面
+   ========================= */
+
+.desktop-pages {
+  display: flex;
+
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+}
+
+.desktop-pages::-webkit-scrollbar {
+  display: none;
+}
+
+.desktop-page {
+  flex: 0 0 100%;
+
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+
+  padding: 0 22px 20px;
+
+  min-height: 650px;
+}
+
+
+/* =========================
+   日历小组件
+   ========================= */
+
+.calendar-widget {
+  padding: 20px 17px 18px;
+
+  margin-bottom: 26px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7e6e1;
+  border-radius: 24px;
+
+  box-shadow:
+    0 8px 28px rgba(30, 30, 30, 0.035);
+}
+
+.calendar-title {
+  text-align: center;
+
+  margin-bottom: 17px;
+}
+
+.calendar-title strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.calendar-week,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  text-align: center;
+}
+
+.calendar-week {
+  margin-bottom: 9px;
+
+  color: #9b9a94;
+
+  font-size: 11px;
+}
+
+.calendar-grid {
+  row-gap: 7px;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.calendar-grid > span {
+  min-height: 31px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 1px;
+}
+
+.calendar-day.today b {
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #2f302e;
+  color: #ffffff;
+
+  font-size: 12px;
+}
+
+.calendar-day.today small {
+  color: #9a9a95;
+
+  font-size: 5px;
+  letter-spacing: 2px;
+}
+
+
+/* =========================
+   App 网格
+   ========================= */
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  column-gap: 11px;
+  row-gap: 22px;
+}
+
+.app-grid.large-gap {
+  margin-top: 36px;
+
+  row-gap: 34px;
+}
+
+.app-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 8px;
+
+  text-align: center;
+}
+
+.app-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  border: 1px solid rgba(0, 0, 0, 0.035);
+
+  font-size: 21px;
+  font-weight: 500;
+
+  box-shadow:
+    0 5px 14px rgba(20, 20, 20, 0.035);
+}
+
+.app-item > span {
+  max-width: 80px;
+
+  color: #555550;
+
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+
+/* App 暂定配色 */
+
+.chat-icon {
+  background: #dce9df;
+}
+
+.moments-icon {
+  background: #e2e5f0;
+}
+
+.signal-icon {
+  background: #e9e2db;
+}
+
+.tarot-icon {
+  background: #e8e1ed;
+}
+
+.diary-icon {
+  background: #e9e5d8;
+}
+
+.mail-icon {
+  background: #e1e7eb;
+}
+
+.timeline-icon {
+  background: #e4e1dd;
+}
+
+.music-icon {
+  background: #eadfe1;
+}
+
+.wallet-icon {
+  background: #e4eadf;
+}
+
+.shop-icon {
+  background: #e8e1d8;
+}
+
+.library-icon {
+  background: #e0e6e5;
+}
+
+.search-icon {
+  background: #e6e3df;
+}
+
+.backup-icon {
+  background: #dfe4e9;
+}
+
+.settings-icon {
+  background: #e4e4e1;
+}
+
+
+/* =========================
+   页面标题
+   ========================= */
+
+.page-heading {
+  margin-top: 22px;
+}
+
+.page-heading small {
+  color: #a1a09a;
+
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.page-heading h2 {
+  margin: 5px 0 0;
+
+  font-size: 24px;
+  font-weight: 600;
+}
+
+
+/* =========================
+   底部分页点
+   ========================= */
+
+.desktop-dots {
+  display: flex;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding-top: 8px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #c9c8c2;
+}
+
+.dot.active {
+  width: 6px;
+  height: 6px;
+
+  background: #666660;
+}
+
+
+/* =========================
+   电脑预览
+   ========================= */
+
+@media (min-width: 700px) {
+  .home-shell {
+    padding-top: 48px;
+  }
+}
