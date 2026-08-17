@@ -33,43 +33,4 @@ desktopDots.forEach(function (dot, index) {
   });
 });
 
-
-/* 电脑鼠标左键拖动
-   手机和平板仍然使用原生手指滑动 */
-let isDesktopDragging = false;
-let dragStartX = 0;
-let dragStartScrollLeft = 0;
-
-desktopPages.addEventListener("pointerdown", function (event) {
-  if (event.pointerType !== "mouse") {
-    return;
-  }
-
-  isDesktopDragging = true;
-  dragStartX = event.clientX;
-  dragStartScrollLeft = desktopPages.scrollLeft;
-
-  desktopPages.setPointerCapture(event.pointerId);
-});
-
-desktopPages.addEventListener("pointermove", function (event) {
-  if (!isDesktopDragging) {
-    return;
-  }
-
-  const distance = event.clientX - dragStartX;
-
-  desktopPages.scrollLeft =
-    dragStartScrollLeft - distance;
-});
-
-desktopPages.addEventListener("pointerup", function () {
-  isDesktopDragging = false;
-});
-
-desktopPages.addEventListener("pointercancel", function () {
-  isDesktopDragging = false;
-});
-
-
 updateDesktopDots();

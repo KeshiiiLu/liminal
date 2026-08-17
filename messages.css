@@ -1,0 +1,410 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #eeeeec;
+  color: #20201f;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+
+/* =========================
+   整体
+   ========================= */
+
+.messages-page {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding-bottom:
+    calc(120px + env(safe-area-inset-bottom));
+
+  background: #eeeeec;
+}
+
+
+/* =========================
+   顶部封面
+   ========================= */
+
+.profile-cover {
+  position: relative;
+
+  height: 250px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #d1d2cf,
+      #bebfbd
+    );
+}
+
+.back-button {
+  position: absolute;
+
+  top: calc(15px + env(safe-area-inset-top));
+  left: 17px;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+
+  font-size: 44px;
+  font-weight: 200;
+
+  cursor: pointer;
+}
+
+
+/* =========================
+   个人资料
+   ========================= */
+
+.profile-card {
+  position: relative;
+
+  min-height: 265px;
+
+  padding:
+    72px
+    24px
+    24px;
+
+  text-align: center;
+
+  background: #f4f4f2;
+}
+
+.profile-avatar {
+  position: absolute;
+
+  top: -55px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 110px;
+  height: 110px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 5px solid #f4f4f2;
+  border-radius: 50%;
+
+  background: #deded9;
+
+  color: #555550;
+
+  font-size: 28px;
+  font-weight: 600;
+
+  box-shadow:
+    0 3px 14px rgba(0, 0, 0, 0.08);
+}
+
+.profile-card h1 {
+  margin: 0;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.profile-id {
+  margin:
+    7px
+    0
+    26px;
+
+  color: #8f8f8a;
+
+  font-size: 16px;
+}
+
+.profile-bio {
+  border: none;
+  background: transparent;
+
+  color: #777772;
+
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+
+/* =========================
+   联系人区域
+   ========================= */
+
+.contacts-section {
+  padding:
+    20px
+    18px
+    40px;
+}
+
+.contacts-section h2 {
+  margin:
+    0
+    0
+    16px;
+
+  color: #777772;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+
+/* 搜索框 */
+
+.contact-search {
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 0 15px;
+
+  margin-bottom: 20px;
+
+  border-radius: 16px;
+
+  background: #e3e3e0;
+
+  color: #aaa9a4;
+}
+
+.contact-search span {
+  font-size: 20px;
+}
+
+.contact-search input {
+  flex: 1;
+
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #777772;
+
+  font-size: 15px;
+}
+
+.contact-search input::placeholder {
+  color: #aaa9a4;
+}
+
+
+/* 联系人分组 */
+
+.contact-group-title {
+  margin:
+    0
+    0
+    9px;
+
+  color: #888883;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.normal-group {
+  margin-top: 25px;
+}
+
+
+/* 单个联系人 */
+
+.contact-item {
+  position: relative;
+
+  min-height: 72px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 14px;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 3px 13px rgba(30, 30, 30, 0.035);
+}
+
+.contact-item:active {
+  transform: scale(0.99);
+}
+
+.contact-avatar {
+  flex: 0 0 auto;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 12px;
+
+  border-radius: 11px;
+
+  background: #deded9;
+
+  color: #555550;
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  flex: 1;
+}
+
+.contact-info strong {
+  font-size: 16px;
+}
+
+.contact-info span {
+  color: #9a9a95;
+
+  font-size: 11px;
+}
+
+.contact-star {
+  color: #aaa9a3;
+
+  font-size: 15px;
+}
+
+
+/* 空联系人区 */
+
+.empty-contact {
+  padding: 18px;
+
+  border: 1px dashed #d4d4cf;
+  border-radius: 14px;
+
+  color: #aaa9a4;
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+
+/* =========================
+   底部悬浮栏
+   ========================= */
+
+.messages-bottom-bar {
+  position: fixed;
+
+  left: 50%;
+  bottom:
+    calc(18px + env(safe-area-inset-bottom));
+
+  transform: translateX(-50%);
+
+  z-index: 20;
+
+  width:
+    calc(100% - 36px);
+
+  max-width: 484px;
+
+  height: 70px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  align-items: center;
+
+  border-radius: 35px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  box-shadow:
+    0 8px 24px rgba(30, 30, 30, 0.08);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.messages-bottom-bar button {
+  height: 100%;
+
+  border: none;
+  background: transparent;
+
+  color: #222220;
+
+  font-size: 31px;
+
+  cursor: pointer;
+}
+
+.messages-bottom-bar button:active {
+  transform: scale(0.94);
+}
+
+
+/* =========================
+   电脑预览
+   ========================= */
+
+@media (min-width: 700px) {
+  .messages-page {
+    box-shadow:
+      0 0 30px rgba(0, 0, 0, 0.03);
+  }
+}

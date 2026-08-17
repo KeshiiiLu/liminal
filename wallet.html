@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f2ef">
+
+  <title>钱包 · Liminal</title>
+
+  <link rel="stylesheet" href="wallet.css">
+</head>
+
+<body>
+
+  <main class="wallet-page">
+
+    <!-- 顶部 -->
+    <header class="wallet-header">
+
+      <button
+        class="wallet-back"
+        onclick="window.location.href='index.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+      <div class="wallet-title">
+        <strong>家庭钱包</strong>
+        <span>Engel Household</span>
+      </div>
+
+      <button class="wallet-settings" aria-label="钱包设置">
+        ···
+      </button>
+
+    </header>
+
+
+    <!-- 家庭成员 -->
+    <section class="household-members">
+
+      <div class="member-avatar">
+        K
+      </div>
+
+      <div class="member-avatar second">
+        L
+      </div>
+
+      <span>共同账户</span>
+
+    </section>
+
+
+    <!-- 余额卡 -->
+    <section class="balance-card">
+
+      <span class="balance-label">
+        可用余额
+      </span>
+
+      <div class="balance-number">
+        <small>¥</small>
+        68,420.00
+      </div>
+
+      <p class="demo-note">
+        当前为演示数据
+      </p>
+
+
+      <div class="balance-summary">
+
+        <div>
+          <span>本月收入</span>
+          <strong>¥ 42,800.00</strong>
+        </div>
+
+        <div>
+          <span>本月支出</span>
+          <strong>¥ 8,216.40</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 快捷功能 -->
+    <section class="wallet-tools">
+
+      <button>
+        <span class="tool-icon">收</span>
+        <small>收支明细</small>
+      </button>
+
+      <button>
+        <span class="tool-icon">转</span>
+        <small>转账</small>
+      </button>
+
+      <button>
+        <span class="tool-icon">包</span>
+        <small>红包</small>
+      </button>
+
+      <button>
+        <span class="tool-icon">账</span>
+        <small>账单</small>
+      </button>
+
+    </section>
+
+
+    <!-- 最近流水 -->
+    <section class="wallet-section">
+
+      <div class="section-heading">
+        <h2>最近流水</h2>
+        <button>全部</button>
+      </div>
+
+
+      <div class="transaction-list">
+
+        <div class="transaction-item">
+
+          <div class="transaction-icon income">
+            督
+          </div>
+
+          <div class="transaction-info">
+            <strong>督导费</strong>
+            <span>陆榛 · 8月17日 16:40</span>
+          </div>
+
+          <div class="transaction-amount income-text">
+            + ¥1,800.00
+          </div>
+
+        </div>
+
+
+        <div class="transaction-item">
+
+          <div class="transaction-icon income">
+            讲
+          </div>
+
+          <div class="transaction-info">
+            <strong>讲座酬劳</strong>
+            <span>陆榛 · 8月16日 19:20</span>
+          </div>
+
+          <div class="transaction-amount income-text">
+            + ¥3,500.00
+          </div>
+
+        </div>
+
+
+        <div class="transaction-item">
+
+          <div class="transaction-icon expense">
+            餐
+          </div>
+
+          <div class="transaction-info">
+            <strong>晚餐</strong>
+            <span>家庭消费 · 8月16日 18:47</span>
+          </div>
+
+          <div class="transaction-amount">
+            - ¥128.00
+          </div>
+
+        </div>
+
+
+        <div class="transaction-item">
+
+          <div class="transaction-icon expense">
+            购
+          </div>
+
+          <div class="transaction-info">
+            <strong>次元购物城</strong>
+            <span>生活用品 · 8月15日 21:03</span>
+          </div>
+
+          <div class="transaction-amount">
+            - ¥399.00
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 家庭资产 -->
+    <section class="wallet-section assets-section">
+
+      <div class="section-heading">
+        <h2>家庭资产</h2>
+        <button>管理</button>
+      </div>
+
+
+      <div class="asset-grid">
+
+        <article class="asset-card">
+
+          <span class="asset-type">
+            RESIDENCE
+          </span>
+
+          <strong>住宅</strong>
+
+          <p>
+            上海 · 自有住宅
+          </p>
+
+          <span class="asset-status">
+            自住
+          </span>
+
+        </article>
+
+
+        <article class="asset-card">
+
+          <span class="asset-type">
+            VEHICLE
+          </span>
+
+          <strong>车辆</strong>
+
+          <p>
+            家庭用车
+          </p>
+
+          <span class="asset-status">
+            在用
+          </span>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- 收入来源 -->
+    <section class="wallet-section income-section">
+
+      <div class="section-heading">
+        <h2>收入来源</h2>
+        <button>查看</button>
+      </div>
+
+      <div class="income-tags">
+
+        <span>咨询</span>
+        <span>督导</span>
+        <span>讲座</span>
+        <span>企业项目</span>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>

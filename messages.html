@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eeeeec">
+
+  <title>聊天 · Liminal</title>
+
+  <link rel="stylesheet" href="messages.css">
+</head>
+
+<body>
+
+  <main class="messages-page">
+
+    <!-- 顶部封面 -->
+    <section class="profile-cover">
+
+      <button
+        class="back-button"
+        onclick="window.location.href='index.html'"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+    </section>
+
+
+    <!-- 个人资料 -->
+    <section class="profile-card">
+
+      <div class="profile-avatar">
+        K
+      </div>
+
+      <h1>Keshi</h1>
+
+      <p class="profile-id">
+        @Keshiii_Lu
+      </p>
+
+      <button class="profile-bio">
+        这里点击替换文案
+      </button>
+
+    </section>
+
+
+    <!-- 联系人 -->
+    <section class="contacts-section">
+
+      <h2>联系人</h2>
+
+      <div class="contact-search">
+        <span>⌕</span>
+        <input
+          type="text"
+          placeholder="搜索联系人"
+          readonly
+        >
+      </div>
+
+
+      <p class="contact-group-title">
+        星标联系人
+      </p>
+
+
+      <!-- 陆榛 -->
+      <a class="contact-item starred" href="chat.html">
+
+        <div class="contact-avatar">
+          L
+        </div>
+
+        <div class="contact-info">
+          <strong>榛榛</strong>
+          <span>在线</span>
+        </div>
+
+        <span class="contact-star">
+          ★
+        </span>
+
+      </a>
+
+
+      <p class="contact-group-title normal-group">
+        联系人
+      </p>
+
+      <div class="empty-contact">
+        以后其他联系人会显示在这里
+      </div>
+
+    </section>
+
+
+    <!-- 底部悬浮栏 -->
+    <nav class="messages-bottom-bar">
+
+      <button aria-label="搜索">
+        <span>⌕</span>
+      </button>
+
+      <button aria-label="新增联系人">
+        <span>＋</span>
+      </button>
+
+    </nav>
+
+  </main>
+
+</body>
+</html>
