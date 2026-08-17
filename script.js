@@ -14,3 +14,9 @@ transmissionButton.addEventListener("click", function () {
 
   alert(result);
 });
+
+const chatButton = document.getElementById("chatButton");
+
+chatButton.addEventListener("click", function () {
+  window.location.href = "chat.html";
+});
