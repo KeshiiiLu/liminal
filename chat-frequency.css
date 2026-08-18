@@ -1,0 +1,522 @@
+* {
+  box-sizing: border-box;
+}
+
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+
+  background: #f4f3f0;
+
+  color: #55524c;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+button,
+input {
+  font: inherit;
+}
+
+
+.frequency-page {
+  width: min(560px, 100%);
+
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding:
+    0 16px
+    50px;
+}
+
+
+/* 顶部 */
+
+.frequency-header {
+  position: sticky;
+  top: 0;
+
+  z-index: 20;
+
+  min-height: 72px;
+
+  display: grid;
+
+  grid-template-columns:
+    44px 1fr 44px;
+
+  align-items: center;
+
+  background:
+    rgba(244, 243, 240, .94);
+
+  backdrop-filter:
+    blur(18px);
+}
+
+
+.frequency-back {
+  width: 40px;
+  height: 40px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #65625c;
+
+  font-size: 31px;
+
+  cursor: pointer;
+}
+
+
+.frequency-heading {
+  text-align: center;
+}
+
+
+.frequency-heading span {
+  display: block;
+
+  color: #aaa79f;
+
+  font-size: 8px;
+
+  letter-spacing: .14em;
+}
+
+
+.frequency-heading h1 {
+  margin: 2px 0 0;
+
+  color: #4f4c46;
+
+  font-size: 15px;
+  font-weight: 650;
+}
+
+
+/* 人物 */
+
+.frequency-person-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin:
+    14px 0
+    10px;
+
+  padding: 15px;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .72);
+}
+
+
+.frequency-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  border-radius: 14px;
+
+  background: #e5e3dd;
+
+  color: #65625c;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.frequency-person-card > div:last-child {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.frequency-person-card strong {
+  color: #57544e;
+
+  font-size: 14px;
+}
+
+
+.frequency-person-card span {
+  color: #aaa79f;
+
+  font-size: 9px;
+}
+
+
+.frequency-description {
+  margin:
+    0 4px
+    22px;
+
+  color: #99968f;
+
+  font-size: 9px;
+
+  line-height: 1.7;
+}
+
+
+/* 分组 */
+
+.frequency-group {
+  margin-bottom: 18px;
+}
+
+
+.frequency-group-heading {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 7px;
+
+  padding:
+    0 5px
+    8px;
+}
+
+
+.frequency-group-heading span {
+  color: #aaa79f;
+
+  font-size: 8px;
+
+  letter-spacing: .12em;
+}
+
+
+.frequency-group-heading strong {
+  color: #77746d;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+.frequency-list {
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .72);
+}
+
+
+/* 一条频率 */
+
+.frequency-row {
+  padding:
+    14px;
+
+  border-top:
+    1px solid
+    rgba(70, 68, 62, .055);
+}
+
+
+.frequency-row:first-child {
+  border-top: 0;
+}
+
+
+.frequency-rule-head {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 11px;
+}
+
+
+.frequency-rule-name {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.frequency-rule-name strong {
+  color: #57544e;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+.frequency-rule-name span {
+  color: #aaa79f;
+
+  font-size: 8px;
+
+  line-height: 1.5;
+}
+
+
+.frequency-range {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  align-items: end;
+
+  gap: 8px;
+}
+
+
+.frequency-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.frequency-field > span {
+  color: #aaa79f;
+
+  font-size: 8px;
+}
+
+
+.frequency-input-wrap {
+  display: flex;
+
+  align-items: center;
+
+  min-height: 39px;
+
+  padding:
+    0 10px;
+
+  border:
+    1px solid
+    rgba(70, 68, 62, .08);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, .8);
+}
+
+
+.frequency-input-wrap input {
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: #5c5953;
+
+  font-size: 11px;
+}
+
+
+.frequency-input-wrap em {
+  color: #99968f;
+
+  font-size: 9px;
+
+  font-style: normal;
+}
+
+
+.frequency-line {
+  padding-bottom: 11px;
+
+  color: #aaa79f;
+
+  font-size: 11px;
+}
+
+
+/* 保存 */
+
+.frequency-save {
+  width: 100%;
+
+  min-height: 45px;
+
+  margin-top: 4px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  background: #5f5c56;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.frequency-save-message {
+  min-height: 20px;
+
+  margin:
+    10px 0 0;
+
+  color: #85827b;
+
+  font-size: 9px;
+
+  text-align: center;
+}
+
+/* =========================
+   今日概率
+   ========================= */
+
+.frequency-today {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 12px;
+
+  padding-top: 10px;
+
+  border-top:
+    1px solid
+    rgba(70, 68, 62, .055);
+}
+
+
+.frequency-today > span {
+  color: #99968f;
+
+  font-size: 9px;
+}
+
+
+.frequency-today-button {
+  padding:
+    5px 9px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background:
+    rgba(70, 68, 62, .055);
+
+  color: #77746d;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+
+.frequency-today-button.revealed {
+  color: #55524c;
+
+  font-weight: 600;
+}
+
+/* =========================
+   回复附加参数
+   ========================= */
+
+.frequency-extra {
+  margin-top: 12px;
+
+  padding-top: 11px;
+
+  border-top:
+    1px solid
+    rgba(70, 68, 62, .055);
+}
+
+
+.frequency-extra-block + .frequency-extra-block {
+  margin-top: 12px;
+}
+
+
+.frequency-extra-title {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #77746d;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+
+.frequency-extra-range {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  align-items: end;
+
+  gap: 8px;
+}
+
+
+.frequency-extra-line {
+  padding-bottom: 11px;
+
+  color: #aaa79f;
+
+  font-size: 11px;
+}

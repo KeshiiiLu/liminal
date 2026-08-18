@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#f4f3f0"
+  >
+
+  <title>互动频率 · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="chat-frequency.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="frequency-page">
+
+    <header class="frequency-header">
+
+      <button
+        class="frequency-back"
+        id="frequencyBack"
+        type="button"
+      >
+        ‹
+      </button>
+
+
+      <div class="frequency-heading">
+
+        <span>
+          INTERACTION
+        </span>
+
+        <h1>
+          互动频率
+        </h1>
+
+      </div>
+
+
+      <div></div>
+
+    </header>
+
+
+    <!-- 当前人物 -->
+
+    <section class="frequency-person-card">
+
+      <div
+        class="frequency-avatar"
+        id="frequencyAvatar"
+      >
+        L
+      </div>
+
+
+      <div>
+
+        <strong id="frequencyPersonName">
+          榛榛
+        </strong>
+
+        <span>
+          当前人物 · 长期随机范围
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <p class="frequency-description">
+      这里与 World Rules 使用同一份数据。
+      每天会从最低与最高之间生成固定的今日概率。
+    </p>
+
+
+    <!-- 消息 -->
+
+    <section class="frequency-group">
+
+      <div class="frequency-group-heading">
+
+        <span>
+          MESSAGE
+        </span>
+
+        <strong>
+          消息互动
+        </strong>
+
+      </div>
+
+
+      <div
+        class="frequency-list"
+        id="messageFrequencyList"
+      >
+      </div>
+
+    </section>
+
+
+    <!-- 通话 -->
+
+    <section class="frequency-group">
+
+      <div class="frequency-group-heading">
+
+        <span>
+          CALL
+        </span>
+
+        <strong>
+          通话互动
+        </strong>
+
+      </div>
+
+
+      <div
+        class="frequency-list"
+        id="callFrequencyList"
+      >
+      </div>
+
+    </section>
+
+
+    <!-- 礼物与金钱 -->
+
+    <section class="frequency-group">
+
+      <div class="frequency-group-heading">
+
+        <span>
+          MONEY & GIFT
+        </span>
+
+        <strong>
+          礼物与金钱
+        </strong>
+
+      </div>
+
+
+      <div
+        class="frequency-list"
+        id="moneyFrequencyList"
+      >
+      </div>
+
+    </section>
+
+
+    <button
+      class="frequency-save"
+      id="saveFrequencyButton"
+      type="button"
+    >
+      保存互动频率
+    </button>
+
+
+    <p
+      class="frequency-save-message"
+      id="frequencySaveMessage"
+    >
+    </p>
+
+  </main>
+
+
+  <script src="chat-frequency.js"></script>
+
+</body>
+
+</html>
