@@ -116,6 +116,13 @@ body {
 .desktop-page {
   flex: 0 0 100%;
 
+  /*
+    非常重要：
+    防止里面的横向 Widget 把整个桌面页撑宽
+  */
+  width: 100%;
+  min-width: 0;
+
   scroll-snap-align: start;
   scroll-snap-stop: always;
 
@@ -390,4 +397,549 @@ body {
   .home-shell {
     padding-top: 48px;
   }
+}
+
+/* =========================
+   Home 2.0 分组
+   ========================= */
+
+.home-app-group {
+  margin-bottom: 27px;
+}
+
+.group-heading {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  padding: 0 4px;
+  margin-bottom: 14px;
+}
+
+.group-heading span {
+  color: #aaa79f;
+
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.group-heading strong {
+  color: #55534e;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+/* 分组以后稍微收紧 App 间距 */
+
+.home-app-group .app-grid {
+  row-gap: 19px;
+}
+
+
+/* 三个金融 App 不需要强行撑满四个 */
+
+.finance-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+
+/* 系统区只有两个 App，也保持和其他图标同样宽度 */
+
+.system-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* =========================
+   Home Widget Carousel
+   ========================= */
+
+.home-widget-section {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow: hidden;
+
+  margin-bottom: 24px;
+}
+
+.home-widget-track {
+  display: flex;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+
+  overscroll-behavior-x: contain;
+
+  scrollbar-width: none;
+
+  border-radius: 24px;
+}
+
+.home-widget-track::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* 单张 Widget */
+
+.home-widget-card {
+  flex: 0 0 100%;
+
+  width: 100%;
+min-width: 100%;
+
+  box-sizing: border-box;
+
+  min-height: 310px;
+
+  padding: 23px 22px 20px;
+
+  border: 1px solid rgba(60, 58, 53, 0.07);
+  border-radius: 24px;
+
+  background:
+    rgba(255, 255, 255, 0.72);
+
+  backdrop-filter: blur(18px);
+
+  scroll-snap-align: start;
+}
+
+
+/* 顶部 */
+
+.widget-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 22px;
+}
+
+.widget-eyebrow {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #aaa69e;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+}
+
+.widget-topline h2 {
+  margin: 0;
+
+  color: #3f3e3a;
+
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.widget-date-number {
+  color: #3f3e3a;
+
+  font-size: 37px;
+  font-weight: 300;
+
+  line-height: 1;
+}
+
+.widget-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  background: rgba(80, 78, 72, 0.055);
+
+  color: #6b6963;
+
+  font-size: 18px;
+}
+
+
+/* Calendar */
+
+.mini-calendar {
+  width: 100%;
+}
+
+.calendar-week,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  text-align: center;
+}
+
+.calendar-week {
+  margin-bottom: 8px;
+
+  color: #aaa79f;
+
+  font-size: 9px;
+}
+
+.calendar-days {
+  row-gap: 6px;
+
+  color: #57554f;
+
+  font-size: 10px;
+}
+
+.calendar-days span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  margin: auto;
+
+  border-radius: 50%;
+}
+
+.calendar-days .muted {
+  color: #ccc9c1;
+}
+
+.calendar-days .today {
+  background: #55534d;
+  color: white;
+}
+
+
+/* 通用底部 */
+
+.widget-footer-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 17px;
+  padding-top: 14px;
+
+  border-top:
+    1px solid rgba(70, 68, 62, 0.07);
+
+  font-size: 9px;
+}
+
+.widget-footer-line span {
+  color: #aaa69e;
+}
+
+.widget-footer-line strong {
+  color: #66635d;
+
+  font-weight: 500;
+}
+
+
+/* Cycle */
+
+.widget-feature {
+  display: flex;
+  flex-direction: column;
+
+  margin: 30px 0 30px;
+}
+
+.feature-label {
+  margin-bottom: 5px;
+
+  color: #aaa69e;
+
+  font-size: 8px;
+  letter-spacing: 0.15em;
+}
+
+.feature-big {
+  color: #484641;
+
+  font-size: 34px;
+  font-weight: 400;
+}
+
+.feature-sub {
+  margin-top: 5px;
+
+  color: #99968f;
+
+  font-size: 10px;
+}
+
+.widget-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+}
+
+.widget-info-grid > div {
+  padding: 12px;
+
+  border-radius: 15px;
+
+  background:
+    rgba(80, 77, 70, 0.045);
+}
+
+.widget-info-grid span,
+.body-status-list span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #aaa69e;
+
+  font-size: 8px;
+}
+
+.widget-info-grid strong {
+  color: #5d5a55;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+
+/* Sleep */
+
+.sleep-main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  margin: 29px 0 32px;
+}
+
+.sleep-main strong {
+  color: #45433f;
+
+  font-size: 39px;
+  font-weight: 300;
+}
+
+.sleep-main small {
+  color: #8c8982;
+
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.sleep-main > span {
+  margin-bottom: 7px;
+
+  color: #8f8c85;
+
+  font-size: 10px;
+}
+
+.sleep-line {
+  display: flex;
+  align-items: center;
+
+  padding: 14px 0;
+}
+
+.sleep-line > div:not(.sleep-line-rule) {
+  flex: 0 0 70px;
+}
+
+.sleep-line span {
+  display: block;
+
+  color: #aaa69e;
+
+  font-size: 8px;
+}
+
+.sleep-line strong {
+  color: #595751;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.sleep-line-rule {
+  flex: 1;
+
+  height: 1px;
+
+  margin: 0 14px;
+
+  background:
+    rgba(80, 78, 72, 0.1);
+}
+
+
+/* Body */
+
+.body-status-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.body-status-list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 43px;
+
+  padding: 0 13px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(80, 77, 70, 0.04);
+}
+
+.body-status-list span {
+  margin: 0;
+}
+
+.body-status-list strong {
+  color: #625f59;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.status-dots {
+  display: flex;
+
+  gap: 4px;
+}
+
+.status-dots i {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #ddd9d0;
+}
+
+.status-dots i.active {
+  background: #78756e;
+}
+
+
+/* Intimacy */
+
+.intimacy-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 155px;
+
+  text-align: center;
+}
+
+.intimacy-center > span {
+  color: #aaa69e;
+
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.intimacy-center strong {
+  margin: 8px 0 19px;
+
+  color: #55534e;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.intimacy-center button {
+  padding: 9px 15px;
+
+  border: 0;
+  border-radius: 14px;
+
+  background:
+    rgba(80, 77, 70, 0.065);
+
+  color: #69665f;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+
+/* Widget 分页圆点 */
+
+.home-widget-dots {
+  display: flex;
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 11px;
+}
+
+.home-widget-dots button {
+  width: 5px;
+  height: 5px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #d4d1ca;
+
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+
+.home-widget-dots button.active {
+  width: 16px;
+
+  border-radius: 999px;
+
+  background: #77746e;
+}
+
+.odds-icon {
+  background: #e7e1e8;
+}
+
+.app-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.companion-icon {
+  background: #e5e3eb;
 }

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Random Test · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="random-test.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="random-shell">
+
+    <header class="random-header">
+
+      <button
+        class="back-button"
+        onclick="window.location.href='index.html?page=3'"
+      >
+        ‹
+      </button>
+
+      <div>
+        <span>WORLD RULES</span>
+        <h1>随机规则测试</h1>
+      </div>
+
+    </header>
+
+
+    <section class="rule-card">
+
+      <div class="rule-title">
+
+        <div>
+          <span>陆榛 · 主动行为</span>
+          <h2>主动送礼</h2>
+        </div>
+
+        <div class="rule-switch">
+          ON
+        </div>
+
+      </div>
+
+
+      <div class="rule-description">
+        每天检查一次。检查时，按照你设置的发生率决定今天是否触发送礼。
+      </div>
+
+
+      <div class="setting-block">
+
+        <label for="giftProbability">
+          发生率
+        </label>
+
+        <div class="probability-input">
+
+          <input
+            id="giftProbability"
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            value="10.0"
+          >
+
+          <span>%</span>
+
+        </div>
+
+        <small>
+          可设置 0.0% ～ 100.0%，精确到 0.1%
+        </small>
+
+      </div>
+
+
+      <div class="example-line">
+
+        <span>当前规则</span>
+
+        <strong id="ruleSummary">
+          每天一次 · 10.0%
+        </strong>
+
+      </div>
+
+
+      <button
+        class="primary-button"
+        id="testOnceButton"
+      >
+        试今天一次
+      </button>
+
+
+      <button
+        class="secondary-button"
+        id="testThirtyButton"
+      >
+        模拟 30 天
+      </button>
+
+
+      <section
+        class="result-card"
+        id="resultCard"
+      >
+
+        <span>RESULT</span>
+
+        <strong id="resultTitle">
+          还没有测试
+        </strong>
+
+        <p id="resultText">
+          改一个概率，然后试试看。
+        </p>
+
+      </section>
+
+    </section>
+
+
+    <section class="explain-card">
+
+      <span>怎么理解？</span>
+
+      <p>
+        10.0% 不是“每十天必送一次”，而是每天都重新随机一次。
+      </p>
+
+      <p>
+        100.0% = 每次检查都会发生。
+      </p>
+
+      <p>
+        0.0% = 永远不会发生。
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <script src="random-test.js"></script>
+
+</body>
+</html>

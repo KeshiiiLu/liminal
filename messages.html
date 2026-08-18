@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,11 +18,7 @@
     <!-- 顶部封面 -->
     <section class="profile-cover">
 
-      <button
-        class="back-button"
-        onclick="window.location.href='index.html'"
-        aria-label="返回"
-      >
+      <button class="back-button" onclick="window.location.href='index.html'" aria-label="返回">
         ‹
       </button>
 
@@ -55,11 +52,7 @@
 
       <div class="contact-search">
         <span>⌕</span>
-        <input
-          type="text"
-          placeholder="搜索联系人"
-          readonly
-        >
+        <input type="text" placeholder="搜索联系人" readonly>
       </div>
 
 
@@ -69,7 +62,7 @@
 
 
       <!-- 陆榛 -->
-      <a class="contact-item starred" href="chat.html">
+      <a class="contact-item starred" href="chat.html?person=luzhen">
 
         <div class="contact-avatar">
           L
@@ -91,9 +84,23 @@
         联系人
       </p>
 
-      <div class="empty-contact">
-        以后其他联系人会显示在这里
-      </div>
+
+      <!-- Jasper -->
+      <a
+  class="contact-item"
+  href="chat.html?person=jasper"
+>
+
+  <div class="contact-avatar">
+    J
+  </div>
+
+  <div class="contact-info">
+    <strong>Jasper</strong>
+    <span>在线</span>
+  </div>
+
+</a>
 
     </section>
 
@@ -114,4 +121,5 @@
   </main>
 
 </body>
+
 </html>

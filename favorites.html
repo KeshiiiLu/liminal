@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#f4f3f0"
+  >
+
+  <title>收藏 · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="favorites.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="favorites-page">
+
+
+    <!-- 顶部 -->
+
+    <header class="favorites-header">
+
+      <button
+        class="favorites-back"
+        id="favoritesBack"
+        type="button"
+        aria-label="返回"
+      >
+        ‹
+      </button>
+
+
+      <div class="favorites-heading">
+
+        <span>
+          CHAT ARCHIVE
+        </span>
+
+        <h1>
+          收藏
+        </h1>
+
+      </div>
+
+
+      <div class="favorites-header-space">
+      </div>
+
+    </header>
+
+
+    <!-- 简介 -->
+
+    <section class="favorites-intro">
+
+      <strong>
+        聊天片段
+      </strong>
+
+      <span id="favoritesCount">
+        0 个收藏
+      </span>
+
+    </section>
+
+
+    <!-- 收藏列表 -->
+
+    <section
+      class="favorites-list"
+      id="favoritesList"
+    >
+    </section>
+
+
+    <!-- 空状态 -->
+
+    <section
+      class="favorites-empty"
+      id="favoritesEmpty"
+      hidden
+    >
+
+      <div class="favorites-empty-icon">
+        ☆
+      </div>
+
+      <strong>
+        还没有收藏
+      </strong>
+
+      <span>
+        可以在聊天里的 ＋ → 收藏 → 新增收藏
+        中保存一段对话。
+      </span>
+
+    </section>
+
+
+  </main>
+
+
+  <script src="favorites.js"></script>
+
+</body>
+
+</html>

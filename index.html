@@ -1,229 +1,562 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f4f3f0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f3f0">
 
-  <title>Liminal</title>
+    <title>Liminal</title>
 
-  <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="home.css">
 </head>
 
 <body>
 
-  <main class="home-shell">
+    <main class="home-shell">
 
-    <header class="home-header">
-      <div>
-        <p class="home-eyebrow">LMN</p>
-        <h1>Liminal</h1>
-      </div>
+        <header class="home-header">
+            <div>
+                <p class="home-eyebrow">LMN</p>
+                <h1>Liminal</h1>
+            </div>
 
-      <div class="home-avatar">L</div>
-    </header>
+            <div class="home-avatar">L</div>
+        </header>
 
 
-    <div class="desktop-pages">
+        <div class="desktop-pages">
 
-      <!-- =========================
+            <!-- =========================
            第一页：交流
            ========================= -->
-      <section class="desktop-page">
 
-        <div class="calendar-widget">
+            <section class="desktop-page">
 
-          <div class="calendar-title">
-            <strong>2026年8月</strong>
-          </div>
+                <!-- =========================
+     HOME WIDGET CAROUSEL
+     ========================= -->
 
-          <div class="calendar-week">
-            <span>日</span>
-            <span>一</span>
-            <span>二</span>
-            <span>三</span>
-            <span>四</span>
-            <span>五</span>
-            <span>六</span>
-          </div>
+                <section class="home-widget-section">
 
-          <div class="calendar-grid">
-
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-
-            <span>1</span>
-
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-            <span>6</span>
-            <span>7</span>
-            <span>8</span>
-
-            <span>9</span>
-            <span>10</span>
-            <span>11</span>
-            <span>12</span>
-            <span>13</span>
-            <span>14</span>
-            <span>15</span>
-
-            <span>16</span>
-
-            <span class="calendar-day today">
-              <b>17</b>
-              <small>● ●</small>
-            </span>
-
-            <span>18</span>
-            <span>19</span>
-            <span>20</span>
-            <span>21</span>
-            <span>22</span>
-
-            <span>23</span>
-            <span>24</span>
-            <span>25</span>
-            <span>26</span>
-            <span>27</span>
-            <span>28</span>
-            <span>29</span>
-
-            <span>30</span>
-            <span>31</span>
-
-          </div>
-
-        </div>
+                    <div class="home-widget-track" id="homeWidgetTrack">
 
 
-  <div class="app-grid">
+                        <!-- 1. Calendar -->
+                        <article class="home-widget-card calendar-widget-card">
 
-  <a class="app-item app-link" href="messages.html">
-    <div class="app-icon chat-icon">聊</div>
-    <span>聊天</span>
-  </a>
+                            <div class="widget-topline">
+                                <div>
+                                    <span class="widget-eyebrow">CALENDAR</span>
+                                    <h2>八月</h2>
+                                </div>
 
-  <div class="app-item">
-    <div class="app-icon moments-icon">◌</div>
-    <span>朋友圈</span>
-  </div>
-
-  <div class="app-item">
-    <div class="app-icon signal-icon">···</div>
-    <span>传讯</span>
-  </div>
-
-  <div class="app-item">
-    <div class="app-icon tarot-icon">✦</div>
-    <span>塔罗</span>
-  </div>
-
-</div>
-
-      </section>
+                                <span class="widget-date-number">18</span>
+                            </div>
 
 
-      <!-- =========================
+                            <div class="mini-calendar">
+
+                                <div class="calendar-week">
+                                    <span>一</span>
+                                    <span>二</span>
+                                    <span>三</span>
+                                    <span>四</span>
+                                    <span>五</span>
+                                    <span>六</span>
+                                    <span>日</span>
+                                </div>
+
+                                <div class="calendar-days">
+                                    <span class="muted">27</span>
+                                    <span class="muted">28</span>
+                                    <span class="muted">29</span>
+                                    <span class="muted">30</span>
+                                    <span class="muted">31</span>
+
+                                    <span>1</span>
+                                    <span>2</span>
+
+                                    <span>3</span>
+                                    <span>4</span>
+                                    <span>5</span>
+                                    <span>6</span>
+                                    <span>7</span>
+                                    <span>8</span>
+                                    <span>9</span>
+
+                                    <span>10</span>
+                                    <span>11</span>
+                                    <span>12</span>
+                                    <span>13</span>
+                                    <span>14</span>
+                                    <span>15</span>
+                                    <span>16</span>
+
+                                    <span>17</span>
+                                    <span class="today">18</span>
+                                    <span>19</span>
+                                    <span>20</span>
+                                    <span>21</span>
+                                    <span>22</span>
+                                    <span>23</span>
+
+                                    <span>24</span>
+                                    <span>25</span>
+                                    <span>26</span>
+                                    <span>27</span>
+                                    <span>28</span>
+                                    <span>29</span>
+                                    <span>30</span>
+
+                                    <span>31</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="widget-footer-line">
+                                <span>今天</span>
+                                <strong>Tuesday · 18 August</strong>
+                            </div>
+
+                        </article>
+
+
+                        <!-- 2. Body -->
+                        <article class="home-widget-card">
+
+                            <div class="widget-topline">
+                                <div>
+                                    <span class="widget-eyebrow">BODY</span>
+                                    <h2>身体状态</h2>
+                                </div>
+
+                                <div class="widget-symbol">＋</div>
+                            </div>
+
+
+                            <div class="body-status-list">
+
+                                <div>
+                                    <span>精力</span>
+
+                                    <div class="status-dots">
+                                        <i class="active"></i>
+                                        <i class="active"></i>
+                                        <i class="active"></i>
+                                        <i></i>
+                                        <i></i>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span>食欲</span>
+                                    <strong>正常</strong>
+                                </div>
+
+                                <div>
+                                    <span>疼痛</span>
+                                    <strong>无记录</strong>
+                                </div>
+
+                                <div>
+                                    <span>身体备注</span>
+                                    <strong>＋ 添加</strong>
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+                        <!-- 3. Sleep -->
+                        <article class="home-widget-card">
+
+                            <div class="widget-topline">
+                                <div>
+                                    <span class="widget-eyebrow">SLEEP</span>
+                                    <h2>昨晚睡眠</h2>
+                                </div>
+
+                                <div class="widget-symbol">☾</div>
+                            </div>
+
+
+                            <div class="sleep-main">
+
+                                <strong>
+                                    6
+                                    <small>h</small>
+                                    42
+                                    <small>m</small>
+                                </strong>
+
+                                <span>一般</span>
+
+                            </div>
+
+
+                            <div class="sleep-line">
+
+                                <div>
+                                    <span>入睡</span>
+                                    <strong>02:18</strong>
+                                </div>
+
+                                <div class="sleep-line-rule"></div>
+
+                                <div>
+                                    <span>起床</span>
+                                    <strong>09:00</strong>
+                                </div>
+
+                            </div>
+
+
+                            <div class="widget-footer-line">
+                                <span>午睡</span>
+                                <strong>暂无记录</strong>
+                            </div>
+
+                        </article>
+
+
+                        <!-- 4. Intimacy -->
+                        <article class="home-widget-card intimacy-widget">
+
+                            <div class="widget-topline">
+                                <div>
+                                    <span class="widget-eyebrow">INTIMACY</span>
+                                    <h2>亲密记录</h2>
+                                </div>
+
+                                <div class="widget-symbol">♡</div>
+                            </div>
+
+
+                            <div class="intimacy-center">
+
+                                <span>Today</span>
+
+                                <strong>
+                                    暂无记录
+                                </strong>
+
+                                <button type="button">
+                                    ＋ 记录今天
+                                </button>
+
+                            </div>
+
+
+                            <div class="widget-footer-line">
+                                <span>最近一次</span>
+                                <strong>查看历史记录</strong>
+                            </div>
+
+                        </article>
+
+
+                        <!-- 5. Cycle -->
+                        <article class="home-widget-card">
+
+                            <div class="widget-topline">
+                                <div>
+                                    <span class="widget-eyebrow">CYCLE</span>
+                                    <h2>经期记录</h2>
+                                </div>
+
+                                <div class="widget-symbol">○</div>
+                            </div>
+
+
+                            <div class="widget-feature">
+
+                                <span class="feature-label">
+                                    CURRENT CYCLE
+                                </span>
+
+                                <strong class="feature-big">
+                                    Day 05
+                                </strong>
+
+                                <span class="feature-sub">
+                                    距预计下次经期还有 23 天
+                                </span>
+
+                            </div>
+
+
+                            <div class="widget-info-grid">
+
+                                <div>
+                                    <span>上次开始</span>
+                                    <strong>8月14日</strong>
+                                </div>
+
+                                <div>
+                                    <span>今日状态</span>
+                                    <strong>记录一下</strong>
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+                    <div class="home-widget-dots" id="homeWidgetDots">
+                        <button class="active"></button>
+                        <button></button>
+                        <button></button>
+                        <button></button>
+                        <button></button>
+                    </div>
+
+                </section>
+
+
+                <div class="app-grid">
+
+                    <a class="app-item app-link" href="messages.html">
+                        <div class="app-icon chat-icon">聊</div>
+                        <span>聊天</span>
+                    </a>
+
+                    <div class="app-item">
+                        <div class="app-icon moments-icon">◌</div>
+                        <span>朋友圈</span>
+                    </div>
+
+                    <div class="app-item">
+                        <div class="app-icon signal-icon">···</div>
+                        <span>传讯</span>
+                    </div>
+
+                    <div class="app-item">
+                        <div class="app-icon tarot-icon">✦</div>
+                        <span>塔罗</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
            第二页：记录与生活
            ========================= -->
-      <section class="desktop-page">
+            <section class="desktop-page">
 
-        <div class="page-heading">
-          <small>RECORDS & LIFE</small>
-          <h2>生活与记录</h2>
-        </div>
-
-        <div class="app-grid large-gap">
-
-          <div class="app-item">
-            <div class="app-icon diary-icon">记</div>
-            <span>日记</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon mail-icon">✉</div>
-            <span>信箱</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon timeline-icon">⌁</div>
-            <span>时间轴</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon music-icon">♫</div>
-            <span>一起听歌</span>
-          </div>
-
-          <a class="app-item app-link" href="wallet.html">
-            <div class="app-icon wallet-icon">¥</div>
-            <span>钱包</span>
-          </a>
-
-          <a class="app-item app-link" href="mall.html">
-             <div class="app-icon shop-icon">袋</div>
-            <span>Mall</span>
-            </a>
-
-        </div>
-
-      </section>
+                <div class="page-heading">
+                    <span>LIFE</span>
+                    <h2>生活</h2>
+                </div>
 
 
-      <!-- =========================
+                <!-- 记录 -->
+                <section class="home-app-group">
+
+                    <div class="group-heading">
+                        <span>MEMORIES</span>
+                        <strong>记录与回忆</strong>
+                    </div>
+
+                    <div class="app-grid">
+
+                        <div class="app-item">
+                            <div class="app-icon diary-icon">记</div>
+                            <span>日记</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon letter-icon">信</div>
+                            <span>信箱</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon timeline-icon">轴</div>
+                            <span>时间轴</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon capsule-icon">⌛</div>
+                            <span>Capsule</span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 日常生活 -->
+                <section class="home-app-group">
+
+                    <div class="group-heading">
+                        <span>DAILY LIFE</span>
+                        <strong>共同生活</strong>
+                    </div>
+
+                    <div class="app-grid">
+
+                        <div class="app-item">
+                            <div class="app-icon home-space-icon">⌂</div>
+                            <span>Home</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon pet-icon">爪</div>
+                            <span>Pet</span>
+                        </div>
+
+                        <div class="app-item" aria-hidden="true" style="visibility: hidden;">
+                            <div class="app-icon">·</div>
+                            <span>Placeholder</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon clock-icon">◷</div>
+                            <span>Clock</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon companion-icon">∞</div>
+                            <span>Companion</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon music-icon">♫</div>
+                            <span>一起听歌</span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- 财务 -->
+                <section class="home-app-group">
+
+                    <div class="group-heading">
+                        <span>FINANCE</span>
+                        <strong>消费与资产</strong>
+                    </div>
+
+                    <div class="app-grid finance-grid">
+
+                        <a class="app-item app-link" href="wallet.html">
+                            <div class="app-icon wallet-icon">¥</div>
+                            <span>Wallet</span>
+                        </a>
+
+                        <a class="app-item app-link" href="mall.html">
+                            <div class="app-icon shop-icon">袋</div>
+                            <span>Mall</span>
+                        </a>
+
+                        <div class="app-item">
+                            <div class="app-icon bank-icon">银</div>
+                            <span>Bank</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon travel-icon">✈</div>
+                            <span>Travel</span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+            <!-- =========================
            第三页：数据与系统
            ========================= -->
-      <section class="desktop-page">
+            <section class="desktop-page">
 
-        <div class="page-heading">
-          <small>DATA & SYSTEM</small>
-          <h2>数据与系统</h2>
+                <div class="page-heading">
+                    <span>DATA & SYSTEM</span>
+                    <h2>数据与系统</h2>
+                </div>
+
+
+                <section class="home-app-group">
+
+                    <div class="group-heading">
+                        <span>CONTENT</span>
+                        <strong>Liminal 内容库</strong>
+                    </div>
+
+                    <div class="app-grid">
+
+                        <div class="app-item">
+                            <div class="app-icon library-icon">卡</div>
+                            <span>语料库</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon gallery-icon">图</div>
+                            <span>图库</span>
+                        </div>
+
+                        <div class="app-item">
+                            <div class="app-icon search-icon">⌕</div>
+                            <span>全局搜索</span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="home-app-group">
+
+                    <div class="group-heading">
+                        <span>SYSTEM</span>
+                        <strong>维护与设置</strong>
+                    </div>
+
+                    <div class="app-grid system-grid">
+
+                        <div class="app-item">
+                            <div class="app-icon backup-icon">↥</div>
+                            <span>导出·备份</span>
+                        </div>
+
+
+                        <a class="app-item app-link" href="settings.html">
+                            <div class="app-icon settings-icon">⚙</div>
+                            <span>设置</span>
+                        </a>
+
+
+                        <a class="app-item app-link" href="rules.html">
+                            <div class="app-icon rules-icon">%</div>
+                            <span>Rules</span>
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </section>
+
         </div>
 
-        <div class="app-grid large-gap">
 
-          <div class="app-item">
-            <div class="app-icon library-icon">库</div>
-            <span>语料 · 图库</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon search-icon">⌕</div>
-            <span>全局搜索</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon backup-icon">⇧</div>
-            <span>导出 · 备份</span>
-          </div>
-
-          <div class="app-item">
-            <div class="app-icon settings-icon">⚙</div>
-            <span>设置</span>
-          </div>
-
+        <div class="desktop-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
         </div>
 
-      </section>
+    </main>
 
-    </div>
-
-
-    <div class="desktop-dots">
-      <span class="dot active"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
-
-  </main>
-
-  <script src="home.js"></script>
+    <script src="home.js"></script>
 </body>
+
 </html>

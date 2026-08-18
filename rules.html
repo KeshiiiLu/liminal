@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>World Rules · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="world.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="world-shell">
+
+    <header class="world-header">
+
+      <button
+        class="back-button"
+        onclick="window.location.href='index.html?page=3'"
+      >
+        ‹
+      </button>
+
+      <div>
+        <span>WORLD RULES</span>
+        <h1>世界规则</h1>
+      </div>
+
+    </header>
+
+
+    <!-- 人物 -->
+
+    <section class="intro-card person-rule-card">
+
+  <span>PERSON</span>
+
+  <div class="person-switch-row">
+
+    <div class="person-select-wrap">
+
+      <select
+        id="personSelect"
+        class="person-select"
+        aria-label="切换人物"
+      >
+      </select>
+
+      <span class="person-select-arrow">
+        ⇄
+      </span>
+
+    </div>
+
+  </div>
+
+  <p id="personRuleDescription">
+    设置当前人物在副世界中的长期随机范围。
+    每天都会从范围内生成固定的今日概率。
+  </p>
+
+</section>
+
+
+    <!-- =========================
+         MALL
+         ========================= -->
+
+    <section class="rules-domain">
+
+      <div class="domain-heading">
+
+        <div>
+          <span>MALL</span>
+          <h2>购物与礼物</h2>
+        </div>
+
+        <span class="domain-count">
+          1 RULE
+        </span>
+
+      </div>
+
+
+      <div class="rules-card">
+
+
+        <!-- 主动送礼 -->
+
+        <div
+          class="rule-row"
+          data-rule="gift"
+        >
+
+          <div class="rule-name">
+
+            <span>GIFT</span>
+
+            <strong>
+              主动送礼
+            </strong>
+
+          </div>
+
+
+          <div class="range-inputs">
+
+            <label>
+
+              <span>最低</span>
+
+              <div>
+
+                <input
+                  id="giftMin"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+
+            <span class="range-line">
+              —
+            </span>
+
+
+            <label>
+
+              <span>最高</span>
+
+              <div>
+
+                <input
+                  id="giftMax"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+          </div>
+
+
+          <div class="today-probability-row">
+
+            <span>
+              今日概率
+            </span>
+
+            <button
+              class="today-probability-button"
+              type="button"
+              data-reveal-rule="gift"
+            >
+              点击查看
+            </button>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CHAT
+         ========================= -->
+
+    <section class="rules-domain">
+
+      <div class="domain-heading">
+
+        <div>
+          <span>CHAT</span>
+          <h2>消息与通话</h2>
+        </div>
+
+        <span class="domain-count">
+          2 RULES
+        </span>
+
+      </div>
+
+
+      <div class="rules-card">
+
+
+        <!-- 主动发消息 -->
+
+        <div
+          class="rule-row"
+          data-rule="message"
+        >
+
+          <div class="rule-name">
+
+            <span>MESSAGE</span>
+
+            <strong>
+              主动发消息
+            </strong>
+
+          </div>
+
+
+          <div class="range-inputs">
+
+            <label>
+
+              <span>最低</span>
+
+              <div>
+
+                <input
+                  id="messageMin"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+
+            <span class="range-line">
+              —
+            </span>
+
+
+            <label>
+
+              <span>最高</span>
+
+              <div>
+
+                <input
+                  id="messageMax"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+          </div>
+
+
+          <div class="today-probability-row">
+
+            <span>
+              今日概率
+            </span>
+
+            <button
+              class="today-probability-button"
+              type="button"
+              data-reveal-rule="message"
+            >
+              点击查看
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- 主动打电话 -->
+
+        <div
+          class="rule-row"
+          data-rule="call"
+        >
+
+          <div class="rule-name">
+
+            <span>CALL</span>
+
+            <strong>
+              主动打电话
+            </strong>
+
+          </div>
+
+
+          <div class="range-inputs">
+
+            <label>
+
+              <span>最低</span>
+
+              <div>
+
+                <input
+                  id="callMin"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+
+            <span class="range-line">
+              —
+            </span>
+
+
+            <label>
+
+              <span>最高</span>
+
+              <div>
+
+                <input
+                  id="callMax"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                >
+
+                <em>%</em>
+
+              </div>
+
+            </label>
+
+          </div>
+
+
+          <div class="today-probability-row">
+
+            <span>
+              今日概率
+            </span>
+
+            <button
+              class="today-probability-button"
+              type="button"
+              data-reveal-rule="call"
+            >
+              点击查看
+            </button>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- 保存 -->
+
+    <button
+      class="primary-button"
+      id="saveRulesButton"
+    >
+      保存世界规则
+    </button>
+
+
+    <p
+      class="save-message"
+      id="saveMessage"
+    ></p>
+
+  </main>
+
+
+  <script src="rules.js"></script>
+
+</body>
+
+</html>

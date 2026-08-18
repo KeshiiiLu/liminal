@@ -796,3 +796,210 @@ h1 {
 body.more-panel-open .chat-messages {
   padding-bottom: calc(390px + env(safe-area-inset-bottom));
 }
+
+/* =========================
+   Mall 礼物聊天卡
+   ========================= */
+
+.gift-message-card {
+  width: 245px;
+
+  overflow: hidden;
+
+  border: 1px solid #dedbd4;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 3px 12px
+    rgba(35, 35, 30, 0.05);
+}
+
+
+/* 顶部 */
+
+.gift-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding:
+    10px
+    12px
+    8px;
+}
+
+.gift-card-brand {
+  color: #aaa79f;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+}
+
+.gift-card-status {
+  padding: 4px 7px;
+
+  border-radius: 8px;
+
+  background: #eeece6;
+
+  color: #77736c;
+
+  font-size: 7px;
+}
+
+
+/* 谁送给谁 */
+
+.gift-card-relation {
+  padding:
+    2px
+    12px
+    10px;
+
+  color: #3e3d38;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+/* 商品 */
+
+.gift-card-product {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+
+  gap: 10px;
+
+  padding:
+    11px
+    12px;
+
+  background: #f3f1ec;
+}
+
+.gift-product-image {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ddd8cd,
+      #cac3b7
+    );
+}
+
+.gift-product-image span {
+  max-width: 48px;
+
+  overflow: hidden;
+
+  color: rgba(75, 71, 65, 0.42);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gift-product-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.gift-product-name {
+  margin-bottom: 5px;
+
+  overflow: hidden;
+
+  color: #3f3e39;
+
+  font-size: 10px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gift-product-options {
+  overflow: hidden;
+
+  color: #949189;
+
+  font-size: 7px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gift-product-price {
+  margin-top: auto;
+
+  color: #55534e;
+
+  font-size: 10px;
+}
+
+
+/* 礼物附言 */
+
+.gift-card-message {
+  padding:
+    10px
+    12px;
+
+  border-bottom: 1px solid #efede8;
+
+  color: #78746d;
+
+  font-size: 8px;
+  line-height: 1.6;
+}
+
+
+/* 查看订单 */
+
+.gift-order-button {
+  width: 100%;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 12px;
+
+  border: none;
+  background: #ffffff;
+
+  color: #6e6b65;
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+.gift-order-button span {
+  color: #aaa79f;
+
+  font-size: 15px;
+}
+
+.page-dot {
+  cursor: pointer;
+}

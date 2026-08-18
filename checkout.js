@@ -7,6 +7,9 @@ const ORDERS_KEY =
 const WALLET_KEY =
   "liminal_wallet_v1";
 
+  const CHAT_STORAGE_KEY =
+  "liminal_chat_luzhen";
+
 const ADDRESSES_KEY =
   "liminal_mall_addresses_v1";
 
@@ -769,12 +772,16 @@ function submitOrder() {
   */
 
   saveOrder(
-    order
-  );
+  order
+);
 
-  saveOrderToWallet(
-    order
-  );
+saveOrderToWallet(
+  order
+);
+
+saveGiftToChat(
+  order
+);
 
 
   /*
@@ -1077,6 +1084,165 @@ function createWalletNote(order) {
 
 }
 
+/* =========================
+   礼物发送到聊天
+   ========================= */
+
+function saveGiftToChat(
+  order
+) {
+
+  /*
+    不是礼物，或者用户关闭了
+    “发送到聊天”，就什么都不做。
+  */
+
+  if (
+    order.purchaseMode !== "gift" ||
+    !order.sendGiftToChat
+  ) {
+
+    return;
+
+  }
+
+
+  let history =
+    [];
+
+
+  const saved =
+    localStorage.getItem(
+      CHAT_STORAGE_KEY
+    );
+
+
+  if (saved) {
+
+    try {
+
+      const parsed =
+        JSON.parse(saved);
+
+
+      if (
+        Array.isArray(parsed)
+      ) {
+
+        history =
+          parsed;
+
+      }
+
+    } catch {
+
+      history =
+        [];
+
+    }
+
+  }
+
+
+  /*
+    防止同一个订单重复插入聊天。
+  */
+
+  const alreadyExists =
+    history.some(
+      function (message) {
+
+        return (
+          message.type === "gift" &&
+          message.gift &&
+          message.gift.orderId ===
+            order.id
+        );
+
+      }
+    );
+
+
+  if (alreadyExists) {
+
+    return;
+
+  }
+
+
+  /*
+    如果收礼人是 Keshi，
+    那么这张卡视为榛榛发来的消息。
+
+    如果收礼人是榛榛，
+    则视为 Keshi 发出去的消息。
+  */
+
+  const direction =
+    order.recipient === "Keshi"
+      ? "incoming"
+      : "outgoing";
+
+
+  const giftMessage = {
+
+    type:
+      "gift",
+
+    direction:
+      direction,
+
+    time:
+      order.createdAt,
+
+    gift: {
+
+      orderId:
+        order.id,
+
+      productName:
+        order.product.name,
+
+      productCategory:
+        order.product.productCategory ||
+        "礼物",
+
+      size:
+        order.product.size,
+
+      style:
+        order.product.style,
+
+      quantity:
+        order.product.quantity,
+
+      total:
+        order.total,
+
+      recipient:
+        order.recipient,
+
+      message:
+        order.giftMessage || ""
+
+    }
+
+  };
+
+
+  history.push(
+    giftMessage
+  );
+
+
+  localStorage.setItem(
+    CHAT_STORAGE_KEY,
+    JSON.stringify(
+      history
+    )
+  );
+
+}
 
 /* =========================
    金额格式
