@@ -49,6 +49,19 @@ const chatInput =
 const chatMessages =
   document.getElementById("chatMessages");
 
+/*
+  聊天页不让浏览器自己恢复旧滚动位置。
+  每次进入都由 Liminal 决定停在哪里。
+*/
+
+if (
+  "scrollRestoration" in history
+) {
+
+  history.scrollRestoration =
+    "manual";
+
+}
 
 /* =========================
    当前聊天人物
@@ -95,6 +108,9 @@ const CHAT_STORAGE_KEY =
 
 const POKE_STATE_KEY =
   `liminal_chat_poke_state_${currentPerson.id}`;
+
+const ACTIVE_MESSAGE_STATE_KEY =
+  `liminal_chat_active_message_state_${currentPerson.id}`;
 
 const MALL_ORDERS_KEY =
   "liminal_mall_orders_v1";
@@ -175,6 +191,47 @@ function getCurrentReplyRule() {
 }
 
 /* =========================
+   读取当前人物的主动发消息规则
+   ========================= */
+
+function getCurrentActiveMessageRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.message ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取主动发消息规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
    读取当前人物的继续说规则
    ========================= */
 
@@ -205,6 +262,47 @@ function getCurrentContinueRule() {
 
     console.warn(
       "读取继续说规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   读取当前人物的撤回消息规则
+   ========================= */
+
+function getCurrentRecallRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.recall ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取撤回消息规则失败",
       error
     );
 
@@ -412,6 +510,491 @@ function savePokeState(
       nextState
     )
   );
+
+}
+
+/* =========================
+   主动发消息等待状态
+   ========================= */
+
+let activeMessageTimer =
+  null;
+
+
+/*
+  当前等待时间规则的“签名”。
+
+  如果以后修改了等待分钟范围，
+  旧的等待时间自动失效，
+  重新抽一个新的。
+*/
+
+function getActiveMessageRuleSignature() {
+
+  const rule =
+    getCurrentActiveMessageRule();
+
+
+  const min =
+    Math.max(
+      0,
+      Math.round(
+        Number(
+          rule
+            ?.waitMinutes
+            ?.min ??
+          30
+        )
+      )
+    );
+
+
+  const max =
+    Math.max(
+      min,
+      Math.round(
+        Number(
+          rule
+            ?.waitMinutes
+            ?.max ??
+          180
+        )
+      )
+    );
+
+
+  return (
+    `${min}-${max}`
+  );
+
+}
+
+
+/* 读取已经保存的下一次机会 */
+
+function getActiveMessageState() {
+
+  const currentRuleSignature =
+    getActiveMessageRuleSignature();
+
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          ACTIVE_MESSAGE_STATE_KEY
+        )
+      );
+
+
+    if (
+      saved &&
+      saved.ruleSignature ===
+        currentRuleSignature &&
+      Number.isFinite(
+        Number(
+          saved.nextOpportunityAt
+        )
+      )
+    ) {
+
+      return {
+
+        nextOpportunityAt:
+          Number(
+            saved.nextOpportunityAt
+          ),
+
+        ruleSignature:
+          currentRuleSignature
+
+      };
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "读取主动发消息等待状态失败",
+      error
+    );
+
+  }
+
+
+  return null;
+
+}
+
+
+/* 保存下一次机会 */
+
+function saveActiveMessageState(
+  state
+) {
+
+  localStorage.setItem(
+    ACTIVE_MESSAGE_STATE_KEY,
+    JSON.stringify({
+
+      nextOpportunityAt:
+        Number(
+          state.nextOpportunityAt
+        ),
+
+      ruleSignature:
+        getActiveMessageRuleSignature()
+
+    })
+  );
+
+}
+
+
+/* 清除当前网页里的倒计时 */
+
+function clearActiveMessageTimer() {
+
+  if (
+    activeMessageTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      activeMessageTimer
+    );
+
+
+    activeMessageTimer =
+      null;
+
+  }
+
+}
+
+
+/* =========================
+   到达一次主动发消息机会
+   ========================= */
+
+function handleActiveMessageOpportunity() {
+
+  activeMessageTimer =
+    null;
+
+
+  /*
+    旧的这个机会已经到点，
+    先从保存状态里清掉。
+  */
+
+  localStorage.removeItem(
+    ACTIVE_MESSAGE_STATE_KEY
+  );
+
+
+  const activeProbability =
+    getCurrentTodayActiveMessageProbability();
+
+
+  if (
+    activeProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日主动发消息概率"
+    );
+
+
+    scheduleNextActiveMessageOpportunity();
+
+    return;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  const shouldSend =
+    roll <
+    activeProbability;
+
+
+  /*
+    这一次机会判定失败：
+    什么都不发，
+    重新等待下一次机会。
+  */
+
+  if (!shouldSend) {
+
+    console.log(
+      "主动发消息判定失败"
+    );
+
+
+    scheduleNextActiveMessageOpportunity();
+
+    return;
+
+  }
+
+
+  const activeRule =
+    getCurrentActiveMessageRule();
+
+
+  const messageCount =
+    randomIntegerBetween(
+      activeRule
+        ?.messageCount
+        ?.min ??
+        1,
+
+      activeRule
+        ?.messageCount
+        ?.max ??
+        4
+    );
+
+
+  const intervalMin =
+    activeRule
+      ?.messageIntervalSeconds
+      ?.min ??
+    2;
+
+
+  const intervalMax =
+    activeRule
+      ?.messageIntervalSeconds
+      ?.max ??
+    12;
+
+
+  /*
+    开始主动发这一轮消息。
+  */
+
+  function sendActiveMessage(
+    index
+  ) {
+
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+        testReplyCards.length
+      );
+
+
+    const text =
+      testReplyCards[
+        randomIndex
+      ];
+
+
+    addIncomingMessage(
+      text,
+      new Date()
+    );
+
+
+    /*
+      这一轮主动消息全部发完。
+  */
+
+    if (
+      index >=
+      messageCount - 1
+    ) {
+
+      /*
+        对方完成一轮消息后，
+        也照常判定动作浮窗。
+      */
+
+      triggerPokeAfterRound();
+
+
+      /*
+        整轮结束以后，
+        再开始等待下一次主动消息机会。
+      */
+
+      scheduleNextActiveMessageOpportunity();
+
+
+      return;
+
+    }
+
+
+    /*
+      下一条消息之间，
+      每次重新随机间隔。
+    */
+
+    const intervalSeconds =
+      randomIntegerBetween(
+        intervalMin,
+        intervalMax
+      );
+
+
+    setTimeout(
+      function () {
+
+        sendActiveMessage(
+          index + 1
+        );
+
+      },
+      intervalSeconds * 1000
+    );
+
+  }
+
+
+  /*
+    到达机会并判定成功后，
+    第一条直接发出。
+  */
+
+  sendActiveMessage(
+    0
+  );
+
+}
+
+
+/* =========================
+   按保存的时间继续等待
+   ========================= */
+
+function startActiveMessageTimer() {
+
+  clearActiveMessageTimer();
+
+
+  const state =
+    getActiveMessageState();
+
+
+  if (!state) {
+
+    scheduleNextActiveMessageOpportunity();
+
+    return;
+
+  }
+
+
+  const remainingMilliseconds =
+    state.nextOpportunityAt -
+    Date.now();
+
+
+  /*
+    如果关闭网页期间，
+    这个时间已经到了，
+    重新打开时立刻处理。
+  */
+
+  if (
+    remainingMilliseconds <= 0
+  ) {
+
+    handleActiveMessageOpportunity();
+
+    return;
+
+  }
+
+
+  activeMessageTimer =
+    setTimeout(
+      function () {
+
+        handleActiveMessageOpportunity();
+
+      },
+      remainingMilliseconds
+    );
+
+}
+
+
+/* =========================
+   随机安排下一次主动发消息机会
+   ========================= */
+
+function scheduleNextActiveMessageOpportunity() {
+
+  clearActiveMessageTimer();
+
+
+  const rule =
+    getCurrentActiveMessageRule();
+
+
+  const waitMinutes =
+    randomIntegerBetween(
+      rule
+        ?.waitMinutes
+        ?.min ??
+        30,
+
+      rule
+        ?.waitMinutes
+        ?.max ??
+        180
+    );
+
+
+  const nextOpportunityAt =
+    Date.now() +
+    waitMinutes *
+    60 *
+    1000;
+
+
+  saveActiveMessageState({
+
+    nextOpportunityAt:
+      nextOpportunityAt
+
+  });
+
+
+  activeMessageTimer =
+    setTimeout(
+      function () {
+
+        handleActiveMessageOpportunity();
+
+      },
+      waitMinutes *
+      60 *
+      1000
+    );
+
+}
+
+/* =========================
+   聊天活动后重新计算主动消息等待
+   ========================= */
+
+function resetActiveMessageWait() {
+
+  localStorage.removeItem(
+    ACTIVE_MESSAGE_STATE_KEY
+  );
+
+
+  scheduleNextActiveMessageOpportunity();
 
 }
 
@@ -957,6 +1540,28 @@ function getCurrentTodayReplyProbability() {
 
 }
 
+/* 读取当前人物今天的主动发消息概率 */
+
+function getCurrentTodayActiveMessageProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.message
+      ?.today ??
+    null
+  );
+
+}
+
 /* 读取当前人物今天的继续说概率 */
 
 function getCurrentTodayContinueProbability() {
@@ -995,6 +1600,28 @@ function getCurrentTodayPokeProbability() {
       ?.chat
       ?.rules
       ?.poke
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的撤回消息概率 */
+
+function getCurrentTodayRecallProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.recall
       ?.today ??
     null
   );
@@ -1769,13 +2396,21 @@ function addOutgoingMessage(
 
   if (shouldSave) {
 
-    saveMessage(
-      "outgoing",
-      text,
-      date
-    );
+  saveMessage(
+    "outgoing",
+    text,
+    date
+  );
 
-  }
+
+  /*
+    你主动发了消息，
+    说明此刻正在聊天。
+  */
+
+  resetActiveMessageWait();
+
+}
 
 
   scrollToBottom();
@@ -1947,6 +2582,21 @@ function addPokeMessage(
 
 
     saveChatHistory();
+
+
+    /*
+      只有你主动发出的动作，
+      才重新开始主动消息等待。
+    */
+
+    if (
+      direction ===
+        "outgoing"
+    ) {
+
+      resetActiveMessageWait();
+
+    }
 
   }
 
@@ -2709,6 +3359,14 @@ continueSayButton.addEventListener(
     closeMorePanel();
 
 
+    /*
+      你主动要求继续说，
+      也属于当前正在聊天。
+    */
+
+    resetActiveMessageWait();
+
+
     createTestContinue();
 
   },
@@ -3092,3 +3750,131 @@ window.addEventListener(
    ========================= */
 
 loadChatHistory();
+
+startActiveMessageTimer();
+
+
+/* =========================
+   每次进入聊天都停在最新消息
+   ========================= */
+
+function openChatAtLatestMessage() {
+
+  /*
+    如果是从搜索结果专门跳到某条消息，
+    就不要强制跑到最底下。
+  */
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  if (
+    params.get("message")
+  ) {
+
+    return;
+
+  }
+
+
+  function goToLatest() {
+
+    const lastMessage =
+      chatMessages.querySelector(
+        ".message-row:last-of-type"
+      ) ||
+      chatMessages.lastElementChild;
+
+
+    if (!lastMessage) {
+
+      return;
+
+    }
+
+
+    lastMessage.scrollIntoView({
+
+      block:
+        "end",
+
+      inline:
+        "nearest",
+
+      behavior:
+        "auto"
+
+    });
+
+  }
+
+
+  /*
+    马上尝试一次。
+  */
+
+  goToLatest();
+
+
+  /*
+    等浏览器把聊天内容摆完以后，
+    再补几次。
+  */
+
+  requestAnimationFrame(
+    function () {
+
+      goToLatest();
+
+
+      requestAnimationFrame(
+        function () {
+
+          goToLatest();
+
+        }
+      );
+
+    }
+  );
+
+
+  setTimeout(
+    goToLatest,
+    100
+  );
+
+
+  setTimeout(
+    goToLatest,
+    300
+  );
+
+}
+
+
+/*
+  第一次正常打开聊天页
+*/
+
+openChatAtLatestMessage();
+
+
+/*
+  从联系人页进入、
+  从右上角其他页面返回、
+  浏览器前进/后退回来，
+  都再次定位到最新消息。
+*/
+
+window.addEventListener(
+  "pageshow",
+  function () {
+
+    openChatAtLatestMessage();
+
+  }
+);

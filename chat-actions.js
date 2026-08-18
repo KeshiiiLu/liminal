@@ -821,6 +821,268 @@ function actionRecall(
 
 }
 
+/* =========================
+   对方自动撤回
+   ========================= */
+
+const actionIncomingRecallTimers =
+  new Map();
+
+
+function actionExecuteIncomingRecall(
+  messageId
+) {
+
+  actionIncomingRecallTimers.delete(
+    messageId
+  );
+
+
+  const targetMessage =
+    actionFindMessage(
+      messageId
+    );
+
+
+  if (
+    !targetMessage ||
+    targetMessage.recalled
+  ) {
+
+    return;
+
+  }
+
+
+  targetMessage.recalled =
+    true;
+
+  targetMessage.recalledAt =
+    new Date().toISOString();
+
+  targetMessage.recalledBy =
+    currentPerson.id;
+
+
+  delete targetMessage
+    .recallScheduledAt;
+
+
+  saveChatHistory();
+
+  loadChatHistory();
+
+
+  requestAnimationFrame(
+    actionSyncRows
+  );
+
+}
+
+
+function actionStartIncomingRecallTimer(
+  message
+) {
+
+  if (
+    !message ||
+    !message.id ||
+    message.direction !==
+      "incoming" ||
+    message.recalled ||
+    !message.recallScheduledAt
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    actionIncomingRecallTimers.has(
+      message.id
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const remainingMilliseconds =
+    new Date(
+      message.recallScheduledAt
+    ).getTime() -
+    Date.now();
+
+
+  if (
+    remainingMilliseconds <= 0
+  ) {
+
+    actionExecuteIncomingRecall(
+      message.id
+    );
+
+    return;
+
+  }
+
+
+  const timer =
+    setTimeout(
+      function () {
+
+        actionExecuteIncomingRecall(
+          message.id
+        );
+
+      },
+      remainingMilliseconds
+    );
+
+
+  actionIncomingRecallTimers.set(
+    message.id,
+    timer
+  );
+
+}
+
+
+function actionScheduleIncomingRecall(
+  message
+) {
+
+  if (
+    !message ||
+    message.direction !==
+      "incoming" ||
+    message.recalled
+  ) {
+
+    return;
+
+  }
+
+
+  /*
+    已经决定过要撤回，
+    就不再重新抽概率，
+    直接继续原来的倒计时。
+  */
+
+  if (
+    message.recallScheduledAt
+  ) {
+
+    actionStartIncomingRecallTimer(
+      message
+    );
+
+    return;
+
+  }
+
+
+  const recallProbability =
+    getCurrentTodayRecallProbability();
+
+
+  if (
+    recallProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日撤回消息概率"
+    );
+
+    return;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  if (
+    roll >=
+    recallProbability
+  ) {
+
+    return;
+
+  }
+
+
+  const recallRule =
+    getCurrentRecallRule();
+
+
+  const delaySeconds =
+    randomIntegerBetween(
+      recallRule
+        ?.delaySeconds
+        ?.min ??
+        5,
+
+      recallRule
+        ?.delaySeconds
+        ?.max ??
+        120
+    );
+
+
+  /*
+    把真正的撤回时间写进聊天记录。
+    因此刷新网页以后也不会丢。
+  */
+
+  message.recallScheduledAt =
+    new Date(
+      Date.now() +
+      delaySeconds * 1000
+    ).toISOString();
+
+
+  saveChatHistory();
+
+
+  actionStartIncomingRecallTimer(
+    message
+  );
+
+}
+
+
+/* =========================
+   恢复尚未完成的自动撤回
+   ========================= */
+
+function actionRestoreIncomingRecallTimers() {
+
+  chatHistory.forEach(
+    function (message) {
+
+      if (
+        message.direction ===
+          "incoming" &&
+        !message.recalled &&
+        message.recallScheduledAt
+      ) {
+
+        actionStartIncomingRecallTimer(
+          message
+        );
+
+      }
+
+    }
+  );
+
+}
+
 actionMenu.addEventListener(
   "click",
   async function (event) {
@@ -1502,6 +1764,16 @@ addIncomingMessage =
 
       }
 
+
+      /*
+        每一条对方发来的消息，
+        都独立判定是否会撤回。
+      */
+
+      actionScheduleIncomingRecall(
+        message
+      );
+
     }
 
 
@@ -1591,6 +1863,8 @@ actionObserver.observe(
 actionEnsureIds();
 
 actionSyncRows();
+
+actionRestoreIncomingRecallTimers();
 
 /* =========================
    从搜索结果定位原消息
