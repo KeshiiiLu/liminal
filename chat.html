@@ -90,10 +90,14 @@
             <small>语料池</small>
           </button>
 
-          <button class="more-item">
-            <span class="more-icon">↻</span>
-            <small>继续说</small>
-          </button>
+          <button
+  class="more-item"
+  id="continueSayButton"
+  type="button"
+>
+  <span class="more-icon">↻</span>
+  <small>继续说</small>
+</button>
 
           <button class="more-item">
             <span class="more-icon">▣</span>
@@ -125,12 +129,22 @@
 
         <section class="more-page">
 
-          <button class="more-item">
-            <span class="more-icon">￥</span>
-            <small>转账</small>
-          </button>
+  <button
+    class="more-item"
+    id="pokeButton"
+    type="button"
+  >
+    <span class="more-icon">☞</span>
+    <small>拍一拍</small>
+  </button>
 
-        </section>
+
+  <button class="more-item">
+    <span class="more-icon">￥</span>
+    <small>转账</small>
+  </button>
+
+</section>
 
       </div>
 
@@ -143,6 +157,92 @@
     </div>
 
   </footer>
+
+    <!-- 拍一拍 / 动作浮窗面板 -->
+
+  <div
+    class="poke-action-panel"
+    id="pokeActionPanel"
+    hidden
+  >
+
+    <div class="poke-action-sheet">
+
+      <div class="poke-action-header">
+
+        <strong>
+          拍一拍
+        </strong>
+
+        <button
+          class="poke-action-close"
+          id="pokeActionClose"
+          type="button"
+          aria-label="关闭"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="poke-action-quick">
+
+        <button
+  class="poke-quick-item"
+  type="button"
+  data-action="摸了摸{target}的头"
+>
+  摸摸头
+</button>
+
+<button
+  class="poke-quick-item"
+  type="button"
+  data-action="戳了戳{target}的脸"
+>
+  戳戳脸
+</button>
+
+<button
+  class="poke-quick-item"
+  type="button"
+  data-action="抱了抱{target}"
+>
+  抱一下
+</button>
+
+<button
+  class="poke-quick-item"
+  type="button"
+  data-action="亲了亲{target}"
+>
+  亲一下
+</button>
+
+      </div>
+
+
+      <div class="poke-action-custom">
+
+        <input
+          id="pokeCustomInput"
+          type="text"
+          placeholder="自定义动作…"
+        >
+
+        <button
+          id="pokeCustomSend"
+          type="button"
+        >
+          发送
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
   <script src="chat.js"></script>
   <script src="chat-actions.js"></script>

@@ -1,6 +1,39 @@
 const moreButton =
   document.getElementById("moreButton");
 
+  const continueSayButton =
+  document.getElementById(
+    "continueSayButton"
+  );
+
+  const pokeButton =
+  document.getElementById(
+    "pokeButton"
+  );
+
+
+const pokeActionPanel =
+  document.getElementById(
+    "pokeActionPanel"
+  );
+
+
+const pokeActionClose =
+  document.getElementById(
+    "pokeActionClose"
+  );
+
+  const pokeCustomInput =
+  document.getElementById(
+    "pokeCustomInput"
+  );
+
+
+const pokeCustomSend =
+  document.getElementById(
+    "pokeCustomSend"
+  );
+
 const morePanel =
   document.getElementById("morePanel");
 
@@ -24,18 +57,20 @@ const chatMessages =
 const CHAT_PEOPLE = {
 
   luzhen: {
-    id: "luzhen",
-    name: "榛榛",
-    avatar: "L",
-    storageKey: "liminal_chat_luzhen"
-  },
+  id: "luzhen",
+  name: "榛榛",
+  actionName: "榛榛",
+  avatar: "L",
+  storageKey: "liminal_chat_luzhen"
+},
 
   jasper: {
-    id: "jasper",
-    name: "Jasper",
-    avatar: "J",
-    storageKey: "liminal_chat_jasper"
-  }
+  id: "jasper",
+  name: "Jasper",
+  actionName: "Jasper",
+  avatar: "J",
+  storageKey: "liminal_chat_jasper"
+}
 
 };
 
@@ -58,10 +93,18 @@ const currentPerson =
 const CHAT_STORAGE_KEY =
   currentPerson.storageKey;
 
+const POKE_STATE_KEY =
+  `liminal_chat_poke_state_${currentPerson.id}`;
 
 const MALL_ORDERS_KEY =
   "liminal_mall_orders_v1";
 
+const WORLD_RULES_KEY =
+  "liminal_world_rules_v2";
+
+
+const TODAY_ODDS_KEY =
+  "liminal_today_odds_v2";
 
 const chatPersonName =
   document.getElementById(
@@ -90,6 +133,873 @@ let chatHistory =
 let lastMessageTime =
   null;
 
+/* =========================
+   读取当前人物的回复规则
+   ========================= */
+
+function getCurrentReplyRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.reply ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取回复规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   读取当前人物的继续说规则
+   ========================= */
+
+function getCurrentContinueRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.continue ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取继续说规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   读取当前人物的拍一拍规则
+   ========================= */
+
+function getCurrentPokeRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.poke ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取拍一拍规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   拍一拍运行状态
+   ========================= */
+
+/*
+  当前轮次间隔规则的“签名”。
+
+  如果你后来修改了轮次间隔，
+  旧的剩余轮数就自动失效。
+*/
+
+function getPokeRuleSignature() {
+
+  const pokeRule =
+    getCurrentPokeRule();
+
+
+  const min =
+    Math.max(
+      0,
+      Math.round(
+        Number(
+          pokeRule
+            ?.roundGap
+            ?.min ??
+          2
+        )
+      )
+    );
+
+
+  const max =
+    Math.max(
+      min,
+      Math.round(
+        Number(
+          pokeRule
+            ?.roundGap
+            ?.max ??
+          6
+        )
+      )
+    );
+
+
+  return (
+    `${min}-${max}`
+  );
+
+}
+
+
+function getPokeState() {
+
+  const currentRuleSignature =
+    getPokeRuleSignature();
+
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          POKE_STATE_KEY
+        )
+      );
+
+
+    if (
+      saved &&
+      saved.ruleSignature ===
+        currentRuleSignature &&
+      Number.isFinite(
+        Number(
+          saved.remainingRounds
+        )
+      )
+    ) {
+
+      return {
+
+        remainingRounds:
+          Math.max(
+            0,
+            Math.round(
+              Number(
+                saved.remainingRounds
+              )
+            )
+          ),
+
+        ruleSignature:
+          currentRuleSignature
+
+      };
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "读取拍一拍状态失败",
+      error
+    );
+
+  }
+
+
+  /*
+    没有旧状态，
+    或轮次间隔规则已经修改：
+    从 0 轮重新开始。
+  */
+
+  return {
+
+    remainingRounds: 0,
+
+    ruleSignature:
+      currentRuleSignature
+
+  };
+
+}
+
+
+function savePokeState(
+  state
+) {
+
+  const nextState = {
+
+    remainingRounds:
+      Math.max(
+        0,
+        Math.round(
+          Number(
+            state
+              ?.remainingRounds
+          ) ||
+          0
+        )
+      ),
+
+    ruleSignature:
+      getPokeRuleSignature()
+
+  };
+
+
+  localStorage.setItem(
+    POKE_STATE_KEY,
+    JSON.stringify(
+      nextState
+    )
+  );
+
+}
+
+/* =========================
+   拍一拍判定
+   ========================= */
+
+function shouldTriggerPokeAfterRound() {
+
+  const pokeState =
+    getPokeState();
+
+
+  /*
+    还处在轮次间隔里：
+    本轮直接跳过，并减少 1 轮
+  */
+
+  if (
+    pokeState.remainingRounds > 0
+  ) {
+
+    pokeState.remainingRounds -=
+      1;
+
+
+    savePokeState(
+      pokeState
+    );
+
+
+    return false;
+
+  }
+
+
+  /*
+    轮次间隔结束：
+    用今天的拍一拍概率判定
+  */
+
+  const pokeProbability =
+    getCurrentTodayPokeProbability();
+
+
+  if (
+    pokeProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日拍一拍概率"
+    );
+
+    return false;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  const shouldPoke =
+    roll <
+    pokeProbability;
+
+
+  if (!shouldPoke) {
+
+    return false;
+
+  }
+
+
+  /*
+    本次拍一拍成功：
+    随机生成下一次需要跳过的轮数
+  */
+
+  const pokeRule =
+    getCurrentPokeRule();
+
+
+  const nextRoundGap =
+    randomIntegerBetween(
+      pokeRule
+        ?.roundGap
+        ?.min ??
+        2,
+
+      pokeRule
+        ?.roundGap
+        ?.max ??
+        6
+    );
+
+
+  savePokeState({
+
+    remainingRounds:
+      nextRoundGap
+
+  });
+
+
+  return true;
+
+}
+
+/* =========================
+   执行拍一拍 / 动作浮窗
+   ========================= */
+
+function triggerPokeAfterRound() {
+
+  const shouldPoke =
+    shouldTriggerPokeAfterRound();
+
+
+  if (!shouldPoke) {
+
+    return;
+
+  }
+
+
+  const randomIndex =
+    Math.floor(
+      Math.random() *
+      testPokeCards.length
+    );
+
+
+  const text =
+  testPokeCards[
+    randomIndex
+  ];
+
+
+addPokeMessage(
+  text,
+  new Date()
+);
+
+}
+
+/* =========================
+   读取今天固定的回复概率
+   ========================= */
+
+function getTodayKey() {
+
+  const now =
+    new Date();
+
+
+  const year =
+    now.getFullYear();
+
+
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  const day =
+    String(
+      now.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  return (
+    `${year}-${month}-${day}`
+  );
+
+}
+
+
+/* =========================
+   今日概率工具
+   ========================= */
+
+function normalizeWorldProbability(
+  value
+) {
+
+  let number =
+    Number(
+      value
+    );
+
+
+  if (
+    !Number.isFinite(
+      number
+    )
+  ) {
+
+    number = 0;
+
+  }
+
+
+  number =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        number
+      )
+    );
+
+
+  return (
+    Math.round(
+      number * 10
+    ) / 10
+  );
+
+}
+
+
+/* 在概率范围内随机到 0.1% */
+
+function randomWorldProbabilityBetween(
+  min,
+  max
+) {
+
+  min =
+    normalizeWorldProbability(
+      min
+    );
+
+
+  max =
+    normalizeWorldProbability(
+      max
+    );
+
+
+  if (
+    min > max
+  ) {
+
+    const temporary =
+      min;
+
+    min =
+      max;
+
+    max =
+      temporary;
+
+  }
+
+
+  const value =
+    min +
+    Math.random() *
+    (
+      max - min
+    );
+
+
+  return (
+    Math.round(
+      value * 10
+    ) / 10
+  );
+
+}
+
+
+/* 根据 World Rules 生成今天全部概率 */
+
+function generateWorldTodayOdds(
+  worldData
+) {
+
+  const people = {};
+
+
+  Object.entries(
+    worldData.people || {}
+  ).forEach(
+    function (
+      [personId, person]
+    ) {
+
+      const personOdds = {
+
+        id:
+          person.id ||
+          personId,
+
+        name:
+          person.name ||
+          "",
+
+        domains: {}
+
+      };
+
+
+      Object.entries(
+        person.domains || {}
+      ).forEach(
+        function (
+          [domainId, domain]
+        ) {
+
+          const domainOdds = {
+
+            id:
+              domain.id ||
+              domainId,
+
+            label:
+              domain.label ||
+              domainId,
+
+            rules: {}
+
+          };
+
+
+          Object.entries(
+            domain.rules || {}
+          ).forEach(
+            function (
+              [ruleId, rule]
+            ) {
+
+              if (
+                rule?.type !==
+                "probability"
+              ) {
+
+                return;
+
+              }
+
+
+              domainOdds.rules[
+                ruleId
+              ] = {
+
+                id:
+                  rule.id ||
+                  ruleId,
+
+                label:
+                  rule.label ||
+                  ruleId,
+
+                type:
+                  "probability",
+
+                min:
+                  normalizeWorldProbability(
+                    rule.min
+                  ),
+
+                max:
+                  normalizeWorldProbability(
+                    rule.max
+                  ),
+
+                today:
+                  randomWorldProbabilityBetween(
+                    rule.min,
+                    rule.max
+                  )
+
+              };
+
+            }
+          );
+
+
+          personOdds.domains[
+            domainId
+          ] =
+            domainOdds;
+
+        }
+      );
+
+
+      people[
+        personId
+      ] =
+        personOdds;
+
+    }
+  );
+
+
+  const todayData = {
+
+    version: 2,
+
+    date:
+      getTodayKey(),
+
+    generatedAt:
+      Date.now(),
+
+    rulesUpdatedAt:
+      worldData.updatedAt ||
+      0,
+
+    people:
+      people
+
+  };
+
+
+  localStorage.setItem(
+    TODAY_ODDS_KEY,
+    JSON.stringify(
+      todayData
+    )
+  );
+
+
+  return todayData;
+
+}
+
+
+/* 读取有效的今日概率，没有就自动生成 */
+
+function getValidTodayOdds() {
+
+  let worldData;
+
+
+  try {
+
+    worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+  } catch (error) {
+
+    console.warn(
+      "读取 World Rules 失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+
+  if (
+    !worldData ||
+    !worldData.people
+  ) {
+
+    return null;
+
+  }
+
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          TODAY_ODDS_KEY
+        )
+      );
+
+
+    if (
+      saved &&
+      saved.version === 2 &&
+      saved.date ===
+        getTodayKey() &&
+      saved.rulesUpdatedAt ===
+        (
+          worldData.updatedAt ||
+          0
+        )
+    ) {
+
+      return saved;
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "读取今日概率失败",
+      error
+    );
+
+  }
+
+
+  return (
+    generateWorldTodayOdds(
+      worldData
+    )
+  );
+
+}
+
+
+/* 读取当前人物今天的回复概率 */
+
+function getCurrentTodayReplyProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.reply
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的继续说概率 */
+
+function getCurrentTodayContinueProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.continue
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的拍一拍概率 */
+
+function getCurrentTodayPokeProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.poke
+      ?.today ??
+    null
+  );
+
+}
 
 /* =========================
    更多功能面板
@@ -118,6 +1028,167 @@ function closeMorePanel() {
 
 }
 
+/* =========================
+   拍一拍动作面板
+   ========================= */
+
+function openPokeActionPanel() {
+
+  closeMorePanel();
+
+  pokeActionPanel.hidden =
+    false;
+
+}
+
+
+function closePokeActionPanel() {
+
+  pokeActionPanel.hidden =
+    true;
+
+}
+
+/* =========================
+   我的快捷动作
+   ========================= */
+
+document
+  .querySelectorAll(
+    ".poke-quick-item"
+  )
+  .forEach(
+    function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          const action =
+            button.dataset.action ||
+            "";
+
+
+          if (!action) {
+
+            return;
+
+          }
+
+
+          const targetName =
+            currentPerson.actionName ||
+            currentPerson.name;
+
+
+          const text =
+            `你${action.replaceAll(
+              "{target}",
+              targetName
+            )}`;
+
+
+          addPokeMessage(
+            text,
+            new Date(),
+            "outgoing"
+          );
+
+
+          closePokeActionPanel();
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================
+   我的自定义动作
+   ========================= */
+
+pokeCustomSend.addEventListener(
+  "click",
+  function () {
+
+    const text =
+      pokeCustomInput.value.trim();
+
+
+    if (!text) {
+
+      return;
+
+    }
+
+
+    addPokeMessage(
+      text,
+      new Date(),
+      "outgoing"
+    );
+
+
+    pokeCustomInput.value =
+      "";
+
+
+    closePokeActionPanel();
+
+  }
+);
+
+
+/* =========================
+   打开拍一拍面板
+   ========================= */
+
+pokeButton.addEventListener(
+  "pointerdown",
+  function (event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    openPokeActionPanel();
+
+  },
+  true
+);
+
+
+/* 关闭按钮 */
+
+pokeActionClose.addEventListener(
+  "click",
+  function () {
+
+    closePokeActionPanel();
+
+  }
+);
+
+
+/* 点击灰色背景关闭 */
+
+pokeActionPanel.addEventListener(
+  "click",
+  function (event) {
+
+    if (
+      event.target ===
+      pokeActionPanel
+    ) {
+
+      closePokeActionPanel();
+
+    }
+
+  }
+);
 
 moreButton.addEventListener(
   "click",
@@ -795,6 +1866,94 @@ function addIncomingMessage(
 
 }
 
+/* =========================
+   拍一拍 / 动作浮窗消息
+   ========================= */
+
+function addPokeMessage(
+  text,
+  date,
+  direction = "incoming",
+  shouldSave = true
+) {
+
+  if (
+    shouldShowTimeDivider(
+      date
+    )
+  ) {
+
+    addTimeDivider(
+      date
+    );
+
+  }
+
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+
+  row.className =
+    `message-row poke-message-row ${direction}`;
+
+
+  const notice =
+    document.createElement(
+      "div"
+    );
+
+
+  notice.className =
+    "poke-message-notice";
+
+  notice.textContent =
+    text;
+
+
+  row.appendChild(
+    notice
+  );
+
+
+  chatMessages.appendChild(
+    row
+  );
+
+
+  lastMessageTime =
+    date;
+
+
+  if (shouldSave) {
+
+    chatHistory.push({
+
+      type:
+        "poke",
+
+      direction:
+        direction,
+
+      text:
+        text,
+
+      time:
+        date.toISOString()
+
+    });
+
+
+    saveChatHistory();
+
+  }
+
+
+  scrollToBottom();
+
+}
 
 /* =========================
    礼物卡消息
@@ -1375,6 +2534,186 @@ const testReplyCards = [
   "嗯"
 ];
 
+/* 拍一拍测试语料 */
+
+const testPokeCards = [
+  "榛榛摸了摸你的腰际",
+  "榛榛吻了吻你的耳垂",
+  "榛榛戳了戳你的脸",
+  "榛榛看着你叹了口气"
+];
+
+/* =========================
+   继续说测试
+   ========================= */
+
+function createTestContinue() {
+
+  const continueProbability =
+    getCurrentTodayContinueProbability();
+
+
+  if (
+    continueProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日继续说概率"
+    );
+
+    return;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  const shouldContinue =
+    roll <
+    continueProbability;
+
+
+  if (!shouldContinue) {
+
+    console.log(
+      "继续说判定失败"
+    );
+
+    return;
+
+  }
+
+
+  const continueRule =
+    getCurrentContinueRule();
+
+
+  const messageCount =
+    randomIntegerBetween(
+      continueRule
+        ?.messageCount
+        ?.min ??
+        1,
+
+      continueRule
+        ?.messageCount
+        ?.max ??
+        4
+    );
+
+
+  const intervalMin =
+    continueRule
+      ?.messageIntervalSeconds
+      ?.min ??
+    2;
+
+
+  const intervalMax =
+    continueRule
+      ?.messageIntervalSeconds
+      ?.max ??
+    12;
+
+
+  function sendContinueMessage(
+    index
+  ) {
+
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+        testReplyCards.length
+      );
+
+
+    const reply =
+      testReplyCards[
+        randomIndex
+      ];
+
+
+    addIncomingMessage(
+      reply,
+      new Date()
+    );
+
+
+    /*
+      这一轮继续说已经全部发完
+    */
+
+    if (
+  index >=
+  messageCount - 1
+) {
+
+  /*
+    继续说这一轮结束后，
+    判定是否触发拍一拍 / 动作浮窗
+  */
+
+  triggerPokeAfterRound();
+
+
+  return;
+
+}
+
+    /*
+      下一条重新随机消息间隔
+    */
+
+    const intervalSeconds =
+      randomIntegerBetween(
+        intervalMin,
+        intervalMax
+      );
+
+
+    setTimeout(
+      function () {
+
+        sendContinueMessage(
+          index + 1
+        );
+
+      },
+      intervalSeconds * 1000
+    );
+
+  }
+
+
+  /*
+    第一条立即出现
+  */
+
+  sendContinueMessage(
+    0
+  );
+
+}
+
+continueSayButton.addEventListener(
+  "pointerdown",
+  function (event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    closeMorePanel();
+
+
+    createTestContinue();
+
+  },
+  true
+);
 
 const originalPersonName =
   currentPerson.name;
@@ -1399,45 +2738,216 @@ function hideTypingStatus() {
 
 }
 
+/* 随机整数范围 */
 
-/* 随机抽一张测试回复 */
+function randomIntegerBetween(
+  min,
+  max
+) {
+
+  min =
+    Math.max(
+      0,
+      Math.round(
+        Number(min) || 0
+      )
+    );
+
+
+  max =
+    Math.max(
+      min,
+      Math.round(
+        Number(max) || min
+      )
+    );
+
+
+  return (
+    Math.floor(
+      Math.random() *
+      (
+        max - min + 1
+      )
+    ) +
+    min
+  );
+
+}
+
+
+/* 随机抽测试回复 */
 
 function createTestReply() {
+
+  const replyProbability =
+    getCurrentTodayReplyProbability();
+
+
+  if (
+    replyProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日回复概率"
+    );
+
+    return;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  const shouldReply =
+    roll <
+    replyProbability;
+
+
+  if (!shouldReply) {
+
+    return;
+
+  }
+
+
+  const replyRule =
+    getCurrentReplyRule();
+
+
+  const delaySeconds =
+    randomIntegerBetween(
+      replyRule
+        ?.delaySeconds
+        ?.min ??
+        5,
+
+      replyRule
+        ?.delaySeconds
+        ?.max ??
+        60
+    );
+
+
+  const messageCount =
+    randomIntegerBetween(
+      replyRule
+        ?.messageCount
+        ?.min ??
+        1,
+
+      replyRule
+        ?.messageCount
+        ?.max ??
+        3
+    );
+
+
+  const intervalMin =
+    replyRule
+      ?.messageIntervalSeconds
+      ?.min ??
+    2;
+
+
+  const intervalMax =
+    replyRule
+      ?.messageIntervalSeconds
+      ?.max ??
+    12;
+
 
   showTypingStatus();
 
 
-  const delay =
-    1500 +
-    Math.random() * 2000;
+  function sendReply(
+    index
+  ) {
 
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+        testReplyCards.length
+      );
+
+
+    const reply =
+      testReplyCards[
+        randomIndex
+      ];
+
+
+    addIncomingMessage(
+      reply,
+      new Date()
+    );
+
+
+    /*
+      这一轮已经全部发完
+    */
+
+    if (
+  index >=
+  messageCount - 1
+) {
+
+  hideTypingStatus();
+
+
+  /*
+    普通回复这一轮结束后，
+    判定是否触发拍一拍 / 动作浮窗
+  */
+
+  triggerPokeAfterRound();
+
+
+  return;
+
+}
+
+
+    /*
+      下一条重新随机消息间隔
+    */
+
+    const intervalSeconds =
+      randomIntegerBetween(
+        intervalMin,
+        intervalMax
+      );
+
+
+    setTimeout(
+      function () {
+
+        sendReply(
+          index + 1
+        );
+
+      },
+      intervalSeconds * 1000
+    );
+
+  }
+
+
+  /*
+    第一条按照回复时间出现
+  */
 
   setTimeout(
     function () {
 
-      const randomIndex =
-        Math.floor(
-          Math.random() *
-          testReplyCards.length
-        );
-
-
-      const reply =
-        testReplyCards[
-          randomIndex
-        ];
-
-
-      addIncomingMessage(
-        reply,
-        new Date()
+      sendReply(
+        0
       );
 
-
-      hideTypingStatus();
-
     },
-    delay
+    delaySeconds * 1000
   );
 
 }
@@ -1464,6 +2974,26 @@ function loadChatHistory() {
           message.time
         );
 
+    /*
+      拍一拍 / 动作浮窗
+    */
+
+    if (
+      message.type ===
+        "poke"
+    ) {
+
+      addPokeMessage(
+  message.text || "",
+  date,
+  message.direction ||
+    "incoming",
+  false
+);
+
+      return;
+
+    }
 
       /*
         新增的礼物卡消息

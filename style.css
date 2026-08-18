@@ -1003,3 +1003,214 @@ body.more-panel-open .chat-messages {
 .page-dot {
   cursor: pointer;
 }
+
+/* =========================
+   拍一拍 / 动作浮窗消息
+   ========================= */
+
+.poke-message-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 6px 14px;
+}
+
+.poke-message-notice {
+  max-width: 82%;
+
+  padding: 4px 8px;
+
+  color: #aaa79f;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+
+  text-align: center;
+
+  white-space: normal;
+}
+
+/* =========================
+   拍一拍 / 动作选择面板
+   ========================= */
+
+.poke-action-panel {
+  position: fixed;
+  inset: 0;
+
+  z-index: 3000;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background:
+    rgba(0, 0, 0, 0.18);
+}
+
+
+/* hidden 时彻底不显示 */
+
+.poke-action-panel[hidden] {
+  display: none;
+}
+
+
+.poke-action-sheet {
+  width: 100%;
+  max-width: 520px;
+
+  padding:
+    18px
+    18px
+    calc(18px + env(safe-area-inset-bottom));
+
+  background:
+    #f7f6f2;
+
+  border-radius:
+    22px 22px 0 0;
+
+  box-sizing: border-box;
+}
+
+
+/* 顶部 */
+
+.poke-action-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+
+.poke-action-header strong {
+  font-size: 16px;
+  font-weight: 600;
+
+  color: #34332f;
+}
+
+
+.poke-action-close {
+  width: 32px;
+  height: 32px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background:
+    rgba(0, 0, 0, 0.05);
+
+  color: #77746d;
+
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+
+/* 快捷动作 */
+
+.poke-action-quick {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin-bottom: 16px;
+}
+
+
+.poke-quick-item {
+  min-height: 46px;
+
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    #ffffff;
+
+  color: #4d4b45;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+
+/* 自定义动作 */
+
+.poke-action-custom {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.poke-action-custom input {
+  flex: 1;
+  min-width: 0;
+
+  height: 44px;
+
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    #ffffff;
+
+  color: #3d3b36;
+
+  font-size: 13px;
+
+  outline: none;
+
+  box-sizing: border-box;
+}
+
+
+.poke-action-custom input::placeholder {
+  color: #aaa79f;
+}
+
+
+#pokeCustomSend {
+  flex: 0 0 auto;
+
+  height: 44px;
+
+  padding: 0 17px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    #45433e;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 动作浮窗无论 incoming / outgoing 都保持居中 */
+
+.chat-messages .message-row.poke-message-row {
+  width: 100%;
+
+  justify-content: center;
+  align-items: center;
+}
