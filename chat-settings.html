@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#f4f3f0">
+
+    <title>聊天设置 · Liminal</title>
+
+    <link rel="stylesheet" href="chat-settings.css">
+</head>
+
+
+<body>
+
+    <main class="chat-settings-page">
+
+
+        <!-- 顶部 -->
+
+        <header class="settings-header">
+
+            <button class="settings-back" id="settingsBack" type="button">
+                ‹
+            </button>
+
+
+            <div class="settings-heading">
+
+                <span>
+                    CURRENT CHAT
+                </span>
+
+                <h1 id="settingsPersonName">
+                    聊天设置
+                </h1>
+
+            </div>
+
+
+            <div class="settings-header-space">
+            </div>
+
+        </header>
+
+
+        <!-- 人物 -->
+
+        <section class="person-card">
+
+            <div class="person-avatar" id="settingsPersonAvatar">
+                L
+            </div>
+
+
+            <div class="person-info">
+
+                <strong id="settingsPersonTitle">
+                    榛榛
+                </strong>
+
+                <span>
+                    当前聊天
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHAT -->
+
+        <section class="settings-group">
+
+            <div class="group-label">
+                CHAT
+            </div>
+
+
+            <button class="settings-item" type="button"
+                onclick="window.location.href='chat-search.html' + window.location.search">
+
+                <span class="settings-icon">
+                    ⌕
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        搜索聊天
+                    </strong>
+
+                    <span>
+                        查找当前聊天中的消息
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button class="settings-item" type="button">
+
+                <span class="settings-icon">
+                    %
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        互动频率
+                    </strong>
+
+                    <span>
+                        消息、通话、拍一拍、礼物等
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button class="settings-item" type="button">
+
+                <span class="settings-icon">
+                    ◌
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        回复与在线状态
+                    </strong>
+
+                    <span>
+                        回复延迟、忙碌状态等
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button class="settings-item" type="button">
+
+                <span class="settings-icon">
+                    ☆
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        置顶聊天
+                    </strong>
+
+                    <span>
+                        调整消息列表中的位置
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+        </section>
+
+
+        <!-- DATA -->
+
+        <section class="settings-group">
+
+            <div class="group-label">
+                DATA
+            </div>
+
+
+            <button class="settings-item" type="button">
+
+                <span class="settings-icon">
+                    ↥
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        导出当前聊天
+                    </strong>
+
+                    <span>
+                        保存这段聊天的数据
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button class="settings-item danger" type="button">
+
+                <span class="settings-icon">
+                    ×
+                </span>
+
+                <span class="settings-text">
+
+                    <strong>
+                        清空聊天记录
+                    </strong>
+
+                    <span>
+                        删除当前人物的全部聊天消息
+                    </span>
+
+                </span>
+
+                <span class="settings-arrow">
+                    ›
+                </span>
+
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+    <script src="chat-settings-page.js"></script>
+
+</body>
+
+</html>

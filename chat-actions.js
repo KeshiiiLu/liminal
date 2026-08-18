@@ -1591,3 +1591,102 @@ actionObserver.observe(
 actionEnsureIds();
 
 actionSyncRows();
+
+/* =========================
+   从搜索结果定位原消息
+   ========================= */
+
+function actionJumpToRequestedMessage() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const requestedMessageId =
+    params.get(
+      "message"
+    );
+
+
+  if (!requestedMessageId) {
+
+    return;
+
+  }
+
+
+  /*
+    等聊天气泡和 messageId
+    都绑定完成以后再定位。
+  */
+
+  requestAnimationFrame(
+    function () {
+
+      requestAnimationFrame(
+        function () {
+
+          const target =
+            Array.from(
+              chatMessages.querySelectorAll(
+                ".message-row"
+              )
+            )
+              .find(
+                function (row) {
+
+                  return (
+                    row.dataset.messageId ===
+                    requestedMessageId
+                  );
+
+                }
+              );
+
+
+          if (!target) {
+
+            return;
+
+          }
+
+
+          target.scrollIntoView({
+
+            behavior:
+              "smooth",
+
+            block:
+              "center"
+
+          });
+
+
+          target.classList.add(
+            "message-highlight"
+          );
+
+
+          setTimeout(
+            function () {
+
+              target.classList.remove(
+                "message-highlight"
+              );
+
+            },
+            1200
+          );
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+actionJumpToRequestedMessage();

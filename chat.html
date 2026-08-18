@@ -22,9 +22,13 @@
       <span id="chatPersonStatus">在线</span>
     </div>
 
-    <button class="chat-settings">
-      ···
-    </button>
+    <button
+  class="chat-settings"
+  type="button"
+  onclick="window.location.href='chat-settings.html' + window.location.search"
+>
+  ···
+</button>
 
   </header>
 
@@ -82,8 +86,8 @@
           </button>
 
           <button class="more-item">
-            <span class="more-icon">◉</span>
-            <small>拍摄</small>
+            <span class="more-icon">卡</span>
+            <small>语料池</small>
           </button>
 
           <button class="more-item">
@@ -144,6 +148,7 @@
   <script src="chat-actions.js"></script>
   <script src="chat-selection.js"></script>
   <script src="chat-favorites-save.js"></script>
+  <script src="chat-settings.js"></script>
 
 </body>
 

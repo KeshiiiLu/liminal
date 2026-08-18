@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#f4f3f0"
+  >
+
+  <title>搜索聊天 · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="chat-search.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="search-page">
+
+    <header class="search-header">
+
+      <button
+        class="search-back"
+        id="searchBack"
+        type="button"
+      >
+        ‹
+      </button>
+
+
+      <div class="search-heading">
+
+        <span>
+          CHAT SEARCH
+        </span>
+
+        <h1 id="searchPersonName">
+          搜索聊天
+        </h1>
+
+      </div>
+
+
+      <div></div>
+
+    </header>
+
+
+    <section class="search-box">
+
+      <span class="search-symbol">
+        ⌕
+      </span>
+
+      <input
+        id="chatSearchInput"
+        type="search"
+        placeholder="搜索当前聊天"
+        autocomplete="off"
+      >
+
+      <button
+        id="clearSearchButton"
+        type="button"
+        hidden
+      >
+        ×
+      </button>
+
+    </section>
+
+
+    <nav class="search-filters">
+
+      <button
+        class="search-filter active"
+        type="button"
+        data-filter="all"
+      >
+        全部
+      </button>
+
+      <button
+        class="search-filter"
+        type="button"
+        data-filter="text"
+      >
+        文字
+      </button>
+
+      <button
+        class="search-filter"
+        type="button"
+        data-filter="gift"
+      >
+        礼物
+      </button>
+
+    </nav>
+
+
+    <div class="search-summary">
+
+      <span id="searchSummary">
+        0 条消息
+      </span>
+
+    </div>
+
+
+    <section
+      class="search-results"
+      id="searchResults"
+    >
+    </section>
+
+
+    <section
+      class="search-empty"
+      id="searchEmpty"
+      hidden
+    >
+
+      <div>
+        ⌕
+      </div>
+
+      <strong>
+        没有找到消息
+      </strong>
+
+      <span>
+        换个关键词或消息类型试试
+      </span>
+
+    </section>
+
+  </main>
+
+
+  <script src="chat-search.js"></script>
+
+</body>
+
+</html>
