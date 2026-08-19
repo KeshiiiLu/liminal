@@ -171,54 +171,87 @@ const FREQUENCY_RULES = [
 
 
   /* =========================
-     通话
-     ========================= */
+   通话
+   ========================= */
 
-  {
-    group: "call",
+{
+  group: "call",
 
-    domainId: "chat",
+  domainId: "chat",
 
-    domainLabel: "Chat",
+  domainLabel: "Chat",
 
-    ruleId: "call",
+  ruleId: "call",
 
-    label: "主动拨打",
+  label: "主动拨打",
 
-    description:
-      "主动发起通话",
+  description:
+    "对方主动给你拨打视频通话",
 
-    defaults: {
-      luzhen: [5.0, 15.0],
-      jasper: [3.0, 12.0]
-    }
-  },
+  defaults: {
 
+    luzhen: [0.0, 0.0],
 
-  {
-    group: "call",
+    jasper: [0.0, 0.0]
 
-    domainId: "chat",
+  }
 
-    domainLabel: "Chat",
-
-    ruleId: "answerCall",
-
-    label: "接听",
-
-    description:
-      "你主动拨打时选择接听",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
+},
 
 
-  /* =========================
-     礼物与金钱
-     ========================= */
+{
+  group: "call",
+
+  domainId: "chat",
+
+  domainLabel: "Chat",
+
+  ruleId: "answerCall",
+
+  label: "接听",
+
+  description:
+    "你主动拨打时选择接听",
+
+  defaults: {
+
+    luzhen: [0.0, 0.0],
+
+    jasper: [0.0, 0.0]
+
+  }
+
+},
+
+
+{
+  group: "call",
+
+  domainId: "chat",
+
+  domainLabel: "Chat",
+
+  ruleId: "rejectCall",
+
+  label: "拒接",
+
+  description:
+    "未选择接听时，主动拒绝通话",
+
+  defaults: {
+
+    luzhen: [0.0, 0.0],
+
+    jasper: [0.0, 0.0]
+
+  }
+
+},
+
+
+/* =========================
+   礼物与金钱
+   ========================= */
 
   {
     group: "money",

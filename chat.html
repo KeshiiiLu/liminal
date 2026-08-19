@@ -99,10 +99,14 @@
   <small>继续说</small>
 </button>
 
-          <button class="more-item">
-            <span class="more-icon">▣</span>
-            <small>视频通话</small>
-          </button>
+          <button
+  class="more-item"
+  id="videoCallButton"
+  type="button"
+>
+  <span class="more-icon">▣</span>
+  <small>视频通话</small>
+</button>
 
           <button class="more-item">
             <span class="more-icon">⌖</span>
@@ -244,11 +248,285 @@
 
   </div>
 
+  <!-- =========================
+     主动拨打 · 正在呼叫
+     ========================= -->
+
+<div
+  class="outgoing-call-panel"
+  id="outgoingCallPanel"
+  hidden
+>
+
+  <div class="outgoing-call-content">
+
+    <div
+      class="outgoing-call-avatar"
+      id="outgoingCallAvatar"
+    >
+      L
+    </div>
+
+
+    <strong
+      class="outgoing-call-name"
+      id="outgoingCallName"
+    >
+      榛榛
+    </strong>
+
+
+    <span
+      class="outgoing-call-status"
+      id="outgoingCallStatus"
+    >
+      正在呼叫…
+    </span>
+
+
+    <button
+      class="outgoing-call-cancel"
+      id="cancelOutgoingCallButton"
+      type="button"
+    >
+      <span>☎</span>
+      <small>取消</small>
+    </button>
+
+  </div>
+
+</div>
+
+  <!-- =========================
+     来电界面
+     ========================= -->
+
+<div
+  class="incoming-call-panel"
+  id="incomingCallPanel"
+  hidden
+>
+
+  <div class="incoming-call-content">
+
+    <div
+      class="incoming-call-avatar"
+      id="incomingCallAvatar"
+    >
+      L
+    </div>
+
+
+    <strong
+      class="incoming-call-name"
+      id="incomingCallName"
+    >
+      榛榛
+    </strong>
+
+
+    <span class="incoming-call-status">
+      邀请你进行视频通话
+    </span>
+
+
+    <div class="incoming-call-actions">
+
+      <button
+        class="incoming-call-button reject"
+        id="rejectCallButton"
+        type="button"
+      >
+        <span>×</span>
+        <small>拒绝</small>
+      </button>
+
+
+      <button
+        class="incoming-call-button answer"
+        id="answerCallButton"
+        type="button"
+      >
+        <span>☎</span>
+        <small>接听</small>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     已接通 · 全屏视频通话
+     ========================= -->
+
+<div
+  class="active-call-panel"
+  id="activeCallPanel"
+  hidden
+>
+
+  <!-- 你的摄像头大画面 -->
+
+  <video
+    class="active-call-video"
+    id="localCallVideo"
+    autoplay
+    muted
+    playsinline
+  ></video>
+
+
+  <!-- 摄像头关闭时的占位 -->
+
+  <div
+    class="active-call-camera-off"
+    id="activeCallCameraOff"
+    hidden
+  >
+    摄像头已关闭
+  </div>
+
+
+  <!-- 顶部 -->
+
+  <div class="active-call-top">
+
+    <button
+      class="active-call-minimize"
+      id="minimizeCallButton"
+      type="button"
+      aria-label="最小化"
+    >
+      ▢
+    </button>
+
+
+    <span
+      class="active-call-duration"
+      id="activeCallDuration"
+    >
+      00:00
+    </span>
+
+  </div>
+
+
+  <!-- 右上角：对方头像小屏 -->
+
+  <div
+    class="active-call-remote"
+    id="activeCallRemote"
+  >
+
+    <div
+      class="active-call-remote-avatar"
+      id="activeCallRemoteAvatar"
+    >
+      L
+    </div>
+
+    <span
+      class="active-call-remote-name"
+      id="activeCallRemoteName"
+    >
+      榛榛
+    </span>
+
+  </div>
+
+
+  <!-- 底部控制 -->
+
+  <div class="active-call-controls">
+
+    <button
+      class="call-control-button"
+      id="callMicButton"
+      type="button"
+    >
+      <span>🎙</span>
+      <small>麦克风已开</small>
+    </button>
+
+
+    <button
+      class="call-control-button"
+      id="callSpeakerButton"
+      type="button"
+    >
+      <span>🔊</span>
+      <small>扬声器已开</small>
+    </button>
+
+
+    <button
+      class="call-control-button"
+      id="callCameraButton"
+      type="button"
+    >
+      <span>▣</span>
+      <small>摄像头已开</small>
+    </button>
+
+  </div>
+
+
+  <div class="active-call-bottom">
+
+    <button
+      class="call-switch-camera"
+      id="switchCameraButton"
+      type="button"
+      aria-label="切换摄像头"
+    >
+      ↻
+    </button>
+
+
+    <button
+      class="call-hangup-button"
+      id="hangupCallButton"
+      type="button"
+    >
+      ☎
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================
+     已接通 · 网站内最小化
+     ========================= -->
+
+<div
+  class="call-mini-window"
+  id="callMiniWindow"
+  hidden
+>
+
+  <div class="call-mini-icon">
+    ☎
+  </div>
+
+  <div
+    class="call-mini-duration"
+    id="callMiniDuration"
+  >
+    00:00
+  </div>
+
+</div>
+
   <script src="chat.js"></script>
   <script src="chat-actions.js"></script>
   <script src="chat-selection.js"></script>
   <script src="chat-favorites-save.js"></script>
+  <script src="call-global.js"></script>
 
 </body>
-
 </html>

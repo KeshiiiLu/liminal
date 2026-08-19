@@ -1,12 +1,12 @@
 const moreButton =
   document.getElementById("moreButton");
 
-  const continueSayButton =
+const continueSayButton =
   document.getElementById(
     "continueSayButton"
   );
 
-  const pokeButton =
+const pokeButton =
   document.getElementById(
     "pokeButton"
   );
@@ -23,7 +23,7 @@ const pokeActionClose =
     "pokeActionClose"
   );
 
-  const pokeCustomInput =
+const pokeCustomInput =
   document.getElementById(
     "pokeCustomInput"
   );
@@ -49,6 +49,155 @@ const chatInput =
 const chatMessages =
   document.getElementById("chatMessages");
 
+/* =========================
+ 电话界面元素
+ ========================= */
+
+const videoCallButton =
+  document.getElementById(
+    "videoCallButton"
+  );
+
+
+const incomingCallPanel =
+  document.getElementById(
+    "incomingCallPanel"
+  );
+
+
+const incomingCallAvatar =
+  document.getElementById(
+    "incomingCallAvatar"
+  );
+
+
+const incomingCallName =
+  document.getElementById(
+    "incomingCallName"
+  );
+
+
+const rejectCallButton =
+  document.getElementById(
+    "rejectCallButton"
+  );
+
+
+const answerCallButton =
+  document.getElementById(
+    "answerCallButton"
+  );
+
+
+const activeCallPanel =
+  document.getElementById(
+    "activeCallPanel"
+  );
+
+
+const activeCallDuration =
+  document.getElementById(
+    "activeCallDuration"
+  );
+
+const localCallVideo =
+  document.getElementById(
+    "localCallVideo"
+  );
+
+
+const activeCallCameraOff =
+  document.getElementById(
+    "activeCallCameraOff"
+  );
+
+
+const callCameraButton =
+  document.getElementById(
+    "callCameraButton"
+  );
+
+
+const switchCameraButton =
+  document.getElementById(
+    "switchCameraButton"
+  );
+
+  const callMicButton =
+  document.getElementById(
+    "callMicButton"
+  );
+
+
+const callSpeakerButton =
+  document.getElementById(
+    "callSpeakerButton"
+  );
+
+const activeCallRemoteAvatar =
+  document.getElementById(
+    "activeCallRemoteAvatar"
+  );
+
+
+const activeCallRemoteName =
+  document.getElementById(
+    "activeCallRemoteName"
+  );
+
+
+const minimizeCallButton =
+  document.getElementById(
+    "minimizeCallButton"
+  );
+
+
+const hangupCallButton =
+  document.getElementById(
+    "hangupCallButton"
+  );
+
+
+const callMiniWindow =
+  document.getElementById(
+    "callMiniWindow"
+  );
+
+
+const callMiniDuration =
+  document.getElementById(
+    "callMiniDuration"
+  );
+
+const outgoingCallPanel =
+  document.getElementById(
+    "outgoingCallPanel"
+  );
+
+
+const outgoingCallAvatar =
+  document.getElementById(
+    "outgoingCallAvatar"
+  );
+
+
+const outgoingCallName =
+  document.getElementById(
+    "outgoingCallName"
+  );
+
+
+const outgoingCallStatus =
+  document.getElementById(
+    "outgoingCallStatus"
+  );
+
+
+const cancelOutgoingCallButton =
+  document.getElementById(
+    "cancelOutgoingCallButton"
+  );
+
 /*
   聊天页不让浏览器自己恢复旧滚动位置。
   每次进入都由 Liminal 决定停在哪里。
@@ -70,20 +219,20 @@ if (
 const CHAT_PEOPLE = {
 
   luzhen: {
-  id: "luzhen",
-  name: "榛榛",
-  actionName: "榛榛",
-  avatar: "L",
-  storageKey: "liminal_chat_luzhen"
-},
+    id: "luzhen",
+    name: "榛榛",
+    actionName: "榛榛",
+    avatar: "L",
+    storageKey: "liminal_chat_luzhen"
+  },
 
   jasper: {
-  id: "jasper",
-  name: "Jasper",
-  actionName: "Jasper",
-  avatar: "J",
-  storageKey: "liminal_chat_jasper"
-}
+    id: "jasper",
+    name: "Jasper",
+    actionName: "Jasper",
+    avatar: "J",
+    storageKey: "liminal_chat_jasper"
+  }
 
 };
 
@@ -111,6 +260,15 @@ const POKE_STATE_KEY =
 
 const ACTIVE_MESSAGE_STATE_KEY =
   `liminal_chat_active_message_state_${currentPerson.id}`;
+
+const ACTIVE_CALL_STATE_KEY =
+  `liminal_chat_active_call_state_${currentPerson.id}`;
+
+  const LIVE_CALL_SESSION_KEY =
+  "liminal_live_call_session_v1";
+
+  const GLOBAL_PENDING_ANSWER_KEY =
+  "liminal_global_answered_call_v1";
 
 const MALL_ORDERS_KEY =
   "liminal_mall_orders_v1";
@@ -221,6 +379,88 @@ function getCurrentActiveMessageRule() {
 
     console.warn(
       "读取主动发消息规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   读取当前人物的主动拨打规则
+   ========================= */
+
+function getCurrentCallRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.call ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取主动拨打规则失败",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+/* =========================
+   读取当前人物的接听规则
+   ========================= */
+
+function getCurrentAnswerCallRule() {
+
+  try {
+
+    const worldData =
+      JSON.parse(
+        localStorage.getItem(
+          WORLD_RULES_KEY
+        )
+      );
+
+
+    return (
+      worldData
+        ?.people
+        ?.[currentPerson.id]
+        ?.domains
+        ?.chat
+        ?.rules
+        ?.answerCall ||
+      null
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "读取接听规则失败",
       error
     );
 
@@ -425,7 +665,7 @@ function getPokeState() {
     if (
       saved &&
       saved.ruleSignature ===
-        currentRuleSignature &&
+      currentRuleSignature &&
       Number.isFinite(
         Number(
           saved.remainingRounds
@@ -591,7 +831,7 @@ function getActiveMessageState() {
     if (
       saved &&
       saved.ruleSignature ===
-        currentRuleSignature &&
+      currentRuleSignature &&
       Number.isFinite(
         Number(
           saved.nextOpportunityAt
@@ -752,12 +992,12 @@ function handleActiveMessageOpportunity() {
       activeRule
         ?.messageCount
         ?.min ??
-        1,
+      1,
 
       activeRule
         ?.messageCount
         ?.max ??
-        4
+      4
     );
 
 
@@ -792,7 +1032,7 @@ function handleActiveMessageOpportunity() {
 
     const text =
       testReplyCards[
-        randomIndex
+      randomIndex
       ];
 
 
@@ -945,12 +1185,12 @@ function scheduleNextActiveMessageOpportunity() {
       rule
         ?.waitMinutes
         ?.min ??
-        30,
+      30,
 
       rule
         ?.waitMinutes
         ?.max ??
-        180
+      180
     );
 
 
@@ -977,6 +1217,386 @@ function scheduleNextActiveMessageOpportunity() {
 
       },
       waitMinutes *
+      60 *
+      1000
+    );
+
+}
+
+/* =========================
+   主动拨打电话等待状态
+   ========================= */
+
+let activeCallTimer =
+  null;
+
+
+/*
+  当前主动拨打等待规则的“签名”。
+
+  如果以后修改等待小时范围，
+  旧的等待时间自动失效，
+  重新抽一个新的。
+*/
+
+function getActiveCallRuleSignature() {
+
+  const rule =
+    getCurrentCallRule();
+
+
+  const min =
+    Math.max(
+      0,
+      Math.round(
+        Number(
+          rule
+            ?.waitHours
+            ?.min ??
+          3
+        )
+      )
+    );
+
+
+  const max =
+    Math.max(
+      min,
+      Math.round(
+        Number(
+          rule
+            ?.waitHours
+            ?.max ??
+          12
+        )
+      )
+    );
+
+
+  return (
+    `${min}-${max}`
+  );
+
+}
+
+
+/* 读取已经保存的下一次电话机会 */
+
+function getActiveCallState() {
+
+  const currentRuleSignature =
+    getActiveCallRuleSignature();
+
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          ACTIVE_CALL_STATE_KEY
+        )
+      );
+
+
+    if (
+      saved &&
+      saved.ruleSignature ===
+      currentRuleSignature &&
+      Number.isFinite(
+        Number(
+          saved.nextOpportunityAt
+        )
+      )
+    ) {
+
+      return {
+
+        nextOpportunityAt:
+          Number(
+            saved.nextOpportunityAt
+          ),
+
+        ruleSignature:
+          currentRuleSignature
+
+      };
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "读取主动拨打等待状态失败",
+      error
+    );
+
+  }
+
+
+  return null;
+
+}
+
+
+/* 保存下一次电话机会 */
+
+function saveActiveCallState(
+  state
+) {
+
+  localStorage.setItem(
+    ACTIVE_CALL_STATE_KEY,
+    JSON.stringify({
+
+      nextOpportunityAt:
+        Number(
+          state.nextOpportunityAt
+        ),
+
+      ruleSignature:
+        getActiveCallRuleSignature()
+
+    })
+  );
+
+}
+
+
+/* 清除当前网页里的电话倒计时 */
+
+function clearActiveCallTimer() {
+
+  if (
+    activeCallTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      activeCallTimer
+    );
+
+
+    activeCallTimer =
+      null;
+
+  }
+
+}
+
+
+/* =========================
+   到达一次主动拨打机会
+   ========================= */
+
+function handleActiveCallOpportunity() {
+
+  activeCallTimer =
+    null;
+
+
+  /*
+    这个已经到点的机会用完了。
+  */
+
+  localStorage.removeItem(
+    ACTIVE_CALL_STATE_KEY
+  );
+
+
+  const callProbability =
+    getCurrentTodayCallProbability();
+
+
+  if (
+    callProbability === null
+  ) {
+
+    console.warn(
+      "没有读取到今日主动拨打概率"
+    );
+
+
+    scheduleNextActiveCallOpportunity();
+
+    return;
+
+  }
+
+
+  const roll =
+    Math.random() * 100;
+
+
+  const shouldCall =
+    roll <
+    callProbability;
+
+
+  /*
+    这一次没有决定打电话：
+    安静地重新等下一次机会。
+  */
+
+  if (!shouldCall) {
+
+    console.log(
+      "主动拨打电话判定失败"
+    );
+
+
+    scheduleNextActiveCallOpportunity();
+
+    return;
+
+  }
+
+
+  /*
+    判定成功：
+    真正显示来电。
+
+    这里暂时不安排下一次电话，
+    等这通电话结束以后再重新计时。
+  */
+
+  showIncomingCall();
+
+}
+
+
+/* =========================
+   按保存的时间继续等待
+   ========================= */
+
+function startActiveCallTimer() {
+
+  clearActiveCallTimer();
+
+
+  const state =
+    getActiveCallState();
+
+
+  /*
+    从来没有安排过下一次电话：
+    现在正常抽一个未来时间。
+  */
+
+  if (!state) {
+
+    scheduleNextActiveCallOpportunity();
+
+    return;
+
+  }
+
+
+  const remainingMilliseconds =
+    state.nextOpportunityAt -
+    Date.now();
+
+
+  /*
+    重要：
+    如果这个时间是在关闭页面、
+    切换页面期间错过的，
+
+    不补打一通电话。
+
+    直接把旧机会作废，
+    重新安排未来的下一次机会。
+
+    这样“进入 Chat”本身
+    永远不会触发来电。
+  */
+
+  if (
+    remainingMilliseconds <= 0
+  ) {
+
+    localStorage.removeItem(
+      ACTIVE_CALL_STATE_KEY
+    );
+
+
+    scheduleNextActiveCallOpportunity();
+
+
+    return;
+
+  }
+
+
+  /*
+    原来的时间还没到：
+    继续等待同一个时间。
+  */
+
+  activeCallTimer =
+    setTimeout(
+      function () {
+
+        handleActiveCallOpportunity();
+
+      },
+      remainingMilliseconds
+    );
+
+}
+
+
+/* =========================
+   随机安排下一次主动拨打机会
+   ========================= */
+
+function scheduleNextActiveCallOpportunity() {
+
+  clearActiveCallTimer();
+
+
+  const rule =
+    getCurrentCallRule();
+
+
+  const waitHours =
+    randomIntegerBetween(
+      rule
+        ?.waitHours
+        ?.min ??
+      3,
+
+      rule
+        ?.waitHours
+        ?.max ??
+      12
+    );
+
+
+  const nextOpportunityAt =
+    Date.now() +
+    waitHours *
+    60 *
+    60 *
+    1000;
+
+
+  saveActiveCallState({
+
+    nextOpportunityAt:
+      nextOpportunityAt
+
+  });
+
+
+  activeCallTimer =
+    setTimeout(
+      function () {
+
+        handleActiveCallOpportunity();
+
+      },
+      waitHours *
+      60 *
       60 *
       1000
     );
@@ -1083,12 +1703,12 @@ function shouldTriggerPokeAfterRound() {
       pokeRule
         ?.roundGap
         ?.min ??
-        2,
+      2,
 
       pokeRule
         ?.roundGap
         ?.max ??
-        6
+      6
     );
 
 
@@ -1129,15 +1749,15 @@ function triggerPokeAfterRound() {
 
 
   const text =
-  testPokeCards[
+    testPokeCards[
     randomIndex
-  ];
+    ];
 
 
-addPokeMessage(
-  text,
-  new Date()
-);
+  addPokeMessage(
+    text,
+    new Date()
+  );
 
 }
 
@@ -1487,12 +2107,12 @@ function getValidTodayOdds() {
       saved &&
       saved.version === 2 &&
       saved.date ===
-        getTodayKey() &&
+      getTodayKey() &&
       saved.rulesUpdatedAt ===
-        (
-          worldData.updatedAt ||
-          0
-        )
+      (
+        worldData.updatedAt ||
+        0
+      )
     ) {
 
       return saved;
@@ -1556,6 +2176,72 @@ function getCurrentTodayActiveMessageProbability() {
       ?.chat
       ?.rules
       ?.message
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的主动拨打概率 */
+
+function getCurrentTodayCallProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.call
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的接听概率 */
+
+function getCurrentTodayAnswerCallProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.answerCall
+      ?.today ??
+    null
+  );
+
+}
+
+/* 读取当前人物今天的拒接概率 */
+
+function getCurrentTodayRejectCallProbability() {
+
+  const todayData =
+    getValidTodayOdds();
+
+
+  return (
+    todayData
+      ?.people
+      ?.[currentPerson.id]
+      ?.domains
+      ?.chat
+      ?.rules
+      ?.rejectCall
       ?.today ??
     null
   );
@@ -1627,6 +2313,2249 @@ function getCurrentTodayRecallProbability() {
   );
 
 }
+
+/* =========================
+   视频通话 · 设备开关状态
+   ========================= */
+
+const CALL_DEVICE_STATE_KEY =
+  "liminal_call_device_state_v1";
+
+
+/*
+  保存的是：
+  “这一通电话里，我希望设备开还是关”。
+
+  它和真实摄像头有没有正在取景
+  是两回事。
+
+  所以最小化时释放摄像头，
+  不会被当成“手动关闭摄像头”。
+*/
+
+function saveCallDeviceState() {
+
+  sessionStorage.setItem(
+    CALL_DEVICE_STATE_KEY,
+    JSON.stringify({
+
+      cameraEnabled:
+        localCameraEnabled,
+
+      microphoneEnabled:
+        localMicrophoneEnabled
+
+    })
+  );
+
+}
+
+
+function resetCallDeviceState() {
+
+  localCameraEnabled =
+    true;
+
+  localMicrophoneEnabled =
+    true;
+
+
+  saveCallDeviceState();
+
+}
+
+
+function restoreCallDeviceState() {
+
+  let saved = null;
+
+
+  try {
+
+    saved =
+      JSON.parse(
+        sessionStorage.getItem(
+          CALL_DEVICE_STATE_KEY
+        )
+      );
+
+  } catch (error) {
+
+    console.warn(
+      "读取通话设备状态失败",
+      error
+    );
+
+  }
+
+
+  localCameraEnabled =
+    saved?.cameraEnabled !==
+    false;
+
+
+  localMicrophoneEnabled =
+    saved?.microphoneEnabled !==
+    false;
+
+
+  /*
+    恢复按钮显示。
+  */
+
+  activeCallCameraOff.hidden =
+    localCameraEnabled;
+
+
+  if (
+    !localCameraEnabled
+  ) {
+
+    activeCallCameraOff.textContent =
+      "摄像头已关闭";
+
+  }
+
+
+  callCameraButton
+    .querySelector("small")
+    .textContent =
+      localCameraEnabled
+        ? "摄像头已开"
+        : "摄像头已关";
+
+
+  callCameraButton.classList.toggle(
+    "is-off",
+    !localCameraEnabled
+  );
+
+
+  callMicButton
+    .querySelector("small")
+    .textContent =
+      localMicrophoneEnabled
+        ? "麦克风已开"
+        : "麦克风已关";
+
+
+  callMicButton.classList.toggle(
+    "is-off",
+    !localMicrophoneEnabled
+  );
+
+
+  return {
+
+    cameraEnabled:
+      localCameraEnabled,
+
+    microphoneEnabled:
+      localMicrophoneEnabled
+
+  };
+
+}
+
+
+function clearCallDeviceState() {
+
+  sessionStorage.removeItem(
+    CALL_DEVICE_STATE_KEY
+  );
+
+}
+
+
+/* =========================
+   视频通话 · 本地摄像头
+   ========================= */
+
+let localCallStream =
+  null;
+
+
+let currentCameraFacingMode =
+  "user";
+
+
+let localCameraEnabled =
+  true;
+
+
+/* 打开真实摄像头 */
+
+async function startLocalCallCamera() {
+
+  stopLocalCallCamera();
+
+
+  try {
+
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          video: {
+
+            facingMode: {
+
+              ideal:
+                currentCameraFacingMode
+
+            }
+
+          },
+
+          audio:
+            false
+
+        });
+
+
+    localCallStream =
+      stream;
+
+
+    localCallVideo.srcObject =
+      stream;
+
+
+    localCameraEnabled =
+      true;
+
+
+    activeCallCameraOff.hidden =
+      true;
+
+
+    callCameraButton
+      .querySelector("small")
+      .textContent =
+        "摄像头已开";
+
+
+    callCameraButton.classList.remove(
+      "is-off"
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "无法打开摄像头",
+      error
+    );
+
+
+    localCallStream =
+      null;
+
+
+    /*
+      这里只表示这一次真实取景失败。
+
+      不去覆盖 sessionStorage 里
+      用户原本的设备偏好。
+    */
+
+    localCameraEnabled =
+      false;
+
+
+    activeCallCameraOff.hidden =
+      false;
+
+    activeCallCameraOff.textContent =
+      "摄像头不可用";
+
+
+    callCameraButton
+      .querySelector("small")
+      .textContent =
+        "摄像头已关";
+
+
+    callCameraButton.classList.add(
+      "is-off"
+    );
+
+  }
+
+}
+
+
+/*
+  停止真实摄像头取景。
+
+  注意：
+  不修改 localCameraEnabled。
+
+  所以最小化调用它时，
+  不等于用户手动关闭摄像头。
+*/
+
+function stopLocalCallCamera() {
+
+  if (
+    localCallStream
+  ) {
+
+    localCallStream
+      .getTracks()
+      .forEach(
+        function (track) {
+
+          track.stop();
+
+        }
+      );
+
+  }
+
+
+  localCallStream =
+    null;
+
+
+  if (
+    localCallVideo
+  ) {
+
+    localCallVideo.srcObject =
+      null;
+
+  }
+
+}
+
+
+/* 用户主动开关摄像头 */
+
+function toggleLocalCallCamera() {
+
+  /*
+    当前没有真实摄像头流：
+    说明现在要主动打开。
+  */
+
+  if (
+    !localCallStream
+  ) {
+
+    localCameraEnabled =
+      true;
+
+
+    saveCallDeviceState();
+
+
+    startLocalCallCamera();
+
+
+    return;
+
+  }
+
+
+  const videoTrack =
+    localCallStream
+      .getVideoTracks()[0];
+
+
+  if (!videoTrack) {
+
+    return;
+
+  }
+
+
+  localCameraEnabled =
+    !localCameraEnabled;
+
+
+  videoTrack.enabled =
+    localCameraEnabled;
+
+
+  saveCallDeviceState();
+
+
+  activeCallCameraOff.hidden =
+    localCameraEnabled;
+
+
+  if (
+    !localCameraEnabled
+  ) {
+
+    activeCallCameraOff.textContent =
+      "摄像头已关闭";
+
+  }
+
+
+  callCameraButton
+    .querySelector("small")
+    .textContent =
+      localCameraEnabled
+        ? "摄像头已开"
+        : "摄像头已关";
+
+
+  callCameraButton.classList.toggle(
+    "is-off",
+    !localCameraEnabled
+  );
+
+}
+
+
+/* 前后摄像头切换 */
+
+async function switchLocalCallCamera() {
+
+  currentCameraFacingMode =
+    currentCameraFacingMode ===
+      "user"
+      ? "environment"
+      : "user";
+
+
+  /*
+    摄像头本来就开着：
+    立即切换真实摄像头。
+  */
+
+  if (
+    localCameraEnabled
+  ) {
+
+    await startLocalCallCamera();
+
+    return;
+
+  }
+
+
+  /*
+    摄像头本来被用户关闭：
+    只记住前 / 后摄选择，
+    不擅自把摄像头打开。
+
+    同时释放旧的真实视频流。
+  */
+
+  stopLocalCallCamera();
+
+}
+
+
+/* =========================
+   视频通话 · 本地麦克风
+   ========================= */
+
+let localMicStream =
+  null;
+
+
+let localMicrophoneEnabled =
+  true;
+
+
+/* 打开麦克风 */
+
+async function startLocalCallMicrophone() {
+
+  stopLocalCallMicrophone();
+
+
+  try {
+
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          audio:
+            true,
+
+          video:
+            false
+
+        });
+
+
+    localMicStream =
+      stream;
+
+
+    localMicrophoneEnabled =
+      true;
+
+
+    callMicButton
+      .querySelector("small")
+      .textContent =
+        "麦克风已开";
+
+
+    callMicButton.classList.remove(
+      "is-off"
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "无法打开麦克风",
+      error
+    );
+
+
+    localMicStream =
+      null;
+
+
+    localMicrophoneEnabled =
+      false;
+
+
+    callMicButton
+      .querySelector("small")
+      .textContent =
+        "麦克风不可用";
+
+
+    callMicButton.classList.add(
+      "is-off"
+    );
+
+  }
+
+}
+
+
+/* 彻底停止真实麦克风 */
+
+function stopLocalCallMicrophone() {
+
+  if (
+    localMicStream
+  ) {
+
+    localMicStream
+      .getTracks()
+      .forEach(
+        function (track) {
+
+          track.stop();
+
+        }
+      );
+
+  }
+
+
+  localMicStream =
+    null;
+
+}
+
+
+/* 用户主动开关麦克风 */
+
+function toggleLocalCallMicrophone() {
+
+  if (
+    !localMicStream
+  ) {
+
+    localMicrophoneEnabled =
+      true;
+
+
+    saveCallDeviceState();
+
+
+    startLocalCallMicrophone();
+
+
+    return;
+
+  }
+
+
+  const audioTrack =
+    localMicStream
+      .getAudioTracks()[0];
+
+
+  if (!audioTrack) {
+
+    return;
+
+  }
+
+
+  localMicrophoneEnabled =
+    !localMicrophoneEnabled;
+
+
+  audioTrack.enabled =
+    localMicrophoneEnabled;
+
+
+  saveCallDeviceState();
+
+
+  callMicButton
+    .querySelector("small")
+    .textContent =
+      localMicrophoneEnabled
+        ? "麦克风已开"
+        : "麦克风已关";
+
+
+  callMicButton.classList.toggle(
+    "is-off",
+    !localMicrophoneEnabled
+  );
+
+}
+
+
+/* =========================
+   新接通一通电话时
+   默认摄像头、麦克风都打开
+   ========================= */
+
+function startDefaultCallDevices() {
+
+  resetCallDeviceState();
+
+
+  startLocalCallCamera();
+
+  startLocalCallMicrophone();
+
+}
+
+
+/* =========================
+   恢复已有电话时
+   按之前手动设置恢复
+   ========================= */
+
+function restoreSavedCallDevices() {
+
+  const state =
+    restoreCallDeviceState();
+
+
+  if (
+    state.cameraEnabled
+  ) {
+
+    startLocalCallCamera();
+
+  }
+
+
+  if (
+    state.microphoneEnabled
+  ) {
+
+    startLocalCallMicrophone();
+
+  }
+
+}
+
+/* =========================
+   视频通话 · 扬声器状态
+   ========================= */
+
+let callSpeakerEnabled =
+  true;
+
+
+function toggleCallSpeaker() {
+
+  callSpeakerEnabled =
+    !callSpeakerEnabled;
+
+
+  callSpeakerButton
+    .querySelector("small")
+    .textContent =
+      callSpeakerEnabled
+        ? "扬声器已开"
+        : "扬声器已关";
+
+
+  callSpeakerButton.classList.toggle(
+    "is-off",
+    !callSpeakerEnabled
+  );
+
+}
+
+/* =========================
+   正在进行中的通话
+   ========================= */
+
+function saveLiveCallSession() {
+
+  if (!callStartedAt) {
+
+    return;
+
+  }
+
+
+  sessionStorage.setItem(
+    LIVE_CALL_SESSION_KEY,
+    JSON.stringify({
+
+      version: 1,
+
+      active: true,
+
+      personId:
+        currentPerson.id,
+
+      direction:
+        currentCallDirection,
+
+      startedAt:
+        callStartedAt,
+
+      updatedAt:
+        Date.now()
+
+    })
+  );
+
+}
+
+function clearLiveCallSession() {
+
+  sessionStorage.removeItem(
+    LIVE_CALL_SESSION_KEY
+  );
+
+}
+
+
+/* =========================
+   恢复跨页面中的通话
+   ========================= */
+
+   /* =========================
+   接住其他 Liminal 页面
+   已经接听的来电
+   ========================= */
+
+function resumeGlobalAnsweredCall() {
+
+  let pending;
+
+
+  try {
+
+    pending =
+      JSON.parse(
+        sessionStorage.getItem(
+  GLOBAL_PENDING_ANSWER_KEY
+)
+      );
+
+  } catch (error) {
+
+    console.warn(
+      "读取全局接听状态失败",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !pending ||
+    pending.personId !==
+      currentPerson.id
+  ) {
+
+    return;
+
+  }
+
+
+  /*
+    这个待接通状态只用一次。
+  */
+
+  sessionStorage.removeItem(
+  GLOBAL_PENDING_ANSWER_KEY
+);
+
+
+  /*
+    进入 Chat 后，
+    停掉刚刚可能重新启动的主动来电时钟。
+  */
+
+  clearActiveCallTimer();
+
+  localStorage.removeItem(
+    ACTIVE_CALL_STATE_KEY
+  );
+
+
+  currentCallDirection =
+    "incoming";
+
+
+  incomingCallPanel.hidden =
+    true;
+
+  outgoingCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    true;
+
+
+  activeCallRemoteAvatar.textContent =
+    currentPerson.avatar;
+
+  activeCallRemoteName.textContent =
+    currentPerson.name;
+
+
+  activeCallPanel.hidden =
+    false;
+
+
+  /*
+    从你在其他页面点“接听”的那一刻
+    开始计算通话时长。
+  */
+
+  startCallDurationTimer(
+    pending.answeredAt ||
+    Date.now()
+  );
+
+
+  saveLiveCallSession();
+
+
+  startDefaultCallDevices();
+
+}
+
+function restoreLiveCallSession() {
+
+    let session;
+
+
+  try {
+
+    session =
+  JSON.parse(
+    sessionStorage.getItem(
+      LIVE_CALL_SESSION_KEY
+    )
+  );
+
+  } catch (error) {
+
+    console.warn(
+      "读取正在进行的通话失败",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !session ||
+    session.active !== true ||
+    session.personId !==
+      currentPerson.id ||
+    !Number.isFinite(
+      Number(
+        session.startedAt
+      )
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  /*
+    恢复这通电话原本的信息。
+  */
+
+  currentCallDirection =
+    session.direction ||
+    "incoming";
+
+
+  incomingCallPanel.hidden =
+    true;
+
+  outgoingCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    true;
+
+
+  activeCallRemoteAvatar.textContent =
+    currentPerson.avatar;
+
+  activeCallRemoteName.textContent =
+    currentPerson.name;
+
+
+  activeCallPanel.hidden =
+    false;
+
+
+  /*
+    用真正的原始接通时间继续计时，
+    不从 00:00 重新开始。
+  */
+
+  startCallDurationTimer(
+    session.startedAt
+  );
+
+
+  /*
+    跨页面期间摄像头和麦克风已经停掉，
+    回到通话页后重新打开。
+  */
+
+  restoreSavedCallDevices();
+
+}
+
+/* =========================
+   视频通话状态与计时
+   ========================= */
+
+let callStartedAt =
+  null;
+
+let callDurationTimer =
+  null;
+
+
+/*
+  当前这通电话是谁发起的。
+*/
+
+let currentCallDirection =
+  "incoming";
+
+
+/*
+  来电响铃最多等待 30 秒。
+*/
+
+const CALL_RING_TIMEOUT_SECONDS =
+  30;
+
+let incomingCallTimeoutTimer =
+  null;
+
+let outgoingCallAnswerTimer =
+  null;
+
+let outgoingCallTimeoutTimer =
+  null;
+
+
+function clearOutgoingCallTimers() {
+
+  if (
+    outgoingCallAnswerTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      outgoingCallAnswerTimer
+    );
+
+    outgoingCallAnswerTimer =
+      null;
+
+  }
+
+
+  if (
+    outgoingCallTimeoutTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      outgoingCallTimeoutTimer
+    );
+
+    outgoingCallTimeoutTimer =
+      null;
+
+  }
+
+}
+
+
+function clearIncomingCallTimeout() {
+
+  if (
+    incomingCallTimeoutTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      incomingCallTimeoutTimer
+    );
+
+
+    incomingCallTimeoutTimer =
+      null;
+
+  }
+
+}
+
+
+/* 把秒数显示成 00:00 / 01:25:08 */
+
+function formatCallDuration(
+  totalSeconds
+) {
+
+  const seconds =
+    Math.max(
+      0,
+      Math.floor(
+        totalSeconds
+      )
+    );
+
+
+  const hours =
+    Math.floor(
+      seconds / 3600
+    );
+
+
+  const minutes =
+    Math.floor(
+      (
+        seconds % 3600
+      ) / 60
+    );
+
+
+  const remainingSeconds =
+    seconds % 60;
+
+
+  if (
+    hours > 0
+  ) {
+
+    return (
+      `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(remainingSeconds)}`
+    );
+
+  }
+
+
+  return (
+    `${padNumber(minutes)}:${padNumber(remainingSeconds)}`
+  );
+
+}
+
+
+/* 刷新通话时长 */
+
+function updateCallDuration() {
+
+  if (!callStartedAt) {
+
+    return;
+
+  }
+
+
+  const elapsedSeconds =
+    Math.floor(
+      (
+        Date.now() -
+        callStartedAt
+      ) / 1000
+    );
+
+
+  const text =
+    formatCallDuration(
+      elapsedSeconds
+    );
+
+
+  activeCallDuration.textContent =
+    text;
+
+  callMiniDuration.textContent =
+    text;
+
+}
+
+
+/* 开始计时 */
+
+function startCallDurationTimer(
+  startedAt = null
+) {
+
+  if (
+    callDurationTimer !==
+    null
+  ) {
+
+    clearInterval(
+      callDurationTimer
+    );
+
+  }
+
+
+  callStartedAt =
+    startedAt !== null
+      ? Number(startedAt)
+      : Date.now();
+
+
+  updateCallDuration();
+
+
+  callDurationTimer =
+    setInterval(
+      updateCallDuration,
+      1000
+    );
+
+}
+
+
+/* 停止计时 */
+
+function stopCallDurationTimer() {
+
+  if (
+    callDurationTimer !==
+    null
+  ) {
+
+    clearInterval(
+      callDurationTimer
+    );
+
+
+    callDurationTimer =
+      null;
+
+  }
+
+}
+
+
+/* =========================
+   显示模拟来电
+   ========================= */
+
+/* =========================
+你主动拨打视频通话
+========================= */
+
+function startOutgoingCall() {
+
+  closeMorePanel();
+
+
+  /*
+    你主动开始拨号以后，
+    暂停对方主动来电的独立时钟。
+  */
+
+  clearActiveCallTimer();
+
+  localStorage.removeItem(
+    ACTIVE_CALL_STATE_KEY
+  );
+
+
+  clearIncomingCallTimeout();
+
+  clearOutgoingCallTimers();
+
+
+  currentCallDirection =
+    "outgoing";
+
+
+  outgoingCallAvatar.textContent =
+    currentPerson.avatar;
+
+  outgoingCallName.textContent =
+    currentPerson.name;
+
+  outgoingCallStatus.textContent =
+    "正在呼叫…";
+
+
+  outgoingCallPanel.hidden =
+    false;
+
+  incomingCallPanel.hidden =
+    true;
+
+  activeCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    true;
+
+
+  const answerProbability =
+    getCurrentTodayAnswerCallProbability();
+
+
+  const rejectProbability =
+    getCurrentTodayRejectCallProbability();
+
+
+  /*
+    先决定：
+    对方会不会接。
+  */
+
+  let shouldAnswer =
+    false;
+
+
+  if (
+    answerProbability !== null
+  ) {
+
+    shouldAnswer =
+      Math.random() * 100 <
+      answerProbability;
+
+  } else {
+
+    console.warn(
+      "没有读取到今日接听概率"
+    );
+
+  }
+
+
+  /*
+    只有“不接”的情况下，
+    才继续判断是否明确拒接。
+  */
+
+  let shouldReject =
+    false;
+
+
+  if (
+    !shouldAnswer &&
+    rejectProbability !== null
+  ) {
+
+    shouldReject =
+      Math.random() * 100 <
+      rejectProbability;
+
+  }
+
+
+  /*
+    如果会接听或会拒接，
+    都使用“接听时间”范围，
+    表示几秒后对这通电话作出反应。
+  */
+
+  if (
+    shouldAnswer ||
+    shouldReject
+  ) {
+
+    const answerRule =
+      getCurrentAnswerCallRule();
+
+
+    const responseDelaySeconds =
+      randomIntegerBetween(
+        answerRule
+          ?.delaySeconds
+          ?.min ??
+        3,
+
+        answerRule
+          ?.delaySeconds
+          ?.max ??
+        30
+      );
+
+
+    outgoingCallAnswerTimer =
+      setTimeout(
+        function () {
+
+          outgoingCallAnswerTimer =
+            null;
+
+
+          if (
+            outgoingCallPanel.hidden
+          ) {
+
+            return;
+
+          }
+
+
+          /*
+            会接听
+          */
+
+          if (shouldAnswer) {
+
+            clearOutgoingCallTimers();
+
+
+            outgoingCallPanel.hidden =
+              true;
+
+
+            activeCallRemoteAvatar.textContent =
+              currentPerson.avatar;
+
+            activeCallRemoteName.textContent =
+              currentPerson.name;
+
+
+            activeCallPanel.hidden =
+              false;
+
+            callMiniWindow.hidden =
+              true;
+
+
+            startCallDurationTimer();
+
+saveLiveCallSession();
+
+startDefaultCallDevices();
+
+
+            return;
+
+          }
+
+
+          /*
+            不接，但明确拒接
+          */
+
+          if (shouldReject) {
+
+            clearOutgoingCallTimers();
+
+
+            outgoingCallPanel.hidden =
+              true;
+
+
+            addCallMessage(
+              "视频通话 · 对方已拒绝",
+              new Date(),
+              "outgoing",
+              0,
+              "rejected",
+              true
+            );
+
+
+            scheduleNextActiveCallOpportunity();
+
+          }
+
+        },
+        responseDelaySeconds *
+        1000
+      );
+
+  }
+
+
+  /*
+    无论如何，
+    最长只等待 30 秒。
+
+    如果前面既没有接听，
+    也没有明确拒接，
+    30 秒后就是“对方无应答”。
+  */
+
+  outgoingCallTimeoutTimer =
+    setTimeout(
+      function () {
+
+        outgoingCallTimeoutTimer =
+          null;
+
+
+        if (
+          outgoingCallPanel.hidden
+        ) {
+
+          return;
+
+        }
+
+
+        clearOutgoingCallTimers();
+
+
+        outgoingCallPanel.hidden =
+          true;
+
+
+        addCallMessage(
+          "视频通话 · 对方无应答",
+          new Date(),
+          "outgoing",
+          0,
+          "unanswered",
+          true
+        );
+
+
+        scheduleNextActiveCallOpportunity();
+
+      },
+      30000
+    );
+
+}
+
+/* =========================
+   你取消正在拨出的电话
+   ========================= */
+
+function cancelOutgoingCall() {
+
+  clearOutgoingCallTimers();
+
+
+  outgoingCallPanel.hidden =
+    true;
+
+
+  addCallMessage(
+    "视频通话 · 已取消",
+    new Date(),
+    "outgoing",
+    0,
+    "cancelled",
+    true
+  );
+
+
+  scheduleNextActiveCallOpportunity();
+
+}
+
+function showIncomingCall() {
+
+  closeMorePanel();
+
+
+  currentCallDirection =
+    "incoming";
+
+
+  incomingCallAvatar.textContent =
+    currentPerson.avatar;
+
+  incomingCallName.textContent =
+    currentPerson.name;
+
+
+  incomingCallPanel.hidden =
+    false;
+
+  activeCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    true;
+
+
+  /*
+    先清掉上一通电话可能残留的计时。
+  */
+
+  clearIncomingCallTimeout();
+
+
+  /*
+    30 秒没有接听或拒绝，
+    自动判定为未接听。
+  */
+
+  incomingCallTimeoutTimer =
+    setTimeout(
+      function () {
+
+        incomingCallTimeoutTimer =
+          null;
+
+
+        /*
+          如果来电页面已经被关掉，
+          说明已经接听或拒绝，
+          不再处理。
+        */
+
+        if (
+          incomingCallPanel.hidden
+        ) {
+
+          return;
+
+        }
+
+
+        /*
+          30 秒到了：
+          自动关闭来电。
+        */
+
+        incomingCallPanel.hidden =
+          true;
+
+
+        /*
+          留下未接听记录。
+        */
+
+        addCallMessage(
+          "视频通话 · 未接听",
+          new Date(),
+          "incoming",
+          0,
+          "unanswered",
+          true
+        );
+
+
+        /*
+          这通电话已经结束，
+          电话独立等待重新开始。
+        */
+
+        scheduleNextActiveCallOpportunity();
+
+      },
+      30000
+    );
+
+}
+
+
+/* =========================
+   接听
+   ========================= */
+
+function answerCurrentCall() {
+
+  /*
+    已经接了，
+    取消 30 秒未接倒计时。
+  */
+
+  clearIncomingCallTimeout();
+
+
+  incomingCallPanel.hidden =
+    true;
+
+
+  activeCallRemoteAvatar.textContent =
+    currentPerson.avatar;
+
+  activeCallRemoteName.textContent =
+    currentPerson.name;
+
+
+  activeCallPanel.hidden =
+    false;
+
+  callMiniWindow.hidden =
+    true;
+
+
+  startCallDurationTimer();
+
+saveLiveCallSession();
+
+startDefaultCallDevices();
+
+}
+
+
+/* =========================
+   拒绝
+   ========================= */
+
+function rejectCurrentCall() {
+
+  /*
+    先取消 30 秒未接倒计时，
+    不然拒绝以后过 30 秒还会再来一条“未接听”。
+  */
+
+  clearIncomingCallTimeout();
+
+
+  /*
+    关闭来电界面。
+  */
+
+  incomingCallPanel.hidden =
+    true;
+
+
+  /*
+    在聊天里留下拒接记录。
+  */
+
+  addCallMessage(
+    "视频通话 · 已拒绝",
+    new Date(),
+    "incoming",
+    0,
+    "rejected",
+    true
+  );
+
+
+  /*
+    这通电话已经结束，
+    下一次主动来电重新开始独立等待。
+  */
+
+  scheduleNextActiveCallOpportunity();
+
+}
+
+
+/* =========================
+   最小化
+   ========================= */
+
+function minimizeCurrentCall() {
+
+  if (!callStartedAt) {
+
+    return;
+
+  }
+
+
+  /*
+    最小化以后停止真实摄像头取景。
+
+    注意：
+    这里不修改 localCameraEnabled，
+    所以它不是“手动关闭摄像头”。
+
+    摄像头按钮状态不会因此变成带斜杠。
+  */
+
+  stopLocalCallCamera();
+
+
+  /*
+    麦克风不停止。
+
+    所以只要还在当前 Chat 页面，
+    最小化以后麦克风仍然保持开启。
+  */
+
+
+  activeCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    false;
+
+
+  updateCallDuration();
+
+}
+
+
+/* =========================
+   从小窗恢复全屏
+   ========================= */
+
+function restoreCurrentCall() {
+
+  if (!callStartedAt) {
+
+    return;
+
+  }
+
+
+  callMiniWindow.hidden =
+    true;
+
+  activeCallPanel.hidden =
+    false;
+
+
+  updateCallDuration();
+
+
+  /*
+    如果最小化以前摄像头本来是开的，
+    恢复全屏时重新开始真实取景。
+
+    如果之前是你自己手动关掉的，
+    localCameraEnabled 会是 false，
+    这里不会擅自重新打开。
+  */
+
+  if (localCameraEnabled) {
+
+    startLocalCallCamera();
+
+  }
+
+}
+
+/* =========================
+   挂断
+   ========================= */
+
+function hangupCurrentCall() {
+
+  /*
+    清掉所有还可能残留的电话计时。
+  */
+
+  clearIncomingCallTimeout();
+
+  clearOutgoingCallTimers();
+
+
+  /*
+    如果此时还显示着“正在呼叫”，
+    一并关闭。
+  */
+
+  outgoingCallPanel.hidden =
+    true;
+
+
+  /*
+    挂断以后彻底停止摄像头。
+  */
+
+  stopLocalCallCamera();
+
+  stopLocalCallMicrophone();
+
+
+  /*
+    挂断前先算出真正通话了多久。
+  */
+
+  let durationSeconds =
+    0;
+
+
+  if (callStartedAt) {
+
+    durationSeconds =
+      Math.max(
+        0,
+        Math.floor(
+          (
+            Date.now() -
+            callStartedAt
+          ) / 1000
+        )
+      );
+
+  }
+
+
+  const durationText =
+    formatCallDuration(
+      durationSeconds
+    );
+
+
+  /*
+    关闭所有电话界面。
+  */
+
+  activeCallPanel.hidden =
+    true;
+
+  callMiniWindow.hidden =
+    true;
+
+  incomingCallPanel.hidden =
+    true;
+
+
+  stopCallDurationTimer();
+
+
+  /*
+    已经真正接通过，
+    才留下通话记录。
+  */
+
+  if (callStartedAt) {
+
+    addCallMessage(
+      `视频通话时长 ${durationText}`,
+      new Date(),
+      currentCallDirection,
+      durationSeconds,
+      "completed"
+    );
+
+  }
+
+clearLiveCallSession();
+
+clearCallDeviceState();
+
+callStartedAt =
+  null;
+
+
+  /*
+    通话结束以后，
+    电话自己的独立时钟重新开始。
+  */
+
+  scheduleNextActiveCallOpportunity();
+
+}
+
+
+/* =========================
+   电话按钮
+   ========================= */
+
+/*
+  点击“视频通话”，
+  向当前聊天对象主动发起视频通话。
+*/
+
+videoCallButton.addEventListener(
+  "pointerdown",
+  function (event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    startOutgoingCall();
+
+  },
+  true
+);
+
+cancelOutgoingCallButton.addEventListener(
+  "click",
+  function () {
+
+    cancelOutgoingCall();
+
+  }
+);
+
+answerCallButton.addEventListener(
+  "click",
+  function () {
+
+    answerCurrentCall();
+
+  }
+);
+
+
+rejectCallButton.addEventListener(
+  "click",
+  function () {
+
+    rejectCurrentCall();
+
+  }
+);
+
+
+minimizeCallButton.addEventListener(
+  "click",
+  function () {
+
+    minimizeCurrentCall();
+
+  }
+);
+
+
+/* =========================
+   通话小窗 · 拖动与自动吸边
+   ========================= */
+
+let miniCallDragging =
+  false;
+
+let miniCallMoved =
+  false;
+
+let miniCallStartX =
+  0;
+
+let miniCallStartY =
+  0;
+
+let miniCallStartLeft =
+  0;
+
+let miniCallStartTop =
+  0;
+
+
+/* 按住小窗 */
+
+callMiniWindow.addEventListener(
+  "pointerdown",
+  function (event) {
+
+    miniCallDragging =
+      true;
+
+    miniCallMoved =
+      false;
+
+
+    const rect =
+      callMiniWindow
+        .getBoundingClientRect();
+
+
+    miniCallStartX =
+      event.clientX;
+
+    miniCallStartY =
+      event.clientY;
+
+    miniCallStartLeft =
+      rect.left;
+
+    miniCallStartTop =
+      rect.top;
+
+
+    /*
+      从 right 定位切换成 left 定位，
+      方便后面拖动。
+    */
+
+    callMiniWindow.style.right =
+      "auto";
+
+    callMiniWindow.style.left =
+      `${rect.left}px`;
+
+    callMiniWindow.style.top =
+      `${rect.top}px`;
+
+
+    callMiniWindow.classList.add(
+      "dragging"
+    );
+
+
+    callMiniWindow
+      .setPointerCapture(
+        event.pointerId
+      );
+
+  }
+);
+
+
+/* 拖动过程中 */
+
+callMiniWindow.addEventListener(
+  "pointermove",
+  function (event) {
+
+    if (!miniCallDragging) {
+
+      return;
+
+    }
+
+
+    const moveX =
+      event.clientX -
+      miniCallStartX;
+
+    const moveY =
+      event.clientY -
+      miniCallStartY;
+
+
+    if (
+      Math.abs(moveX) > 5 ||
+      Math.abs(moveY) > 5
+    ) {
+
+      miniCallMoved =
+        true;
+
+    }
+
+
+    const rect =
+      callMiniWindow
+        .getBoundingClientRect();
+
+
+    const margin =
+      8;
+
+
+    const maxLeft =
+      window.innerWidth -
+      rect.width -
+      margin;
+
+    const maxTop =
+      window.innerHeight -
+      rect.height -
+      margin;
+
+
+    const nextLeft =
+      Math.min(
+        Math.max(
+          margin,
+          miniCallStartLeft +
+          moveX
+        ),
+        maxLeft
+      );
+
+
+    const nextTop =
+      Math.min(
+        Math.max(
+          margin,
+          miniCallStartTop +
+          moveY
+        ),
+        maxTop
+      );
+
+
+    callMiniWindow.style.left =
+      `${nextLeft}px`;
+
+    callMiniWindow.style.top =
+      `${nextTop}px`;
+
+  }
+);
+
+
+/* 松手 */
+
+callMiniWindow.addEventListener(
+  "pointerup",
+  function (event) {
+
+    if (!miniCallDragging) {
+
+      return;
+
+    }
+
+
+    miniCallDragging =
+      false;
+
+
+    callMiniWindow.classList.remove(
+      "dragging"
+    );
+
+
+    callMiniWindow
+      .releasePointerCapture(
+        event.pointerId
+      );
+
+
+    /*
+      没有真正拖动：
+      当作点击，恢复全屏。
+    */
+
+    if (!miniCallMoved) {
+
+      restoreCurrentCall();
+
+      return;
+
+    }
+
+
+    /*
+      真正拖动过：
+      判断离左边还是右边更近，
+      自动吸过去。
+    */
+
+    const rect =
+      callMiniWindow
+        .getBoundingClientRect();
+
+
+    const margin =
+      12;
+
+
+    const centerX =
+      rect.left +
+      rect.width / 2;
+
+
+    const snapLeft =
+      centerX <
+      window.innerWidth / 2;
+
+
+    const targetLeft =
+      snapLeft
+        ? margin
+        : (
+          window.innerWidth -
+          rect.width -
+          margin
+        );
+
+
+    callMiniWindow.style.left =
+      `${targetLeft}px`;
+
+  }
+);
+
+
+callMiniWindow.addEventListener(
+  "pointercancel",
+  function () {
+
+    miniCallDragging =
+      false;
+
+    miniCallMoved =
+      false;
+
+
+    callMiniWindow.classList.remove(
+      "dragging"
+    );
+
+  }
+);
+
+callCameraButton.addEventListener(
+  "click",
+  function () {
+
+    toggleLocalCallCamera();
+
+  }
+);
+
+
+switchCameraButton.addEventListener(
+  "click",
+  function () {
+
+    switchLocalCallCamera();
+
+  }
+);
+
+callMicButton.addEventListener(
+  "click",
+  function () {
+
+    toggleLocalCallMicrophone();
+
+  }
+);
+
+
+callSpeakerButton.addEventListener(
+  "click",
+  function () {
+
+    toggleCallSpeaker();
+
+  }
+);
+
+hangupCallButton.addEventListener(
+  "click",
+  function () {
+
+    hangupCurrentCall();
+
+  }
+);
 
 /* =========================
    更多功能面板
@@ -2218,9 +5147,9 @@ function formatDividerTime(date) {
   const sameDay =
     sameYear &&
     date.getMonth() ===
-      now.getMonth() &&
+    now.getMonth() &&
     date.getDate() ===
-      now.getDate();
+    now.getDate();
 
 
   const hours =
@@ -2382,7 +5311,7 @@ function addOutgoingMessage(
       ".message-bubble"
     )
     .textContent =
-      text;
+    text;
 
 
   chatMessages.appendChild(
@@ -2396,21 +5325,21 @@ function addOutgoingMessage(
 
   if (shouldSave) {
 
-  saveMessage(
-    "outgoing",
-    text,
-    date
-  );
+    saveMessage(
+      "outgoing",
+      text,
+      date
+    );
 
 
-  /*
-    你主动发了消息，
-    说明此刻正在聊天。
-  */
+    /*
+      你主动发了消息，
+      说明此刻正在聊天。
+    */
 
-  resetActiveMessageWait();
+    resetActiveMessageWait();
 
-}
+  }
 
 
   scrollToBottom();
@@ -2474,7 +5403,7 @@ function addIncomingMessage(
       ".message-bubble"
     )
     .textContent =
-      text;
+    text;
 
 
   chatMessages.appendChild(
@@ -2493,6 +5422,175 @@ function addIncomingMessage(
       text,
       date
     );
+
+  }
+
+
+  scrollToBottom();
+
+}
+
+/* =========================
+   视频通话记录消息
+   ========================= */
+
+function addCallMessage(
+  text,
+  date,
+  direction = "incoming",
+  durationSeconds = 0,
+  status = "completed",
+  shouldSave = true
+) {
+
+  if (
+    shouldShowTimeDivider(
+      date
+    )
+  ) {
+
+    addTimeDivider(
+      date
+    );
+
+  }
+
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+
+  row.className =
+    `message-row ${direction}`;
+
+
+  const content =
+    document.createElement(
+      "div"
+    );
+
+
+  content.className =
+    "message-content";
+
+
+  const bubble =
+    document.createElement(
+      "div"
+    );
+
+
+  bubble.className =
+    "message-bubble";
+
+  bubble.textContent =
+    `▣ ${text}`;
+
+
+  const time =
+    document.createElement(
+      "div"
+    );
+
+
+  time.className =
+    "message-time";
+
+  time.textContent =
+    formatMessageTime(
+      date
+    );
+
+
+  content.appendChild(
+    bubble
+  );
+
+  content.appendChild(
+    time
+  );
+
+
+  const avatar =
+    document.createElement(
+      "div"
+    );
+
+
+  avatar.className =
+    "message-avatar";
+
+  avatar.textContent =
+    direction === "incoming"
+      ? currentPerson.avatar
+      : "K";
+
+
+  if (
+    direction === "incoming"
+  ) {
+
+    row.appendChild(
+      avatar
+    );
+
+    row.appendChild(
+      content
+    );
+
+  } else {
+
+    row.appendChild(
+      content
+    );
+
+    row.appendChild(
+      avatar
+    );
+
+  }
+
+
+  chatMessages.appendChild(
+    row
+  );
+
+
+  lastMessageTime =
+    date;
+
+
+  if (shouldSave) {
+
+    chatHistory.push({
+
+      type:
+        "call",
+
+      direction:
+        direction,
+
+      callType:
+        "video",
+
+      status:
+        status,
+
+      durationSeconds:
+        durationSeconds,
+
+      text:
+        text,
+
+      time:
+        date.toISOString()
+
+    });
+
+
+    saveChatHistory();
 
   }
 
@@ -2591,7 +5689,7 @@ function addPokeMessage(
 
     if (
       direction ===
-        "outgoing"
+      "outgoing"
     ) {
 
       resetActiveMessageWait();
@@ -2817,9 +5915,9 @@ function createGiftCard(
       ".gift-card-status"
     )
     .textContent =
-      getOrderStatusText(
-        gift.orderId
-      );
+    getOrderStatusText(
+      gift.orderId
+    );
 
 
   const relation =
@@ -2839,8 +5937,8 @@ function createGiftCard(
       ".gift-product-image span"
     )
     .textContent =
-      gift.productCategory ||
-      "GIFT";
+    gift.productCategory ||
+    "GIFT";
 
 
   card
@@ -2848,8 +5946,8 @@ function createGiftCard(
       ".gift-product-name"
     )
     .textContent =
-      gift.productName ||
-      "礼物";
+    gift.productName ||
+    "礼物";
 
 
   card
@@ -2857,9 +5955,9 @@ function createGiftCard(
       ".gift-product-options"
     )
     .textContent =
-      createGiftOptionText(
-        gift
-      );
+    createGiftOptionText(
+      gift
+    );
 
 
   card
@@ -2867,9 +5965,9 @@ function createGiftCard(
       ".gift-product-price"
     )
     .textContent =
-      formatMoney(
-        gift.total || 0
-      );
+    formatMoney(
+      gift.total || 0
+    );
 
 
   const messageElement =
@@ -3245,12 +6343,12 @@ function createTestContinue() {
       continueRule
         ?.messageCount
         ?.min ??
-        1,
+      1,
 
       continueRule
         ?.messageCount
         ?.max ??
-        4
+      4
     );
 
 
@@ -3281,7 +6379,7 @@ function createTestContinue() {
 
     const reply =
       testReplyCards[
-        randomIndex
+      randomIndex
       ];
 
 
@@ -3296,21 +6394,21 @@ function createTestContinue() {
     */
 
     if (
-  index >=
-  messageCount - 1
-) {
+      index >=
+      messageCount - 1
+    ) {
 
-  /*
-    继续说这一轮结束后，
-    判定是否触发拍一拍 / 动作浮窗
-  */
+      /*
+        继续说这一轮结束后，
+        判定是否触发拍一拍 / 动作浮窗
+      */
 
-  triggerPokeAfterRound();
+      triggerPokeAfterRound();
 
 
-  return;
+      return;
 
-}
+    }
 
     /*
       下一条重新随机消息间隔
@@ -3480,12 +6578,12 @@ function createTestReply() {
       replyRule
         ?.delaySeconds
         ?.min ??
-        5,
+      5,
 
       replyRule
         ?.delaySeconds
         ?.max ??
-        60
+      60
     );
 
 
@@ -3494,12 +6592,12 @@ function createTestReply() {
       replyRule
         ?.messageCount
         ?.min ??
-        1,
+      1,
 
       replyRule
         ?.messageCount
         ?.max ??
-        3
+      3
     );
 
 
@@ -3533,7 +6631,7 @@ function createTestReply() {
 
     const reply =
       testReplyCards[
-        randomIndex
+      randomIndex
       ];
 
 
@@ -3548,24 +6646,24 @@ function createTestReply() {
     */
 
     if (
-  index >=
-  messageCount - 1
-) {
+      index >=
+      messageCount - 1
+    ) {
 
-  hideTypingStatus();
-
-
-  /*
-    普通回复这一轮结束后，
-    判定是否触发拍一拍 / 动作浮窗
-  */
-
-  triggerPokeAfterRound();
+      hideTypingStatus();
 
 
-  return;
+      /*
+        普通回复这一轮结束后，
+        判定是否触发拍一拍 / 动作浮窗
+      */
 
-}
+      triggerPokeAfterRound();
+
+
+      return;
+
+    }
 
 
     /*
@@ -3632,26 +6730,52 @@ function loadChatHistory() {
           message.time
         );
 
-    /*
-      拍一拍 / 动作浮窗
-    */
+      /*
+视频通话记录
+*/
 
-    if (
-      message.type ===
+      if (
+        message.type ===
+        "call"
+      ) {
+
+        addCallMessage(
+          message.text ||
+          "视频通话",
+          date,
+          message.direction ||
+          "incoming",
+          message.durationSeconds ||
+          0,
+          message.status ||
+          "completed",
+          false
+        );
+
+        return;
+
+      }
+
+      /*
+        拍一拍 / 动作浮窗
+      */
+
+      if (
+        message.type ===
         "poke"
-    ) {
+      ) {
 
-      addPokeMessage(
-  message.text || "",
-  date,
-  message.direction ||
-    "incoming",
-  false
-);
+        addPokeMessage(
+          message.text || "",
+          date,
+          message.direction ||
+          "incoming",
+          false
+        );
 
-      return;
+        return;
 
-    }
+      }
 
       /*
         新增的礼物卡消息
@@ -3753,6 +6877,16 @@ loadChatHistory();
 
 startActiveMessageTimer();
 
+restoreLiveCallSession();
+
+resumeGlobalAnsweredCall();
+
+
+if (!callStartedAt) {
+
+  startActiveCallTimer();
+
+}
 
 /* =========================
    每次进入聊天都停在最新消息
