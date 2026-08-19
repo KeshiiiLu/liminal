@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#f4f3f0"
+    >
+
+    <title>拍一拍 · Liminal</title>
+
+    <link
+        rel="stylesheet"
+        href="poke.css"
+    >
+</head>
+
+<body>
+
+    <main class="poke-shell">
+
+
+        <!-- =========================
+             顶部
+             ========================= -->
+
+        <header class="poke-header">
+
+            <a
+                class="poke-back"
+                href="library.html"
+                aria-label="返回语料库"
+            >
+                ‹
+            </a>
+
+
+            <div class="poke-title">
+
+                <span>
+                    POKE ACTIONS
+                </span>
+
+                <h1>
+                    拍一拍
+                </h1>
+
+            </div>
+
+
+            <div
+                class="poke-mode"
+                aria-label="只读浏览"
+            >
+                阅
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             人物切换
+             ========================= -->
+
+        <nav
+            class="person-tabs"
+            id="personTabs"
+            aria-label="人物"
+        ></nav>
+
+
+        <!-- =========================
+             总览
+             ========================= -->
+
+        <section class="poke-summary">
+
+            <div class="summary-copy">
+
+                <span>
+                    PERSON ACTIONS
+                </span>
+
+                <strong id="summaryName">
+                    榛榛
+                </strong>
+
+                <p id="summaryMeta">
+                    0 个分类 · 0 个动作
+                </p>
+
+            </div>
+
+
+            <div class="summary-count">
+
+                <span id="summaryCount">
+                    0
+                </span>
+
+                <small>
+                    ACTIONS
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             搜索
+             ========================= -->
+
+        <div class="poke-search">
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+            <input
+                id="pokeSearch"
+                type="search"
+                autocomplete="off"
+                placeholder="搜索当前人物的拍一拍动作"
+            >
+
+            <button
+                id="searchClear"
+                type="button"
+                hidden
+                aria-label="清除搜索"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             列表标题
+             ========================= -->
+
+        <div class="list-heading">
+
+            <div>
+
+                <span id="listEyebrow">
+                    CATEGORIES
+                </span>
+
+                <strong id="listTitle">
+                    分类
+                </strong>
+
+            </div>
+
+
+            <small id="listCount">
+                0 项
+            </small>
+
+        </div>
+
+
+        <!-- =========================
+             分类 / 搜索结果
+             ========================= -->
+
+        <section
+            class="poke-list"
+            id="pokeList"
+        ></section>
+
+
+        <section
+            class="poke-empty"
+            id="pokeEmpty"
+            hidden
+        >
+
+            <span>
+                NO RESULT
+            </span>
+
+            <p id="emptyText">
+                暂无内容
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             说明
+             ========================= -->
+
+        <section class="poke-note">
+
+            <span>
+                ACTION ONLY
+            </span>
+
+            <p>
+                拍一拍只保存动作反应，不保存对白或完整说话语句。
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         分类详情
+         ========================= -->
+
+    <div
+        class="poke-backdrop"
+        id="pokeBackdrop"
+        hidden
+    ></div>
+
+
+    <section
+        class="poke-sheet"
+        id="pokeSheet"
+        aria-hidden="true"
+    >
+
+        <div class="sheet-handle"></div>
+
+
+        <div class="sheet-header">
+
+            <div>
+
+                <span id="sheetPath">
+                    榛榛 / 01
+                </span>
+
+                <h2 id="sheetTitle">
+                    回应你
+                </h2>
+
+            </div>
+
+
+            <button
+                class="sheet-close"
+                id="sheetClose"
+                type="button"
+                aria-label="关闭"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="sheet-meta">
+
+            <span id="sheetCount">
+                0 个动作
+            </span>
+
+            <i></i>
+
+            <span>
+                READ ONLY
+            </span>
+
+        </div>
+
+
+        <div
+            class="sheet-actions"
+            id="sheetActions"
+        ></div>
+
+
+        <div class="sheet-readonly">
+
+            <span>
+                STATIC DATA
+            </span>
+
+            <p>
+                拍一拍动作由电脑端数据文件维护
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <script src="opencc-full.js"></script>
+    <script src="poke-data.js"></script>
+    <script src="poke.js"></script>
+
+</body>
+
+</html>

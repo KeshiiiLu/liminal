@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#f4f3f0"
+    >
+
+    <title>语料库 · Liminal</title>
+
+    <link
+        rel="stylesheet"
+        href="library.css"
+    >
+</head>
+
+<body>
+
+    <main class="library-shell">
+
+
+        <!-- =========================
+             顶部
+             ========================= -->
+
+        <header class="library-header">
+
+            <a
+    class="library-back"
+    href="index.html?page=3"
+    aria-label="返回 Home"
+>
+    ‹
+</a>
+
+
+            <div class="library-title">
+
+                <span>
+                    CORPUS LIBRARY
+                </span>
+
+                <h1>
+                    语料库
+                </h1>
+
+            </div>
+
+
+            <div class="library-mark">
+                卡
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             简介
+             ========================= -->
+
+        <section class="library-intro">
+
+            <span class="intro-eyebrow">
+                LIMINAL DATA
+            </span>
+
+            <p>
+                查看 Liminal 中用于随机、聊天与互动的全部语料。
+            </p>
+
+            <div class="intro-meta">
+
+                <span>
+                    LOCAL FIRST
+                </span>
+
+                <i></i>
+
+                <span>
+                    PERSON AWARE
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             基础语料
+             ========================= -->
+
+        <section class="library-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span>BASE CORPUS</span>
+                    <strong>基础语料</strong>
+                </div>
+
+                <small>
+                    共享
+                </small>
+
+            </div>
+
+
+            <button
+                class="corpus-card corpus-card-main"
+                type="button"
+                data-corpus="cards"
+            >
+
+                <div class="corpus-card-top">
+
+                    <div class="corpus-icon card-icon">
+                        卡
+                    </div>
+
+
+                    <div class="corpus-arrow">
+                        ›
+                    </div>
+
+                </div>
+
+
+                <div class="corpus-card-copy">
+
+                    <span>
+                        ELECTRONIC CARDS
+                    </span>
+
+                    <h2>
+                        电子字卡
+                    </h2>
+
+                    <p>
+                        共享分类树 · 01 层级随机入口
+                    </p>
+
+                </div>
+
+
+                <div class="corpus-card-footer">
+
+                    <div class="corpus-tags">
+                        <span>日常</span>
+                        <span>亲密</span>
+                        <span>情欲</span>
+                    </div>
+
+
+                    <div class="corpus-total corpus-total-large">
+
+                        <strong id="cardsTotal">
+                            —
+                        </strong>
+
+                        <span>
+                            字卡
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </button>
+
+        </section>
+
+
+        <!-- =========================
+             人物语料
+             ========================= -->
+
+        <section class="library-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span>PERSON CORPUS</span>
+                    <strong>人物语料</strong>
+                </div>
+
+                <small>
+                    按人物独立
+                </small>
+
+            </div>
+
+
+            <div class="person-corpus-list">
+
+
+                <!-- =========================
+                     快捷用语
+                     ========================= -->
+
+                <button
+                    class="corpus-row"
+                    type="button"
+                    data-corpus="phrases"
+                >
+
+                    <div class="corpus-icon phrase-icon">
+                        句
+                    </div>
+
+
+                    <div class="corpus-row-copy">
+
+                        <div class="row-title">
+
+                            <strong>
+                                快捷用语
+                            </strong>
+
+                            <span>
+                                PHRASES
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            完整人物语句 · 独立随机入口
+                        </p>
+
+
+                        <div class="row-meta">
+                            榛榛 · Jasper
+                        </div>
+
+                    </div>
+
+
+                    <div class="person-corpus-end">
+
+                        <span class="person-corpus-count">
+
+                            <strong id="phrasesTotal">
+                                —
+                            </strong>
+
+                            <span>
+                                句
+                            </span>
+
+                        </span>
+
+
+                        <div class="corpus-arrow">
+                            ›
+                        </div>
+
+                    </div>
+
+                </button>
+
+
+                <!-- =========================
+                     暗号
+                     ========================= -->
+
+                <button
+                    class="corpus-row"
+                    type="button"
+                    data-corpus="codes"
+                >
+
+                    <div class="corpus-icon code-icon">
+                        号
+                    </div>
+
+
+                    <div class="corpus-row-copy">
+
+                        <div class="row-title">
+
+                            <strong>
+                                暗号
+                            </strong>
+
+                            <span>
+                                CODES
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            约定信号 · 独立随机入口
+                        </p>
+
+
+                        <div class="row-meta">
+
+                            <span class="off-dot"></span>
+
+                            默认关闭
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="person-corpus-end">
+
+                        <span class="person-corpus-count">
+
+                            <strong id="codesTotal">
+                                —
+                            </strong>
+
+                            <span>
+                                条
+                            </span>
+
+                        </span>
+
+
+                        <div class="corpus-arrow">
+                            ›
+                        </div>
+
+                    </div>
+
+                </button>
+
+
+                <!-- =========================
+                     拍一拍
+                     ========================= -->
+
+                <button
+                    class="corpus-row"
+                    type="button"
+                    data-corpus="poke"
+                >
+
+                    <div class="corpus-icon poke-icon">
+                        拍
+                    </div>
+
+
+                    <div class="corpus-row-copy">
+
+                        <div class="row-title">
+
+                            <strong>
+                                拍一拍
+                            </strong>
+
+                            <span>
+                                POKE
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            纯动作反应 · 按人物管理
+                        </p>
+
+
+                        <div class="row-meta">
+                            榛榛 · Jasper
+                        </div>
+
+                    </div>
+
+
+                    <div class="person-corpus-end">
+
+                        <span class="person-corpus-count">
+
+                            <strong id="pokeTotal">
+                                —
+                            </strong>
+
+                            <span>
+                                动作
+                            </span>
+
+                        </span>
+
+
+                        <div class="corpus-arrow">
+                            ›
+                        </div>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             底部说明
+             ========================= -->
+
+        <section class="library-note">
+
+            <div class="note-line">
+
+                <span>
+                    RANDOM
+                </span>
+
+                <p>
+                    分类负责组织；实际概率遵循各语料自己的随机规则。
+                </p>
+
+            </div>
+
+
+            <div class="note-line">
+
+                <span>
+                    STORAGE
+                </span>
+
+                <p>
+                    固定语料由电脑端维护；手机端用于浏览与运行。
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================
+         数据
+         ========================= -->
+
+    <script src="phrases-data.js"></script>
+    <script src="codes-data.js"></script>
+    <script src="poke-data.js"></script>
+
+
+    <!-- =========================
+         页面逻辑
+         ========================= -->
+
+    <script src="library.js"></script>
+
+</body>
+
+</html>
