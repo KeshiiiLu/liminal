@@ -4,22 +4,13 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="theme-color"
-        content="#f4f3f0"
-    >
+    <meta name="theme-color" content="#f4f3f0">
 
     <title>电子字卡 · Liminal</title>
 
-    <link
-        rel="stylesheet"
-        href="cards.css"
-    >
+    <link rel="stylesheet" href="cards.css">
 </head>
 
 <body>
@@ -33,11 +24,7 @@
 
         <header class="cards-header">
 
-            <a
-                class="cards-back"
-                href="library.html"
-                aria-label="返回语料库"
-            >
+            <a class="cards-back" href="library.html" aria-label="返回语料库">
                 ‹
             </a>
 
@@ -55,10 +42,7 @@
             </div>
 
 
-            <div
-                class="cards-mode"
-                aria-label="只读浏览"
-            >
+            <div class="cards-mode" aria-label="只读浏览">
                 阅
             </div>
 
@@ -83,15 +67,15 @@
 
                 <div class="summary-text-stats">
 
-    <p id="summaryText">
-        38个层级
-    </p>
+                    <p id="summaryText">
+                        38个层级
+                    </p>
 
-    <p id="summaryCardText">
-        —枚字卡
-    </p>
+                    <p id="summaryCardText">
+                        —枚字卡
+                    </p>
 
-</div>
+                </div>
 
             </div>
 
@@ -138,34 +122,19 @@
              分区切换
              ========================= -->
 
-        <nav
-            class="section-tabs"
-            aria-label="字卡分区"
-        >
+        <nav class="section-tabs" aria-label="字卡分区">
 
-            <button
-                class="section-tab active"
-                type="button"
-                data-section="normal"
-            >
+            <button class="section-tab active" type="button" data-section="normal">
                 日常
             </button>
 
 
-            <button
-                class="section-tab"
-                type="button"
-                data-section="intimate"
-            >
+            <button class="section-tab" type="button" data-section="intimate">
                 亲密
             </button>
 
 
-            <button
-                class="section-tab"
-                type="button"
-                data-section="adult"
-            >
+            <button class="section-tab" type="button" data-section="adult">
                 情欲
             </button>
 
@@ -183,20 +152,10 @@
             </span>
 
 
-            <input
-                id="cardsSearch"
-                type="search"
-                autocomplete="off"
-                placeholder="搜索 01 层级"
-            >
+            <input id="cardsSearch" type="search" autocomplete="off" placeholder="搜索 01 层级">
 
 
-            <button
-                id="searchClear"
-                type="button"
-                hidden
-                aria-label="清除搜索"
-            >
+            <button id="searchClear" type="button" hidden aria-label="清除搜索">
                 ×
             </button>
 
@@ -233,21 +192,14 @@
              01 列表
              ========================= -->
 
-        <section
-            class="cards-list"
-            id="cardsList"
-        ></section>
+        <section class="cards-list" id="cardsList"></section>
 
 
         <!-- =========================
              空状态
              ========================= -->
 
-        <section
-            class="cards-empty"
-            id="cardsEmpty"
-            hidden
-        >
+        <section class="cards-empty" id="cardsEmpty" hidden>
 
             <span>
                 NO RESULT
@@ -267,18 +219,10 @@
          01 详情 Sheet
          ========================= -->
 
-    <div
-        class="detail-backdrop"
-        id="detailBackdrop"
-        hidden
-    ></div>
+    <div class="detail-backdrop" id="detailBackdrop" hidden></div>
 
 
-    <section
-        class="detail-sheet"
-        id="detailSheet"
-        aria-hidden="true"
-    >
+    <section class="detail-sheet" id="detailSheet" aria-hidden="true">
 
         <div class="detail-handle"></div>
 
@@ -298,12 +242,7 @@
             </div>
 
 
-            <button
-                class="detail-close"
-                id="detailClose"
-                type="button"
-                aria-label="关闭"
-            >
+            <button class="detail-close" id="detailClose" type="button" aria-label="关闭">
                 ×
             </button>
 
@@ -325,10 +264,7 @@
         </div>
 
 
-        <div
-            class="tree-preview"
-            id="treePreview"
-        ></div>
+        <div class="tree-preview" id="treePreview"></div>
 
 
         <div class="detail-readonly">
@@ -356,6 +292,8 @@
     <!-- =========================
          页面逻辑
          ========================= -->
+
+    <script src="cards-data.js"></script>
 
     <script src="cards.js"></script>
 

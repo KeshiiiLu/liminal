@@ -7,7 +7,255 @@
   <title>聊天 · Liminal</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="chat-corpus.css">
+
 </head>
+
+<!-- =========================
+     语料池键盘
+     ========================= -->
+
+<div class="corpus-keyboard-panel" id="corpusKeyboardPanel" hidden>
+
+  <section class="corpus-keyboard-sheet">
+
+    <header class="corpus-keyboard-header">
+
+      <div>
+
+        <span>
+          CORPUS POOL
+        </span>
+
+        <strong>
+          语料池
+        </strong>
+
+        <small id="corpusKeyboardPerson">
+          榛榛
+        </small>
+
+      </div>
+
+
+      <button class="corpus-keyboard-close" id="corpusKeyboardClose" type="button" aria-label="关闭">
+        ×
+      </button>
+
+    </header>
+
+
+    <div class="corpus-keyboard-summary">
+
+      <span id="corpusOpenSummary">
+        已开放 0 个 01
+      </span>
+
+      <span id="corpusExtraSummary">
+        快捷用语 ON · 暗号 OFF
+      </span>
+
+    </div>
+
+
+    <div class="corpus-keyboard-pages" id="corpusKeyboardPages">
+
+
+      <!-- P1 · 预设 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="presets">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            PRESETS
+          </span>
+
+          <strong>
+            预设
+          </strong>
+
+          <p>
+            预设只控制电子字卡 01；快捷用语与暗号保持独立。
+          </p>
+
+        </div>
+
+
+       <div
+  class="corpus-preset-list"
+  id="corpusPresetList"
+></div>
+
+<div class="corpus-fixed-heading">
+
+  <span>
+    MY PRESETS
+  </span>
+
+  <small>
+    电脑端定义
+  </small>
+
+</div>
+
+
+<div
+  class="corpus-preset-list"
+  id="corpusFixedPresetList"
+></div>
+
+
+      </section>
+
+
+      <!-- P2 · 日常 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="normal">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            DAILY
+          </span>
+
+          <strong>
+            日常
+          </strong>
+
+          <p>
+            选择本轮允许进入随机池的日常 01。
+          </p>
+
+        </div>
+
+
+        <div class="corpus-toggle-list" id="corpusNormalList"></div>
+
+      </section>
+
+
+      <!-- P3 · 亲密 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="intimate">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            INTIMATE
+          </span>
+
+          <strong>
+            亲密
+          </strong>
+
+          <p>
+            选择本轮允许进入随机池的亲密 01。
+          </p>
+
+        </div>
+
+
+        <div class="corpus-toggle-list" id="corpusIntimateList"></div>
+
+      </section>
+
+
+      <!-- P4 · 情欲 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="adult">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            DESIRE
+          </span>
+
+          <strong>
+            情欲
+          </strong>
+
+          <p>
+            选择本轮允许进入随机池的情欲 01。
+          </p>
+
+        </div>
+
+
+        <div class="corpus-toggle-list" id="corpusAdultList"></div>
+
+      </section>
+
+
+      <!-- P5 · 快捷用语 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="phrases">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            PHRASES
+          </span>
+
+          <strong>
+            快捷用语
+          </strong>
+
+          <p>
+            人物专属完整句。开启后作为一个独立随机入口参与。
+          </p>
+
+        </div>
+
+
+        <div class="corpus-extra-list" id="corpusPhraseControl"></div>
+
+      </section>
+
+
+      <!-- P6 · 暗号 -->
+
+      <section class="corpus-keyboard-page" data-corpus-page="codes">
+
+        <div class="corpus-page-heading">
+
+          <span>
+            CODES
+          </span>
+
+          <strong>
+            暗号
+          </strong>
+
+          <p>
+            人物专属约定信号。独立控制，不包含在“全部开放”中。
+          </p>
+
+        </div>
+
+
+        <div class="corpus-extra-list" id="corpusCodeControl"></div>
+
+      </section>
+
+
+    </div>
+
+
+    <footer class="corpus-keyboard-footer">
+
+      <div class="corpus-page-dots" id="corpusPageDots"></div>
+
+      <span id="corpusPageLabel">
+        1 / 6 · 预设
+      </span>
+
+    </footer>
+
+  </section>
+
+</div>
 
 <body class="chat-page">
 
@@ -22,13 +270,10 @@
       <span id="chatPersonStatus">在线</span>
     </div>
 
-    <button
-  class="chat-settings"
-  type="button"
-  onclick="window.location.href='chat-settings.html' + window.location.search"
->
-  ···
-</button>
+    <button class="chat-settings" type="button"
+      onclick="window.location.href='chat-settings.html' + window.location.search">
+      ···
+    </button>
 
   </header>
 
@@ -85,28 +330,20 @@
             <small>相片</small>
           </button>
 
-          <button class="more-item">
+          <button class="more-item" id="corpusPoolButton" type="button">
             <span class="more-icon">卡</span>
             <small>语料池</small>
           </button>
 
-          <button
-  class="more-item"
-  id="continueSayButton"
-  type="button"
->
-  <span class="more-icon">↻</span>
-  <small>继续说</small>
-</button>
+          <button class="more-item" id="continueSayButton" type="button">
+            <span class="more-icon">↻</span>
+            <small>继续说</small>
+          </button>
 
-          <button
-  class="more-item"
-  id="videoCallButton"
-  type="button"
->
-  <span class="more-icon">▣</span>
-  <small>视频通话</small>
-</button>
+          <button class="more-item" id="videoCallButton" type="button">
+            <span class="more-icon">▣</span>
+            <small>视频通话</small>
+          </button>
 
           <button class="more-item">
             <span class="more-icon">⌖</span>
@@ -133,22 +370,18 @@
 
         <section class="more-page">
 
-  <button
-    class="more-item"
-    id="pokeButton"
-    type="button"
-  >
-    <span class="more-icon">☞</span>
-    <small>拍一拍</small>
-  </button>
+          <button class="more-item" id="pokeButton" type="button">
+            <span class="more-icon">☞</span>
+            <small>拍一拍</small>
+          </button>
 
 
-  <button class="more-item">
-    <span class="more-icon">￥</span>
-    <small>转账</small>
-  </button>
+          <button class="more-item">
+            <span class="more-icon">￥</span>
+            <small>转账</small>
+          </button>
 
-</section>
+        </section>
 
       </div>
 
@@ -162,13 +395,55 @@
 
   </footer>
 
-    <!-- 拍一拍 / 动作浮窗面板 -->
+  <!-- =========================
+     临时状态提示
+     ========================= -->
 
-  <div
-    class="poke-action-panel"
-    id="pokeActionPanel"
-    hidden
+<div
+  class="chat-transient-notice"
+  id="chatTransientNotice"
+  hidden
+>
+  当前没有可抽取语料
+</div>
+
+  <!-- =========================
+     新消息提示
+     ========================= -->
+
+<button
+  class="new-message-notice"
+  id="newMessageNotice"
+  type="button"
+  hidden
+>
+
+  <svg
+    class="new-message-notice-icon"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
   >
+
+    <path
+      d="M5 6.5 L12 13.5 L19 6.5"
+    ></path>
+
+    <path
+      d="M5 11 L12 18 L19 11"
+    ></path>
+
+  </svg>
+
+
+  <span id="newMessageNoticeText">
+    1 则新讯息
+  </span>
+
+</button>
+
+  <!-- 拍一拍 / 动作浮窗面板 -->
+
+  <div class="poke-action-panel" id="pokeActionPanel" hidden>
 
     <div class="poke-action-sheet">
 
@@ -178,12 +453,7 @@
           拍一拍
         </strong>
 
-        <button
-          class="poke-action-close"
-          id="pokeActionClose"
-          type="button"
-          aria-label="关闭"
-        >
+        <button class="poke-action-close" id="pokeActionClose" type="button" aria-label="关闭">
           ×
         </button>
 
@@ -192,53 +462,30 @@
 
       <div class="poke-action-quick">
 
-        <button
-  class="poke-quick-item"
-  type="button"
-  data-action="摸了摸{target}的头"
->
-  摸摸头
-</button>
+        <button class="poke-quick-item" type="button" data-action="摸了摸{target}的头">
+          摸摸头
+        </button>
 
-<button
-  class="poke-quick-item"
-  type="button"
-  data-action="戳了戳{target}的脸"
->
-  戳戳脸
-</button>
+        <button class="poke-quick-item" type="button" data-action="戳了戳{target}的脸">
+          戳戳脸
+        </button>
 
-<button
-  class="poke-quick-item"
-  type="button"
-  data-action="抱了抱{target}"
->
-  抱一下
-</button>
+        <button class="poke-quick-item" type="button" data-action="抱了抱{target}">
+          抱一下
+        </button>
 
-<button
-  class="poke-quick-item"
-  type="button"
-  data-action="亲了亲{target}"
->
-  亲一下
-</button>
+        <button class="poke-quick-item" type="button" data-action="亲了亲{target}">
+          亲一下
+        </button>
 
       </div>
 
 
       <div class="poke-action-custom">
 
-        <input
-          id="pokeCustomInput"
-          type="text"
-          placeholder="自定义动作…"
-        >
+        <input id="pokeCustomInput" type="text" placeholder="自定义动作…">
 
-        <button
-          id="pokeCustomSend"
-          type="button"
-        >
+        <button id="pokeCustomSend" type="button">
           发送
         </button>
 
@@ -252,281 +499,204 @@
      主动拨打 · 正在呼叫
      ========================= -->
 
-<div
-  class="outgoing-call-panel"
-  id="outgoingCallPanel"
-  hidden
->
+  <div class="outgoing-call-panel" id="outgoingCallPanel" hidden>
 
-  <div class="outgoing-call-content">
+    <div class="outgoing-call-content">
 
-    <div
-      class="outgoing-call-avatar"
-      id="outgoingCallAvatar"
-    >
-      L
+      <div class="outgoing-call-avatar" id="outgoingCallAvatar">
+        L
+      </div>
+
+
+      <strong class="outgoing-call-name" id="outgoingCallName">
+        榛榛
+      </strong>
+
+
+      <span class="outgoing-call-status" id="outgoingCallStatus">
+        正在呼叫…
+      </span>
+
+
+      <button class="outgoing-call-cancel" id="cancelOutgoingCallButton" type="button">
+        <span>☎</span>
+        <small>取消</small>
+      </button>
+
     </div>
 
-
-    <strong
-      class="outgoing-call-name"
-      id="outgoingCallName"
-    >
-      榛榛
-    </strong>
-
-
-    <span
-      class="outgoing-call-status"
-      id="outgoingCallStatus"
-    >
-      正在呼叫…
-    </span>
-
-
-    <button
-      class="outgoing-call-cancel"
-      id="cancelOutgoingCallButton"
-      type="button"
-    >
-      <span>☎</span>
-      <small>取消</small>
-    </button>
-
   </div>
-
-</div>
 
   <!-- =========================
      来电界面
      ========================= -->
 
-<div
-  class="incoming-call-panel"
-  id="incomingCallPanel"
-  hidden
->
+  <div class="incoming-call-panel" id="incomingCallPanel" hidden>
 
-  <div class="incoming-call-content">
+    <div class="incoming-call-content">
 
-    <div
-      class="incoming-call-avatar"
-      id="incomingCallAvatar"
-    >
-      L
-    </div>
+      <div class="incoming-call-avatar" id="incomingCallAvatar">
+        L
+      </div>
 
 
-    <strong
-      class="incoming-call-name"
-      id="incomingCallName"
-    >
-      榛榛
-    </strong>
+      <strong class="incoming-call-name" id="incomingCallName">
+        榛榛
+      </strong>
 
 
-    <span class="incoming-call-status">
-      邀请你进行视频通话
-    </span>
+      <span class="incoming-call-status">
+        邀请你进行视频通话
+      </span>
 
 
-    <div class="incoming-call-actions">
+      <div class="incoming-call-actions">
 
-      <button
-        class="incoming-call-button reject"
-        id="rejectCallButton"
-        type="button"
-      >
-        <span>×</span>
-        <small>拒绝</small>
-      </button>
+        <button class="incoming-call-button reject" id="rejectCallButton" type="button">
+          <span>×</span>
+          <small>拒绝</small>
+        </button>
 
 
-      <button
-        class="incoming-call-button answer"
-        id="answerCallButton"
-        type="button"
-      >
-        <span>☎</span>
-        <small>接听</small>
-      </button>
+        <button class="incoming-call-button answer" id="answerCallButton" type="button">
+          <span>☎</span>
+          <small>接听</small>
+        </button>
+
+      </div>
 
     </div>
 
   </div>
 
-</div>
-
-<!-- =========================
+  <!-- =========================
      已接通 · 全屏视频通话
      ========================= -->
 
-<div
-  class="active-call-panel"
-  id="activeCallPanel"
-  hidden
->
+  <div class="active-call-panel" id="activeCallPanel" hidden>
 
-  <!-- 你的摄像头大画面 -->
+    <!-- 你的摄像头大画面 -->
 
-  <video
-    class="active-call-video"
-    id="localCallVideo"
-    autoplay
-    muted
-    playsinline
-  ></video>
+    <video class="active-call-video" id="localCallVideo" autoplay muted playsinline></video>
 
 
-  <!-- 摄像头关闭时的占位 -->
+    <!-- 摄像头关闭时的占位 -->
 
-  <div
-    class="active-call-camera-off"
-    id="activeCallCameraOff"
-    hidden
-  >
-    摄像头已关闭
-  </div>
-
-
-  <!-- 顶部 -->
-
-  <div class="active-call-top">
-
-    <button
-      class="active-call-minimize"
-      id="minimizeCallButton"
-      type="button"
-      aria-label="最小化"
-    >
-      ▢
-    </button>
-
-
-    <span
-      class="active-call-duration"
-      id="activeCallDuration"
-    >
-      00:00
-    </span>
-
-  </div>
-
-
-  <!-- 右上角：对方头像小屏 -->
-
-  <div
-    class="active-call-remote"
-    id="activeCallRemote"
-  >
-
-    <div
-      class="active-call-remote-avatar"
-      id="activeCallRemoteAvatar"
-    >
-      L
+    <div class="active-call-camera-off" id="activeCallCameraOff" hidden>
+      摄像头已关闭
     </div>
 
-    <span
-      class="active-call-remote-name"
-      id="activeCallRemoteName"
-    >
-      榛榛
-    </span>
+
+    <!-- 顶部 -->
+
+    <div class="active-call-top">
+
+      <button class="active-call-minimize" id="minimizeCallButton" type="button" aria-label="最小化">
+        ▢
+      </button>
+
+
+      <span class="active-call-duration" id="activeCallDuration">
+        00:00
+      </span>
+
+    </div>
+
+
+    <!-- 右上角：对方头像小屏 -->
+
+    <div class="active-call-remote" id="activeCallRemote">
+
+      <div class="active-call-remote-avatar" id="activeCallRemoteAvatar">
+        L
+      </div>
+
+      <span class="active-call-remote-name" id="activeCallRemoteName">
+        榛榛
+      </span>
+
+    </div>
+
+
+    <!-- 底部控制 -->
+
+    <div class="active-call-controls">
+
+      <button class="call-control-button" id="callMicButton" type="button">
+        <span>🎙</span>
+        <small>麦克风已开</small>
+      </button>
+
+
+      <button class="call-control-button" id="callSpeakerButton" type="button">
+        <span>🔊</span>
+        <small>扬声器已开</small>
+      </button>
+
+
+      <button class="call-control-button" id="callCameraButton" type="button">
+        <span>▣</span>
+        <small>摄像头已开</small>
+      </button>
+
+    </div>
+
+
+    <div class="active-call-bottom">
+
+      <button class="call-switch-camera" id="switchCameraButton" type="button" aria-label="切换摄像头">
+        ↻
+      </button>
+
+
+      <button class="call-hangup-button" id="hangupCallButton" type="button">
+        ☎
+      </button>
+
+    </div>
 
   </div>
 
 
-  <!-- 底部控制 -->
 
-  <div class="active-call-controls">
-
-    <button
-      class="call-control-button"
-      id="callMicButton"
-      type="button"
-    >
-      <span>🎙</span>
-      <small>麦克风已开</small>
-    </button>
-
-
-    <button
-      class="call-control-button"
-      id="callSpeakerButton"
-      type="button"
-    >
-      <span>🔊</span>
-      <small>扬声器已开</small>
-    </button>
-
-
-    <button
-      class="call-control-button"
-      id="callCameraButton"
-      type="button"
-    >
-      <span>▣</span>
-      <small>摄像头已开</small>
-    </button>
-
-  </div>
-
-
-  <div class="active-call-bottom">
-
-    <button
-      class="call-switch-camera"
-      id="switchCameraButton"
-      type="button"
-      aria-label="切换摄像头"
-    >
-      ↻
-    </button>
-
-
-    <button
-      class="call-hangup-button"
-      id="hangupCallButton"
-      type="button"
-    >
-      ☎
-    </button>
-
-  </div>
-
-</div>
-
-
-
-<!-- =========================
+  <!-- =========================
      已接通 · 网站内最小化
      ========================= -->
 
-<div
-  class="call-mini-window"
-  id="callMiniWindow"
-  hidden
->
+  <div class="call-mini-window" id="callMiniWindow" hidden>
 
-  <div class="call-mini-icon">
-    ☎
+    <div class="call-mini-icon">
+      ☎
+    </div>
+
+    <div class="call-mini-duration" id="callMiniDuration">
+      00:00
+    </div>
+
   </div>
 
-  <div
-    class="call-mini-duration"
-    id="callMiniDuration"
-  >
-    00:00
-  </div>
+  <script src="cards-data.js"></script>
+<script src="phrases-data.js"></script>
+<script src="codes-data.js"></script>
+<script src="corpus-presets-data.js"></script>
+<script src="poke-data.js"></script>
 
-</div>
+<script src="corpus-random.js"></script>
+<script src="poke-random.js"></script>
 
-  <script src="chat.js"></script>
-  <script src="chat-actions.js"></script>
-  <script src="chat-selection.js"></script>
-  <script src="chat-favorites-save.js"></script>
-  <script src="call-global.js"></script>
+<script src="chat.js"></script>
+<script src="chat-corpus.js"></script>
+
+<script src="chat-actions.js"></script>
+<script src="chat-selection.js"></script>
+<script src="chat-favorites-save.js"></script>
+<script src="call-global.js"></script>
+
+<script src="chat-actions.js"></script>
+<script src="chat-selection.js"></script>
+<script src="chat-favorites-save.js"></script>
+<script src="call-global.js"></script>
 
 </body>
+
 </html>

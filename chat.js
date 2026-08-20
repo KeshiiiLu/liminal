@@ -49,6 +49,26 @@ const chatInput =
 const chatMessages =
   document.getElementById("chatMessages");
 
+  const newMessageNotice =
+  document.getElementById(
+    "newMessageNotice"
+  );
+
+
+const newMessageNoticeText =
+  document.getElementById(
+    "newMessageNoticeText"
+  );
+
+  const chatTransientNotice =
+  document.getElementById(
+    "chatTransientNotice"
+  );
+
+
+let chatTransientNoticeTimer =
+  null;
+
 /* =========================
  电话界面元素
  ========================= */
@@ -982,6 +1002,28 @@ function handleActiveMessageOpportunity() {
 
   }
 
+  /*
+    概率判定成功，
+    但当前没有任何真实可抽语料时，
+    不生成假回复。
+  */
+
+  if (
+    !hasDrawableCorpusPool(
+      currentPerson.id
+    )
+  ) {
+
+    console.warn(
+      "当前语料池没有可抽取内容"
+    );
+
+
+    scheduleNextActiveMessageOpportunity();
+
+    return;
+
+  }
 
   const activeRule =
     getCurrentActiveMessageRule();
@@ -1023,17 +1065,24 @@ function handleActiveMessageOpportunity() {
     index
   ) {
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-        testReplyCards.length
+        const text =
+      drawCorpusText(
+        currentPerson.id
       );
 
 
-    const text =
-      testReplyCards[
-      randomIndex
-      ];
+    if (!text) {
+
+      console.warn(
+        "主动消息抽取失败：当前没有可用语料"
+      );
+
+
+      scheduleNextActiveMessageOpportunity();
+
+      return;
+
+    }
 
 
     addIncomingMessage(
@@ -1741,21 +1790,31 @@ function triggerPokeAfterRound() {
   }
 
 
-  const randomIndex =
-    Math.floor(
-      Math.random() *
-      testPokeCards.length
+  const result =
+    drawPokeAction(
+      currentPerson.id,
+      currentPerson.name
     );
 
 
-  const text =
-    testPokeCards[
-    randomIndex
-    ];
+  /*
+    当前人物没有正式动作语料时，
+    不拿其他人物或测试语料代替。
+  */
+
+  if (!result) {
+
+    console.warn(
+      `${currentPerson.name}目前没有可用的拍一拍语料`
+    );
+
+    return;
+
+  }
 
 
   addPokeMessage(
-    text,
+    result.text,
     new Date()
   );
 
@@ -5250,6 +5309,370 @@ function addTimeDivider(date) {
 
 }
 
+/* =========================
+   临时状态提示
+   ========================= */
+
+function showChatTransientNotice(
+  text
+) {
+
+  if (!chatTransientNotice) {
+
+    return;
+
+  }
+
+
+  if (
+    chatTransientNoticeTimer !==
+    null
+  ) {
+
+    clearTimeout(
+      chatTransientNoticeTimer
+    );
+
+  }
+
+
+  chatTransientNotice.textContent =
+    text;
+
+
+  chatTransientNotice.hidden =
+    false;
+
+
+  chatTransientNoticeTimer =
+    setTimeout(
+      function () {
+
+        chatTransientNotice.hidden =
+          true;
+
+
+        chatTransientNoticeTimer =
+          null;
+
+      },
+      2200
+    );
+
+}
+
+/* =========================
+   新消息跟随 / 阅读旧消息
+   ========================= */
+
+const CHAT_LATEST_THRESHOLD =
+  90;
+
+
+let unreadIncomingCount =
+  0;
+
+
+/* =========================
+   取得最后一条聊天内容
+   ========================= */
+
+function getLatestChatElement() {
+
+  return (
+    chatMessages.querySelector(
+      ".message-row:last-of-type"
+    ) ||
+    chatMessages.lastElementChild
+  );
+
+}
+
+
+/* =========================
+   判断用户是否正在看最新消息
+   ========================= */
+
+function isChatAtLatest() {
+
+  const latestElement =
+    getLatestChatElement();
+
+
+  if (!latestElement) {
+
+    return true;
+
+  }
+
+
+  const latestRect =
+    latestElement
+      .getBoundingClientRect();
+
+
+  const chatBottom =
+    document.querySelector(
+      ".chat-bottom"
+    );
+
+
+  const visibleBottom =
+    chatBottom
+      ? chatBottom
+          .getBoundingClientRect()
+          .top
+      : window.innerHeight;
+
+
+  /*
+    最后一条消息已经在输入框附近，
+    或者只差一点点，
+    都视为仍然跟随最新消息。
+  */
+
+  return (
+    latestRect.bottom <=
+    visibleBottom +
+    CHAT_LATEST_THRESHOLD
+  );
+
+}
+
+
+/* =========================
+   真正移动到最新消息
+   ========================= */
+
+function goToLatestChatMessage(
+  behavior = "auto"
+) {
+
+  const latestElement =
+    getLatestChatElement();
+
+
+  if (!latestElement) {
+
+    return;
+
+  }
+
+
+  latestElement.scrollIntoView({
+
+    block:
+      "end",
+
+    inline:
+      "nearest",
+
+    behavior:
+      behavior
+
+  });
+
+}
+
+
+/* =========================
+   更新新消息提示
+   ========================= */
+
+function renderNewMessageNotice() {
+
+  if (
+    unreadIncomingCount <= 0
+  ) {
+
+    if (
+      newMessageNotice
+    ) {
+
+      newMessageNotice.hidden =
+        true;
+
+    }
+
+
+    return;
+
+  }
+
+
+  if (
+    newMessageNoticeText
+  ) {
+
+    newMessageNoticeText.textContent =
+      `${unreadIncomingCount} 则新讯息`;
+
+  }
+
+
+  if (
+    newMessageNotice
+  ) {
+
+    newMessageNotice.hidden =
+      false;
+
+  }
+
+}
+
+
+/* =========================
+   清除新消息提示
+   ========================= */
+
+function clearNewMessageNotice() {
+
+  unreadIncomingCount =
+    0;
+
+
+  if (
+    newMessageNotice
+  ) {
+
+    newMessageNotice.hidden =
+      true;
+
+  }
+
+}
+
+
+/* =========================
+   新消息出现以后
+   ========================= */
+
+function handleIncomingMessagePosition(
+  wasFollowingLatest
+) {
+
+  /*
+    新消息出现以前就在最新位置：
+    继续跟着往下串。
+  */
+
+  if (
+    wasFollowingLatest
+  ) {
+
+    clearNewMessageNotice();
+
+
+    requestAnimationFrame(
+      function () {
+
+        goToLatestChatMessage(
+          "auto"
+        );
+
+      }
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+    正在翻旧聊天：
+    不抢走当前位置。
+  */
+
+  unreadIncomingCount +=
+    1;
+
+
+  renderNewMessageNotice();
+
+}
+
+
+/* =========================
+   点新消息提示
+   ========================= */
+
+if (
+  newMessageNotice
+) {
+
+  newMessageNotice.addEventListener(
+    "click",
+    function () {
+
+      clearNewMessageNotice();
+
+
+      goToLatestChatMessage(
+        "smooth"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   用户自己滑回最新消息
+   ========================= */
+
+function checkNewMessageNoticeAfterScroll() {
+
+  if (
+    unreadIncomingCount <= 0
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    isChatAtLatest()
+  ) {
+
+    clearNewMessageNotice();
+
+  }
+
+}
+
+
+/*
+  两边都监听。
+
+  不管实际滚动宿主是：
+  - 整个网页
+  - chatMessages
+
+  都可以工作。
+*/
+
+window.addEventListener(
+  "scroll",
+  checkNewMessageNoticeAfterScroll,
+  {
+    passive:
+      true
+  }
+);
+
+
+chatMessages.addEventListener(
+  "scroll",
+  checkNewMessageNoticeAfterScroll,
+  {
+    passive:
+      true
+  }
+);
 
 /* =========================
    普通文字消息
@@ -5355,6 +5778,11 @@ function addIncomingMessage(
   shouldSave = true
 ) {
 
+    const wasFollowingLatest =
+    shouldSave
+      ? isChatAtLatest()
+      : false;
+
   if (
     shouldShowTimeDivider(
       date
@@ -5426,7 +5854,15 @@ function addIncomingMessage(
   }
 
 
-  scrollToBottom();
+    if (
+    shouldSave
+  ) {
+
+    handleIncomingMessagePosition(
+      wasFollowingLatest
+    );
+
+  }
 
 }
 
@@ -5442,6 +5878,16 @@ function addCallMessage(
   status = "completed",
   shouldSave = true
 ) {
+
+  const wasFollowingLatest =
+    (
+      direction ===
+        "incoming" &&
+      shouldSave
+    )
+      ? isChatAtLatest()
+      : false;
+
 
   if (
     shouldShowTimeDivider(
@@ -5595,7 +6041,33 @@ function addCallMessage(
   }
 
 
-  scrollToBottom();
+  if (
+    direction ===
+      "incoming" &&
+    shouldSave
+  ) {
+
+    handleIncomingMessagePosition(
+      wasFollowingLatest
+    );
+
+  } else if (
+    direction ===
+      "outgoing" &&
+    shouldSave
+  ) {
+
+    requestAnimationFrame(
+      function () {
+
+        goToLatestChatMessage(
+          "auto"
+        );
+
+      }
+    );
+
+  }
 
 }
 
@@ -5609,6 +6081,15 @@ function addPokeMessage(
   direction = "incoming",
   shouldSave = true
 ) {
+
+    const wasFollowingLatest =
+    (
+      direction ===
+        "incoming" &&
+      shouldSave
+    )
+      ? isChatAtLatest()
+      : false;
 
   if (
     shouldShowTimeDivider(
@@ -5699,7 +6180,24 @@ function addPokeMessage(
   }
 
 
-  scrollToBottom();
+    if (
+    direction ===
+      "incoming" &&
+    shouldSave
+  ) {
+
+    handleIncomingMessagePosition(
+      wasFollowingLatest
+    );
+
+  } else if (
+    direction ===
+      "outgoing"
+  ) {
+
+    scrollToBottom();
+
+  }
 
 }
 
@@ -6271,25 +6769,9 @@ chatInput.addEventListener(
 
 
 /* =========================
-   测试随机回复
+   聊天随机回复
    ========================= */
 
-const testReplyCards = [
-  "是",
-  "不是",
-  "不完全是",
-  "我不知道",
-  "嗯"
-];
-
-/* 拍一拍测试语料 */
-
-const testPokeCards = [
-  "榛榛摸了摸你的腰际",
-  "榛榛吻了吻你的耳垂",
-  "榛榛戳了戳你的脸",
-  "榛榛看着你叹了口气"
-];
 
 /* =========================
    继续说测试
@@ -6333,6 +6815,25 @@ function createTestContinue() {
 
   }
 
+  if (
+  !hasDrawableCorpusPool(
+    currentPerson.id
+  )
+) {
+
+  console.warn(
+    "继续说失败：当前语料池没有可抽取内容"
+  );
+
+
+  showChatTransientNotice(
+    "当前没有可抽取语料"
+  );
+
+
+  return;
+
+}
 
   const continueRule =
     getCurrentContinueRule();
@@ -6370,17 +6871,21 @@ function createTestContinue() {
     index
   ) {
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-        testReplyCards.length
+        const reply =
+      drawCorpusText(
+        currentPerson.id
       );
 
 
-    const reply =
-      testReplyCards[
-      randomIndex
-      ];
+    if (!reply) {
+
+      console.warn(
+        "继续说抽取失败：当前没有可用语料"
+      );
+
+      return;
+
+    }
 
 
     addIncomingMessage(
@@ -6568,6 +7073,31 @@ function createTestReply() {
 
   }
 
+  /*
+    回复概率通过，
+    但没有任何真实可抽语料，
+    就安静结束。
+  */
+
+  if (
+  !hasDrawableCorpusPool(
+    currentPerson.id
+  )
+) {
+
+  console.warn(
+    "回复失败：当前语料池没有可抽取内容"
+  );
+
+
+  showChatTransientNotice(
+    "当前没有可抽取语料"
+  );
+
+
+  return;
+
+}
 
   const replyRule =
     getCurrentReplyRule();
@@ -6622,17 +7152,24 @@ function createTestReply() {
     index
   ) {
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-        testReplyCards.length
+       const reply =
+      drawCorpusText(
+        currentPerson.id
       );
 
 
-    const reply =
-      testReplyCards[
-      randomIndex
-      ];
+    if (!reply) {
+
+      hideTypingStatus();
+
+
+      console.warn(
+        "回复抽取失败：当前没有可用语料"
+      );
+
+      return;
+
+    }
 
 
     addIncomingMessage(
@@ -6835,8 +7372,9 @@ function loadChatHistory() {
 
 function scrollToBottom() {
 
-  chatMessages.scrollTop =
-    chatMessages.scrollHeight;
+  goToLatestChatMessage(
+    "auto"
+  );
 
 }
 
