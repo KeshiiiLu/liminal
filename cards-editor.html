@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Electronic Cards Editor · Liminal</title>
+
+  <link rel="stylesheet" href="cards-editor.css">
+
+</head>
+
+
+<body>
+
+  <main class="editor-shell">
+
+
+    <!-- =========================
+         顶部
+         ========================= -->
+
+    <header class="editor-header">
+
+      <div>
+
+        <span class="editor-eyebrow">
+          LIMINAL · DESKTOP EDITOR
+        </span>
+
+        <h1>
+          Electronic Cards
+        </h1>
+
+        <p>
+          电子字卡内容编辑器
+        </p>
+
+      </div>
+
+
+      <div class="editor-header-actions">
+
+        <button class="editor-button secondary" id="connectCorpusButton" type="button">
+          连接字卡库
+        </button>
+
+
+        <button class="editor-button primary" id="saveCorpusButton" type="button" disabled>
+          保存
+        </button>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         文件状态
+         ========================= -->
+
+    <section class="file-status-card">
+
+      <div>
+
+        <small>
+          DATA SOURCE
+        </small>
+
+        <strong id="corpusFileStatus">
+          尚未连接本地文件
+        </strong>
+
+      </div>
+
+
+      <span class="save-state" id="corpusSaveState">
+        未连接
+      </span>
+
+    </section>
+
+
+
+    <!-- =========================
+         分区标签
+         ========================= -->
+
+    <nav class="section-tabs" id="sectionTabs">
+
+      <button class="section-tab active" type="button" data-section="normal">
+        日常
+        <span id="normalCount">
+          0
+        </span>
+      </button>
+
+
+      <button class="section-tab" type="button" data-section="intimate">
+        亲密
+        <span id="intimateCount">
+          0
+        </span>
+      </button>
+
+
+      <button class="section-tab" type="button" data-section="adult">
+        情欲
+        <span id="adultCount">
+          0
+        </span>
+      </button>
+
+    </nav>
+
+
+
+    <!-- =========================
+         01 编辑区
+         ========================= -->
+
+    <section class="section-panel" id="categoryOverviewPanel">
+
+      <div class="section-panel-heading">
+
+        <div>
+
+          <small>
+            01 CATEGORIES
+          </small>
+
+          <h2 id="currentSectionTitle">
+            日常
+          </h2>
+
+        </div>
+
+
+        <button class="add-item-button" id="addCategoryButton" type="button">
+          ＋ 新增 01
+        </button>
+
+      </div>
+
+
+      <div class="category-list" id="categoryList">
+      </div>
+
+
+    </section>
+
+<!-- =========================
+     具体字卡编辑区
+     ========================= -->
+
+<section
+  class="section-panel"
+  id="categoryContentPanel"
+  hidden
+>
+
+  <button
+    class="content-back-button"
+    id="categoryContentBack"
+    type="button"
+  >
+    ← 返回 01
+  </button>
+
+
+  <div class="section-panel-heading">
+
+  <div>
+
+    <small>
+      CARD TREE
+    </small>
+
+    <h2 id="categoryContentTitle">
+      —
+    </h2>
+
+    <span
+      class="content-meta"
+      id="categoryContentMeta"
+    >
+    </span>
+
+  </div>
+
+
+  <div class="content-add-actions">
+
+    <button
+      class="add-item-button"
+      id="addTreeCardButton"
+      type="button"
+    >
+      ＋ 新增字卡
+    </button>
+
+
+    <button
+      class="add-item-button"
+      id="addTreeGroupButton"
+      type="button"
+    >
+      ＋ 新增分组
+    </button>
+
+  </div>
+
+</div>
+
+
+<div
+  class="tree-breadcrumbs"
+  id="treeBreadcrumbs"
+>
+</div>
+
+
+  <div
+    class="tree-card-list"
+    id="treeCardList"
+  >
+  </div>
+
+</section>
+
+  </main>
+
+
+
+  <!-- =========================
+       修改名称
+       ========================= -->
+
+  <div class="editor-dialog-backdrop" id="renameDialog" hidden>
+
+    <section class="editor-dialog">
+
+      <small>
+        EDIT 01
+      </small>
+
+      <h3>
+        修改名称
+      </h3>
+
+
+      <input class="editor-dialog-input" id="renameInput" type="text" autocomplete="off" maxlength="80">
+
+      <div class="editor-field">
+
+        <label for="renameIdInput">
+          ID
+        </label>
+
+        <input class="editor-dialog-input" id="renameIdInput" type="text" autocomplete="off" spellcheck="false"
+          placeholder="例如：weather">
+
+        <small class="editor-field-tip">
+          新建时填写；已有 01 的 ID 保持不变
+        </small>
+
+      </div>
+
+      <div class="editor-dialog-actions">
+
+        <button class="dialog-button secondary" id="renameCancelButton" type="button">
+          取消
+        </button>
+
+
+        <button class="dialog-button primary" id="renameConfirmButton" type="button">
+          保存名称
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+
+  <!-- =========================
+       删除确认
+       ========================= -->
+
+  <div class="editor-dialog-backdrop" id="deleteDialog" hidden>
+
+    <section class="editor-dialog">
+
+      <small>
+        DELETE 01
+      </small>
+
+      <h3>
+        删除这个 01？
+      </h3>
+
+      <p id="deleteDialogText">
+      </p>
+
+
+      <div class="editor-dialog-actions">
+
+        <button class="dialog-button secondary" id="deleteCancelButton" type="button">
+          取消
+        </button>
+
+
+        <button class="dialog-button danger" id="deleteConfirmButton" type="button">
+          删除
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+
+<!-- =========================
+     新增 / 编辑具体字卡
+     ========================= -->
+
+<div
+  class="editor-dialog-backdrop"
+  id="treeCardDialog"
+  hidden
+>
+
+  <section class="editor-dialog">
+
+    <small>
+      CARD
+    </small>
+
+    <h3 id="treeCardDialogTitle">
+      新增字卡
+    </h3>
+
+
+    <textarea
+      class="editor-dialog-textarea"
+      id="treeCardInput"
+      autocomplete="off"
+      maxlength="1000"
+      rows="5"
+      placeholder="输入具体字卡内容"
+    ></textarea>
+
+
+    <div class="editor-dialog-actions">
+
+      <button
+        class="dialog-button secondary"
+        id="treeCardCancelButton"
+        type="button"
+      >
+        取消
+      </button>
+
+
+      <button
+        class="dialog-button primary"
+        id="treeCardConfirmButton"
+        type="button"
+      >
+        保存字卡
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+<!-- =========================
+     新增 / 编辑分组
+     ========================= -->
+
+<div
+  class="editor-dialog-backdrop"
+  id="treeGroupDialog"
+  hidden
+>
+
+  <section class="editor-dialog">
+
+    <small>
+      GROUP
+    </small>
+
+    <h3 id="treeGroupDialogTitle">
+      新增分组
+    </h3>
+
+
+    <input
+      class="editor-dialog-input"
+      id="treeGroupInput"
+      type="text"
+      autocomplete="off"
+      maxlength="120"
+      placeholder="输入分组名称"
+    >
+
+
+    <div class="editor-dialog-actions">
+
+      <button
+        class="dialog-button secondary"
+        id="treeGroupCancelButton"
+        type="button"
+      >
+        取消
+      </button>
+
+
+      <button
+        class="dialog-button primary"
+        id="treeGroupConfirmButton"
+        type="button"
+      >
+        保存分组
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+  <script src="cards-data.js"></script>
+
+  <script src="cards-corpus-data.js"></script>
+
+  <script src="cards-editor.js"></script>
+
+</body>
+
+</html>
