@@ -296,14 +296,165 @@ setLibraryCount(
 );
 
 
-/*
-  电子字卡完整分类树目前还没有正式导入。
+/* =========================
+   电子字卡统计
+   ========================= */
 
-  所以暂时不统计 demo TREE_PREVIEWS，
-  避免把测试数据误当成真实字卡库存。
+/*
+  电子字卡的真正内容现在已经统一存放在：
+
+  cards-corpus-data.js
+
+  tree 中：
+
+  - 字符串 = 一枚真正字卡
+  - 分组对象 = 继续递归 children
+
+  所以这里统计所有分区、
+  所有 01、
+  所有层级中的字符串叶子。
 */
+
+function countElectronicCardLeaves(
+  tree
+) {
+
+  if (
+    !Array.isArray(
+      tree
+    )
+  ) {
+
+    return 0;
+
+  }
+
+
+  let total =
+    0;
+
+
+  tree.forEach(
+    function (node) {
+
+      /*
+        字符串叶子
+        = 一枚真实字卡
+      */
+
+      if (
+        typeof node ===
+        "string"
+      ) {
+
+        if (
+          node.trim()
+        ) {
+
+          total +=
+            1;
+
+        }
+
+
+        return;
+
+      }
+
+
+      /*
+        分组节点：
+
+        {
+          name: "...",
+          children: [...]
+        }
+
+        继续向下递归。
+      */
+
+      if (
+        node &&
+        typeof node ===
+          "object" &&
+        Array.isArray(
+          node.children
+        )
+      ) {
+
+        total +=
+          countElectronicCardLeaves(
+            node.children
+          );
+
+      }
+
+    }
+  );
+
+
+  return total;
+
+}
+
+
+
+/* =========================
+   全部电子字卡数量
+   ========================= */
+
+function countAllElectronicCards() {
+
+  if (
+    typeof window.CARD_CORPUS ===
+      "undefined" ||
+    !window.CARD_CORPUS ||
+    typeof window.CARD_CORPUS !==
+      "object"
+  ) {
+
+    return null;
+
+  }
+
+
+  let total =
+    0;
+
+
+  Object.values(
+    window.CARD_CORPUS
+  ).forEach(
+    function (section) {
+
+      (
+        section.items ||
+        []
+      ).forEach(
+        function (item) {
+
+          total +=
+            countElectronicCardLeaves(
+              item.tree
+            );
+
+        }
+      );
+
+    }
+  );
+
+
+  return total;
+
+}
+
+
+const cardCount =
+  countAllElectronicCards();
+
 
 setLibraryCount(
   "cardsTotal",
-  null
+  cardCount
 );
