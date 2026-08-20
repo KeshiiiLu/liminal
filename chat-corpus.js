@@ -2,7 +2,80 @@
    Liminal · Chat Corpus Pool
    ========================= */
 
+/* =========================
+   电子字卡唯一内容来源
+   ========================= */
 
+/*
+  Chat 的电子字卡 01：
+
+  - 名称
+  - ID
+  - 顺序
+  - 所属分区
+
+  全部只认 cards-corpus-data.js。
+
+  cards-data.js 不再负责
+  Chat 语料池里的 01 定义。
+*/
+
+const CORPUS_CORPUS_CARD_SECTIONS =
+  (
+    window.CARD_CORPUS &&
+    typeof window.CARD_CORPUS ===
+      "object"
+  )
+    ? window.CARD_CORPUS
+    : {
+
+        normal: {
+          id:
+            "normal",
+
+          name:
+            "日常",
+
+          items:
+            []
+        },
+
+        intimate: {
+          id:
+            "intimate",
+
+          name:
+            "亲密",
+
+          items:
+            []
+        },
+
+        adult: {
+          id:
+            "adult",
+
+          name:
+            "情欲",
+
+          items:
+            []
+        }
+
+      };
+
+
+if (
+  !window.CARD_CORPUS ||
+  typeof window.CARD_CORPUS !==
+    "object"
+) {
+
+  console.warn(
+    "Chat 未读取到 cards-corpus-data.js，电子字卡 01 将暂时显示为空。"
+  );
+
+}
 const corpusPoolButton =
   document.getElementById(
     "corpusPoolButton"
@@ -134,7 +207,7 @@ function createDefaultCorpusState() {
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -206,7 +279,7 @@ function normalizeCorpusState(
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -396,7 +469,7 @@ function isSectionFullyEnabled(
 ) {
 
   const section =
-    CARD_SECTIONS[
+    CORPUS_CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -443,7 +516,7 @@ function countEnabled01() {
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -482,7 +555,7 @@ function getTotal01Count() {
 
   return (
     Object.values(
-      CARD_SECTIONS
+      CORPUS_CORPUS_CARD_SECTIONS
     )
       .reduce(
         function (
@@ -636,7 +709,7 @@ function renderSectionList(
 ) {
 
   const section =
-    CARD_SECTIONS[
+    CORPUS_CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -837,7 +910,7 @@ function toggleWholeSection(
 ) {
 
   const section =
-    CARD_SECTIONS[
+    CORPUS_CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -878,7 +951,7 @@ function toggleAllSections() {
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -1012,7 +1085,7 @@ function countFixedPreset01(
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -1073,7 +1146,7 @@ function isFixedPresetActive(
 
   return (
     Object.entries(
-      CARD_SECTIONS
+      CORPUS_CARD_SECTIONS
     ).every(
       function (
         [sectionId, section]
@@ -1151,7 +1224,7 @@ function applyFixedCorpusPreset(
 
 
   Object.entries(
-    CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]

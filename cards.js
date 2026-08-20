@@ -1,264 +1,77 @@
 /* =========================
    Liminal · Electronic Cards
    电子字卡只读浏览
+
+   唯一数据来源：
+   cards-corpus-data.js
    ========================= */
 
 
 
 /* =========================
-   结构预览
-   当前仅用于测试详情页 UI
+   电子字卡唯一来源
    ========================= */
 
-const TREE_PREVIEWS = {
+function getCardSections() {
 
-  "normal-02": [
+  if (
+    window.CARD_CORPUS &&
+    typeof window.CARD_CORPUS ===
+      "object"
+  ) {
 
-    "强肯定",
-    "肯定",
-    "偏肯定",
-    "部分成立",
-    "中立",
-    "偏否定",
-    "否定",
-    "强否定",
-    "无法判断"
+    return window.CARD_CORPUS;
 
-  ],
+  }
 
 
-  "normal-19": [
+  console.warn(
+    "未读取到 cards-corpus-data.js"
+  );
 
-    {
-      label:
-        "正向高唤醒",
 
-      children: [
-        "兴奋",
-        "激动",
-        "亢奋",
-        "惊喜",
-        "得意",
-        "自豪",
-        "热情",
-        "期待"
-      ]
+  return {
+
+    normal: {
+      id:
+        "normal",
+
+      name:
+        "日常",
+
+      items:
+        []
     },
 
-    {
-      label:
-        "正向中唤醒",
+    intimate: {
+      id:
+        "intimate",
 
-      children: [
-        "开心",
-        "快乐",
-        "愉悦",
-        "满意",
-        "幸福",
-        "欣慰",
-        "感激",
-        "感动"
-      ]
+      name:
+        "亲密",
+
+      items:
+        []
     },
 
-    {
-      label:
-        "正向低唤醒",
+    adult: {
+      id:
+        "adult",
 
-      children: [
-        "平静",
-        "放松",
-        "安心",
-        "舒适",
-        "温柔",
-        "宁静",
-        "满足",
-        "安稳"
-      ]
-    },
+      name:
+        "情欲",
 
-    {
-      label:
-        "负向高唤醒",
-
-      children: [
-        "愤怒",
-        "恼怒",
-        "烦躁",
-        "焦虑",
-        "紧张",
-        "恐慌",
-        "压力",
-        "惊吓",
-        "急躁"
-      ]
-    },
-
-    {
-      label:
-        "复杂情绪",
-
-      children: [
-        "正负混合",
-        "情绪矛盾",
-        "无法命名",
-        "情绪混乱"
-      ]
+      items:
+        []
     }
 
-  ],
+  };
+
+}
 
 
-  "intimate-01": [
-
-    "喜欢你",
-    "很喜欢你",
-    "爱你",
-    "很爱你",
-    "在乎你",
-    "很在乎你",
-    "珍惜你",
-    "很珍惜你",
-    "你很重要",
-    "庆幸有你",
-    "感谢你的存在"
-
-  ],
-
-
-  "intimate-05": [
-
-    {
-      label:
-        "整体安全感",
-
-      children: [
-        "非常笃定",
-        "很安心",
-        "安心",
-        "基本稳定",
-        "有一点不安",
-        "明显不安",
-        "很不安"
-      ]
-    },
-
-    {
-      label:
-        "确认需求",
-
-      children: [
-        "不需要确认",
-        "偶尔需要确认",
-        "有一点需要确认",
-        "需要确认",
-        "很需要确认"
-      ]
-    },
-
-    {
-      label:
-        "不安指向",
-
-      children: [
-        "怕失去你",
-        "怕被你推开",
-        "怕被替代",
-        "怕我们的关系发生变化",
-        "怕你不再选择我",
-        "说不上来在怕什么"
-      ]
-    }
-
-  ],
-
-
-  "adult-01": [
-
-    "非常想",
-    "很想",
-    "想",
-    "有一点想",
-    "可以",
-    "都可以",
-    "看情况",
-    "有点犹豫",
-    "不太想",
-    "不想",
-    "完全不想",
-    "暂时不要"
-
-  ],
-
-
-  "adult-16": [
-
-    {
-      label:
-        "唤起程度",
-
-      children: [
-        "无明显唤起",
-        "极低",
-        "很低",
-        "较低",
-        "中等",
-        "较高",
-        "很高",
-        "极强"
-      ]
-    },
-
-    {
-      label:
-        "敏感程度",
-
-      children: [
-        "几乎不敏感",
-        "很低",
-        "较低",
-        "中等",
-        "较敏感",
-        "很敏感",
-        "极度敏感"
-      ]
-    },
-
-    {
-      label:
-        "舒适程度",
-
-      children: [
-        "非常舒服",
-        "很舒服",
-        "舒服",
-        "基本舒服",
-        "一般",
-        "有一点不舒服",
-        "明显不舒服",
-        "很不舒服"
-      ]
-    },
-
-    {
-      label:
-        "高潮接近度",
-
-      children: [
-        "完全没有接近",
-        "还很远",
-        "有一点接近",
-        "正在逐渐接近",
-        "比较接近",
-        "很接近",
-        "几乎到了",
-        "正在高潮"
-      ]
-    }
-
-  ]
-
-};
+const CARD_BROWSER_SECTIONS =
+  getCardSections();
 
 
 
@@ -273,6 +86,7 @@ const traditionalToSimplified =
     ? OpenCC.Converter({
         from:
           "t",
+
         to:
           "cn"
       })
@@ -430,7 +244,7 @@ let searchKeyword =
 
 
 /* =========================
-   Helper
+   Helpers
    ========================= */
 
 function padNumber(
@@ -447,16 +261,190 @@ function padNumber(
 }
 
 
-function getTreeKey(
-  section,
-  index
+
+function getCurrentCardSection() {
+
+  return (
+    CARD_BROWSER_SECTIONS[
+      currentSection
+    ] ||
+    {
+      id:
+        currentSection,
+
+      name:
+        "",
+
+      items:
+        []
+    }
+  );
+
+}
+
+
+
+/* =========================
+   判断分组
+   ========================= */
+
+function isCardTreeGroup(
+  node
 ) {
 
   return (
-    section +
-    "-" +
-    padNumber(
-      index + 1
+    node &&
+    typeof node ===
+      "object" &&
+    Array.isArray(
+      node.children
+    )
+  );
+
+}
+
+
+
+/* =========================
+   统计真正叶子数量
+   ========================= */
+
+function countTreeLeaves(
+  tree
+) {
+
+  if (
+    !Array.isArray(
+      tree
+    )
+  ) {
+
+    return 0;
+
+  }
+
+
+  let count =
+    0;
+
+
+  tree.forEach(
+    function (node) {
+
+      if (
+        typeof node ===
+        "string"
+      ) {
+
+        if (
+          node.trim()
+        ) {
+
+          count +=
+            1;
+
+        }
+
+
+        return;
+
+      }
+
+
+      if (
+        isCardTreeGroup(
+          node
+        )
+      ) {
+
+        count +=
+          countTreeLeaves(
+            node.children
+          );
+
+      }
+
+    }
+  );
+
+
+  return count;
+
+}
+
+
+
+/* =========================
+   统计整个分区字卡数量
+   ========================= */
+
+function countSectionLeaves(
+  section
+) {
+
+  return (
+    (
+      section.items ||
+      []
+    ).reduce(
+      function (
+        total,
+        item
+      ) {
+
+        return (
+          total +
+          countTreeLeaves(
+            item.tree
+          )
+        );
+
+      },
+      0
+    )
+  );
+
+}
+
+
+
+/* =========================
+   tree 中是否存在分组
+   ========================= */
+
+function treeContainsGroup(
+  tree
+) {
+
+  if (
+    !Array.isArray(
+      tree
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  return (
+    tree.some(
+      function (node) {
+
+        if (
+          isCardTreeGroup(
+            node
+          )
+        ) {
+
+          return true;
+
+        }
+
+
+        return false;
+
+      }
     )
   );
 
@@ -471,28 +459,39 @@ function getTreeKey(
 function renderCards() {
 
   const section =
-    CARD_SECTIONS[
-      currentSection
-    ];
+    getCurrentCardSection();
+
+
+  const items =
+    Array.isArray(
+      section.items
+    )
+      ? section.items
+      : [];
 
 
   const filtered =
-    section.categories
+    items
       .map(
         function (
-          title,
+          item,
           index
         ) {
 
           return {
-            title,
-            index
+
+            item:
+              item,
+
+            index:
+              index
+
           };
 
         }
       )
       .filter(
-        function (item) {
+        function (entry) {
 
           if (
             !searchKeyword
@@ -505,7 +504,8 @@ function renderCards() {
 
           return (
             normalizeForSearch(
-              item.title
+              entry.item.name ||
+              ""
             )
               .includes(
                 searchKeyword
@@ -521,7 +521,21 @@ function renderCards() {
 
 
   filtered.forEach(
-    function (item) {
+    function (entry) {
+
+      const item =
+        entry.item;
+
+
+      const index =
+        entry.index;
+
+
+      const leafCount =
+        countTreeLeaves(
+          item.tree
+        );
+
 
       const button =
         document.createElement(
@@ -538,35 +552,47 @@ function renderCards() {
 
 
       button.innerHTML = `
+
         <div class="category-index">
-          ${padNumber(item.index + 1)}
+          ${padNumber(index + 1)}
         </div>
+
 
         <div class="category-copy">
 
           <strong>
-            ${item.title}
           </strong>
 
           <span>
-            ${
-              TREE_PREVIEWS[
-                getTreeKey(
-                  currentSection,
-                  item.index
-                )
-              ]
-                ? "结构已载入"
-                : "子系尚未载入"
-            }
           </span>
 
         </div>
 
+
         <div class="category-arrow">
           ›
         </div>
+
       `;
+
+
+      button
+        .querySelector(
+          "strong"
+        )
+        .textContent =
+          item.name ||
+          "未命名 01";
+
+
+      button
+        .querySelector(
+          ".category-copy span"
+        )
+        .textContent =
+          leafCount > 0
+            ? `${leafCount} 枚字卡`
+            : "子系尚未载入";
 
 
       button.addEventListener(
@@ -574,8 +600,8 @@ function renderCards() {
         function () {
 
           openDetail(
-            item.index,
-            item.title
+            item,
+            index
           );
 
         }
@@ -615,48 +641,44 @@ function renderCards() {
 function renderSummary() {
 
   const section =
-    CARD_SECTIONS[
-      currentSection
-    ];
+    getCurrentCardSection();
+
+
+  const itemCount =
+    Array.isArray(
+      section.items
+    )
+      ? section.items.length
+      : 0;
+
+
+  const cardCount =
+    countSectionLeaves(
+      section
+    );
 
 
   summaryTitle.textContent =
-    section.name;
+    section.name ||
+    "";
 
 
   summaryText.textContent =
-    section.count +
+    itemCount +
     "个层级";
 
 
   summaryNumber.textContent =
-    section.count;
+    itemCount;
 
 
-  if (
-    Number.isFinite(
-      section.cardCount
-    )
-  ) {
-
-    summaryCardText.textContent =
-      section.cardCount +
-      "枚字卡";
+  summaryCardText.textContent =
+    cardCount +
+    "枚字卡";
 
 
-    sectionCardCount.textContent =
-      section.cardCount;
-
-  } else {
-
-    summaryCardText.textContent =
-      "—枚字卡";
-
-
-    sectionCardCount.textContent =
-      "—";
-
-  }
+  sectionCardCount.textContent =
+    cardCount;
 
 }
 
@@ -678,7 +700,9 @@ sectionTabs.forEach(
 
 
         sectionTabs.forEach(
-          function (otherTab) {
+          function (
+            otherTab
+          ) {
 
             otherTab.classList.toggle(
               "active",
@@ -772,33 +796,18 @@ searchClear.addEventListener(
    ========================= */
 
 function openDetail(
-  index,
-  title
+  item,
+  index
 ) {
 
   const section =
-    CARD_SECTIONS[
-      currentSection
-    ];
+    getCurrentCardSection();
 
 
   const number =
     padNumber(
       index + 1
     );
-
-
-  const key =
-    getTreeKey(
-      currentSection,
-      index
-    );
-
-
-  const tree =
-    TREE_PREVIEWS[
-      key
-    ];
 
 
   detailPath.textContent =
@@ -808,11 +817,12 @@ function openDetail(
 
 
   detailTitle.textContent =
-    title;
+    item.name ||
+    "未命名 01";
 
 
   renderTree(
-    tree
+    item.tree
   );
 
 
@@ -884,7 +894,11 @@ function renderTree(
 
 
   if (
-    !tree
+    !Array.isArray(
+      tree
+    ) ||
+    tree.length ===
+      0
   ) {
 
     detailType.textContent =
@@ -902,7 +916,7 @@ function renderTree(
 
 
     empty.textContent =
-      "当前仅收录 01 层级名称。完整子系将在语料整理稳定后统一载入。";
+      "这个 01 当前还没有具体字卡内容。";
 
 
     treePreview.appendChild(
@@ -915,21 +929,10 @@ function renderTree(
   }
 
 
-  const hasGroup =
-    tree.some(
-      function (item) {
-
-        return (
-          typeof item ===
-          "object"
-        );
-
-      }
-    );
-
-
   detailType.textContent =
-    hasGroup
+    treeContainsGroup(
+      tree
+    )
       ? "分层树"
       : "平铺叶子";
 
@@ -968,22 +971,60 @@ function createTreeNode(
     "tree-node";
 
 
+/* ---------- 字符串叶子 ---------- */
+
   if (
     typeof item ===
     "string"
   ) {
 
-    node.innerHTML = `
-      <div class="tree-item">
+    const itemElement =
+      document.createElement(
+        "div"
+      );
 
-        <span class="tree-dot"></span>
 
-        <span class="tree-label">
-          ${item}
-        </span>
+    itemElement.className =
+      "tree-item";
 
-      </div>
-    `;
+
+    const dot =
+      document.createElement(
+        "span"
+      );
+
+
+    dot.className =
+      "tree-dot";
+
+
+    const label =
+      document.createElement(
+        "span"
+      );
+
+
+    label.className =
+      "tree-label";
+
+
+    label.textContent =
+      item;
+
+
+    itemElement.appendChild(
+      dot
+    );
+
+
+    itemElement.appendChild(
+      label
+    );
+
+
+    node.appendChild(
+      itemElement
+    );
 
 
     return node;
@@ -991,63 +1032,123 @@ function createTreeNode(
   }
 
 
-  const itemElement =
-    document.createElement(
-      "div"
-    );
-
-
-  itemElement.className =
-    "tree-item group";
-
-
-  itemElement.innerHTML = `
-    <span class="tree-dot"></span>
-
-    <span class="tree-label">
-      ${item.label}
-    </span>
-  `;
-
-
-  node.appendChild(
-    itemElement
-  );
-
+/* ---------- 分组 ---------- */
 
   if (
-    item.children &&
-    item.children.length
+    isCardTreeGroup(
+      item
+    )
   ) {
 
-    const children =
+    const itemElement =
       document.createElement(
         "div"
       );
 
 
-    children.className =
-      "tree-children";
+    itemElement.className =
+      "tree-item group";
 
 
-    item.children.forEach(
-      function (child) {
+    const dot =
+      document.createElement(
+        "span"
+      );
 
-        children.appendChild(
-          createTreeNode(
-            child
-          )
-        );
 
-      }
+    dot.className =
+      "tree-dot";
+
+
+    const label =
+      document.createElement(
+        "span"
+      );
+
+
+    label.className =
+      "tree-label";
+
+
+    label.textContent =
+      item.name ||
+      "未命名分组";
+
+
+    itemElement.appendChild(
+      dot
+    );
+
+
+    itemElement.appendChild(
+      label
     );
 
 
     node.appendChild(
-      children
+      itemElement
     );
 
+
+    if (
+      item.children.length >
+      0
+    ) {
+
+      const children =
+        document.createElement(
+          "div"
+        );
+
+
+      children.className =
+        "tree-children";
+
+
+      item.children.forEach(
+        function (child) {
+
+          children.appendChild(
+            createTreeNode(
+              child
+            )
+          );
+
+        }
+      );
+
+
+      node.appendChild(
+        children
+      );
+
+    }
+
+
+    return node;
+
   }
+
+
+/* ---------- 异常节点 ---------- */
+
+  const unknown =
+    document.createElement(
+      "div"
+    );
+
+
+  unknown.className =
+    "tree-item";
+
+
+  unknown.textContent =
+    "无法识别的字卡节点";
+
+
+  node.appendChild(
+    unknown
+  );
 
 
   return node;
@@ -1095,5 +1196,6 @@ document.addEventListener(
    ========================= */
 
 renderSummary();
+
 
 renderCards();
