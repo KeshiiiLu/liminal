@@ -20,7 +20,7 @@
   Chat 语料池里的 01 定义。
 */
 
-const CORPUS_CORPUS_CARD_SECTIONS =
+const CORPUS_CARD_SECTIONS =
   (
     window.CARD_CORPUS &&
     typeof window.CARD_CORPUS ===
@@ -207,7 +207,7 @@ function createDefaultCorpusState() {
 
 
   Object.entries(
-    CORPUS_CORPUS_CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -279,7 +279,7 @@ function normalizeCorpusState(
 
 
   Object.entries(
-    CORPUS_CORPUS_CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -469,7 +469,7 @@ function isSectionFullyEnabled(
 ) {
 
   const section =
-    CORPUS_CORPUS_CARD_SECTIONS[
+    CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -516,7 +516,7 @@ function countEnabled01() {
 
 
   Object.entries(
-    CORPUS_CORPUS_CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -555,7 +555,7 @@ function getTotal01Count() {
 
   return (
     Object.values(
-      CORPUS_CORPUS_CARD_SECTIONS
+      CORPUS_CARD_SECTIONS
     )
       .reduce(
         function (
@@ -709,7 +709,7 @@ function renderSectionList(
 ) {
 
   const section =
-    CORPUS_CORPUS_CARD_SECTIONS[
+    CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -910,7 +910,7 @@ function toggleWholeSection(
 ) {
 
   const section =
-    CORPUS_CORPUS_CARD_SECTIONS[
+    CORPUS_CARD_SECTIONS[
       sectionId
     ];
 
@@ -951,7 +951,7 @@ function toggleAllSections() {
 
 
   Object.entries(
-    CORPUS_CORPUS_CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]
@@ -1085,7 +1085,7 @@ function countFixedPreset01(
 
 
   Object.entries(
-    CORPUS_CORPUS_CARD_SECTIONS
+    CORPUS_CARD_SECTIONS
   ).forEach(
     function (
       [sectionId, section]

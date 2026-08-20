@@ -364,55 +364,62 @@ let draggedCategoryId =
    初始化当前 88 个 01
    ========================= */
 
-function createCorpusFromCurrentSections() {
+/* =========================
+   创建安全空壳
 
-  const result = {};
+   仅用于：
+   真正字卡库尚未读取时的页面占位。
+
+   绝不从旧 cards-data.js
+   自动生成 01。
+   ========================= */
+
+function createEmptyCorpusShell() {
+
+  return {
+
+    normal: {
+
+      id:
+        "normal",
+
+      name:
+        "日常",
+
+      items:
+        []
+
+    },
 
 
-  Object.entries(
-    CARD_SECTIONS
-  ).forEach(
-    function (
-      [sectionId, section]
-    ) {
+    intimate: {
 
-      result[
-        sectionId
-      ] = {
+      id:
+        "intimate",
 
-        id:
-          sectionId,
+      name:
+        "亲密",
 
-        name:
-          section.name,
+      items:
+        []
 
-        items:
-          section.items.map(
-            function (item) {
+    },
 
-              return {
 
-                id:
-                  item.id,
+    adult: {
 
-                name:
-                  item.name,
+      id:
+        "adult",
 
-                tree:
-                  []
+      name:
+        "情欲",
 
-              };
-
-            }
-          )
-
-      };
+      items:
+        []
 
     }
-  );
 
-
-  return result;
+  };
 
 }
 
@@ -426,12 +433,12 @@ let corpusData =
   (
     window.CARD_CORPUS &&
     typeof window.CARD_CORPUS ===
-    "object"
+      "object"
   )
     ? structuredClone(
-      window.CARD_CORPUS
-    )
-    : createCorpusFromCurrentSections();
+        window.CARD_CORPUS
+      )
+    : createEmptyCorpusShell();
 
 
 
@@ -4679,26 +4686,25 @@ async function loadCorpusFromFileHandle(
 
 
     if (
-      isInitialEmptyCorpus
-    ) {
+  isInitialEmptyCorpus
+) {
 
-      /*
-        只有真正第一次建立数据库时，
-        才允许从旧 cards-data.js
-        初始化 88 个 01。
-      */
+  /*
+    以前这里会从 cards-data.js
+    自动生成 88 个空 01。
 
-      corpusData =
-        createCorpusFromCurrentSections();
+    现在禁止这种 fallback。
 
+    如果真实文件还是 null，
+    就直接拒绝载入，
+    防止空壳覆盖正式数据库。
+  */
 
-      hasLoadedRealCorpusFile =
-        true;
+  throw new Error(
+    "cards-corpus-data.js 当前仍是空字卡库，已停止载入以保护数据。"
+  );
 
-
-      markUnsaved();
-
-    } else {
+} else {
 
       /*
         正常情况：
