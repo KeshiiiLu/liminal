@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#f4f3f0"
+    >
+
+    <title>Home · Liminal</title>
+
+    <link
+        rel="stylesheet"
+        href="home-life.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="life-shell">
+
+
+        <!-- =========================
+             Header
+             ========================= -->
+
+        <header class="life-header">
+
+            <button
+                class="life-back"
+                type="button"
+                onclick="window.location.href='index.html?page=2'"
+            >
+                ‹
+            </button>
+
+
+            <div class="life-title">
+
+                <span>
+                    DAILY LIFE
+                </span>
+
+                <h1>
+                    Home
+                </h1>
+
+            </div>
+
+
+            <button
+                class="life-refresh"
+                id="refreshHomeState"
+                type="button"
+            >
+                ↻
+            </button>
+
+        </header>
+
+
+
+        <!-- =========================
+             Home Hero
+             ========================= -->
+
+        <section class="home-hero">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    AT HOME
+                </span>
+
+                <h2>
+                    家里现在
+                </h2>
+
+                <p id="homeUpdatedText">
+                    刚刚更新
+                </p>
+
+            </div>
+
+
+            <div class="home-mark">
+                ⌂
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             NOW
+             ========================= -->
+
+        <section class="life-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        NOW
+                    </span>
+
+                    <strong>
+                        现在都在做什么
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="now-list">
+
+
+                <!-- Keshi -->
+
+                <article class="now-card">
+
+                    <div class="now-avatar">
+                        K
+                    </div>
+
+                    <div class="now-main">
+
+                        <span>
+                            KESHI
+                        </span>
+
+                        <strong>
+                            你
+                        </strong>
+
+                        <p>
+                            你的状态暂不随机
+                        </p>
+
+                    </div>
+
+                    <div class="now-location">
+                        —
+                    </div>
+
+                </article>
+
+
+
+                <!-- Luzhen -->
+
+                <article class="now-card">
+
+                    <div class="now-avatar">
+                        L
+                    </div>
+
+                    <div class="now-main">
+
+                        <span>
+                            LUZHEN
+                        </span>
+
+                        <strong>
+                            榛榛
+                        </strong>
+
+                        <p id="luzhenActivity">
+                            —
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="now-location"
+                        id="luzhenLocation"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+
+
+                <!-- Pet -->
+
+                <article class="now-card pet-now-card">
+
+                    <div class="now-avatar pet-avatar">
+                        爪
+                    </div>
+
+                    <div class="now-main">
+
+                        <span>
+                            PET
+                        </span>
+
+                        <strong id="petName">
+                            Pet
+                        </strong>
+
+                        <p id="petActivity">
+                            —
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="now-location"
+                        id="petLocation"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             PET
+             ========================= -->
+
+        <section class="life-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        PET
+                    </span>
+
+                    <strong>
+                        家里的小家伙
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <article class="pet-card">
+
+                <div class="pet-card-top">
+
+                    <div class="pet-large-mark">
+                        爪
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            CURRENT STATE
+                        </span>
+
+                        <strong id="petStateText">
+                            悠闲
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="pet-info-grid">
+
+                    <div>
+
+                        <span>
+                            地点
+                        </span>
+
+                        <strong id="petDetailLocation">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            正在
+                        </span>
+
+                        <strong id="petDetailActivity">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- =========================
+             ROOMS
+             ========================= -->
+
+        <section class="life-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ROOMS
+                    </span>
+
+                    <strong>
+                        家里各处
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="room-grid"
+                id="roomGrid"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ACTIVITY
+             ========================= -->
+
+        <section class="life-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ACTIVITY
+                    </span>
+
+                    <strong>
+                        最近发生
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="activity-column-heading">
+
+    <span>
+        榛榛
+    </span>
+
+    <span>
+        Pet
+    </span>
+
+</div>
+
+
+<section
+    class="activity-list"
+    id="activityList"
+>
+</section>
+
+        </section>
+
+
+
+        <!-- =========================
+             Bottom action
+             ========================= -->
+
+        <button
+            class="draw-now-button"
+            id="drawNowButton"
+            type="button"
+        >
+            刷新现在
+        </button>
+
+
+        <p class="life-note">
+            初版仅手动刷新。以后再接时间、日程和后台生活事件。
+        </p>
+
+
+    </main>
+
+
+    <script src="home-life-data.js"></script>
+
+    <script src="home-life.js"></script>
+
+</body>
+
+</html>

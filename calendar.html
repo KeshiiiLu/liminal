@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#f4f3f0">
+
+    <title>Calendar · Liminal</title>
+
+    <link rel="stylesheet" href="calendar.css">
+</head>
+
+
+<body>
+
+    <main class="calendar-shell">
+
+
+        <!-- =========================
+         Header
+         ========================= -->
+
+        <header class="calendar-header">
+
+            <button
+                class="calendar-back"
+                type="button"
+                onclick="window.location.href='index.html'"
+            >
+                ‹
+            </button>
+
+
+            <div class="calendar-title">
+
+                <span>
+                    LIMINAL
+                </span>
+
+                <h1>
+                    Calendar
+                </h1>
+
+            </div>
+
+
+            <button
+                class="calendar-today"
+                id="calendarTodayButton"
+                type="button"
+            >
+                今
+            </button>
+
+        </header>
+
+
+
+        <!-- =========================
+         App 内分页
+         ========================= -->
+
+        <nav class="calendar-tabs">
+
+            <button
+                class="calendar-tab active"
+                type="button"
+                data-page-index="0"
+            >
+                月历
+            </button>
+
+            <button
+                class="calendar-tab"
+                type="button"
+                data-page-index="1"
+            >
+                日程
+            </button>
+
+            <button
+                class="calendar-tab"
+                type="button"
+                data-page-index="2"
+            >
+                时间线
+            </button>
+
+            <button
+                class="calendar-tab"
+                type="button"
+                data-page-index="3"
+            >
+                记录
+            </button>
+
+        </nav>
+
+
+
+        <!-- =========================
+         横向页面
+         ========================= -->
+
+        <div
+            class="calendar-pages"
+            id="calendarPages"
+        >
+
+
+            <!-- =========================
+           P1 · 月历
+           ========================= -->
+
+            <section class="calendar-page">
+
+
+                <section class="month-card">
+
+                    <div class="month-heading">
+
+                        <button
+                            class="month-arrow"
+                            id="previousMonthButton"
+                            type="button"
+                        >
+                            ‹
+                        </button>
+
+
+                        <div>
+
+                            <span id="monthYearLabel">
+                                2026
+                            </span>
+
+                            <strong id="monthTitle">
+                                八月
+                            </strong>
+
+                        </div>
+
+
+                        <button
+                            class="month-arrow"
+                            id="nextMonthButton"
+                            type="button"
+                        >
+                            ›
+                        </button>
+
+                    </div>
+
+
+                    <div class="calendar-legend">
+
+                        <span>
+                            <i class="legend-dot period-dot"></i>
+                            经期
+                        </span>
+
+                        <span>
+                            <i class="legend-dot sex-dot"></i>
+                            Sex
+                        </span>
+
+                        <span>
+                            <i class="legend-transmission">✦</i>
+                            传讯
+                        </span>
+
+                        <span>
+                            <i class="legend-block predicted-period"></i>
+                            预计经期
+                        </span>
+
+                        <span>
+                            <i class="legend-block fertile-period"></i>
+                            易孕期
+                        </span>
+
+                    </div>
+
+
+                    <div class="month-week">
+
+                        <span>一</span>
+                        <span>二</span>
+                        <span>三</span>
+                        <span>四</span>
+                        <span>五</span>
+                        <span>六</span>
+                        <span>日</span>
+
+                    </div>
+
+
+                    <div
+                        class="month-grid"
+                        id="monthGrid"
+                    >
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     选中日期总览
+                     ========================= -->
+
+                <section
+                    class="day-overview"
+                    id="dayOverview"
+                >
+
+                    <header class="day-overview-header">
+
+                        <span>
+                            DAILY OVERVIEW
+                        </span>
+
+                        <strong id="sheetDateTitle">
+                            8月21日 · 周五
+                        </strong>
+
+                    </header>
+
+
+                    <div class="day-view-switch">
+
+                        <button
+                            class="day-view-button active"
+                            type="button"
+                            data-day-view="mine"
+                        >
+                            我的
+                        </button>
+
+                        <button
+                            class="day-view-button"
+                            type="button"
+                            data-day-view="both"
+                        >
+                            我们
+                        </button>
+
+                    </div>
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            大事
+                        </div>
+
+                        <div
+                            class="sheet-value"
+                            id="sheetMilestone"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            传讯
+                        </div>
+
+                        <div
+                            class="daily-transmission-list"
+                            id="sheetTransmissionTimeline"
+                        >
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            身体
+                        </div>
+
+                        <div
+                            class="sheet-value"
+                            id="sheetBody"
+                        >
+                            暂无记录
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            睡眠
+                        </div>
+
+                        <div
+                            class="sheet-value"
+                            id="sheetSleep"
+                        >
+                            暂无记录
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            Cycle
+                        </div>
+
+                        <div
+                            class="sheet-value"
+                            id="sheetCycle"
+                        >
+                            暂无记录
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="sheet-section">
+
+                        <div class="sheet-label">
+                            Sex
+                        </div>
+
+                        <div
+                            class="sheet-value sex-detail"
+                            id="sheetSex"
+                        >
+                            暂无记录
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =========================
+           P2 · 日程
+           ========================= -->
+
+            <section class="calendar-page">
+
+
+                <div class="page-section-heading schedule-page-heading">
+
+                    <div>
+
+                        <span>
+                            SCHEDULE
+                        </span>
+
+                        <strong>
+                            我们今天在做什么
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        class="schedule-add-button"
+                        id="addScheduleButton"
+                        type="button"
+                    >
+                        ＋ 添加
+                    </button>
+
+                </div>
+
+
+                <section class="schedule-card">
+
+                    <div class="schedule-date-row">
+
+                        <button
+                            id="previousScheduleDay"
+                            type="button"
+                        >
+                            ‹
+                        </button>
+
+                        <strong id="scheduleDateTitle">
+                            8月21日 · 周五
+                        </strong>
+
+                        <button
+                            id="nextScheduleDay"
+                            type="button"
+                        >
+                            ›
+                        </button>
+
+                    </div>
+
+
+                    <div class="schedule-head">
+
+                        <span>
+                            时间
+                        </span>
+
+                        <strong>
+                            Keshi
+                        </strong>
+
+                        <strong>
+                            榛榛
+                        </strong>
+
+                        <span>
+                            时间
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="schedule-list"
+                        id="scheduleList"
+                    >
+                    </div>
+
+                </section>
+
+
+                <div class="schedule-hint">
+
+                    <span>
+                        按实际时间自动排列
+                    </span>
+
+                    <p>
+                        只显示至少一人有安排的时间点；同一时间共用一行。
+                        点击日程可以编辑或删除，新增时间会自动插入正确位置。
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+           P3 · 时间线
+           ========================= -->
+
+            <section class="calendar-page">
+
+
+                <div class="page-section-heading">
+
+                    <span>
+                        TIMELINE
+                    </span>
+
+                    <strong>
+                        时间线
+                    </strong>
+
+                </div>
+
+
+
+                <div class="timeline-mode-switch">
+
+                    <button
+                        class="timeline-mode-button active"
+                        type="button"
+                        data-timeline-mode="milestone"
+                    >
+                        大事
+                    </button>
+
+                    <button
+                        class="timeline-mode-button"
+                        type="button"
+                        data-timeline-mode="transmission"
+                    >
+                        传讯
+                    </button>
+
+                </div>
+
+
+
+                <!-- =========================
+                     大事时间线
+                     ========================= -->
+
+                <div id="milestoneTimelinePanel">
+
+                    <div class="timeline-subheading">
+
+                        <span>
+                            MILESTONES
+                        </span>
+
+                        <button
+                            class="timeline-add-button"
+                            id="addMilestoneButton"
+                            type="button"
+                        >
+                            ＋ 添加
+                        </button>
+
+                    </div>
+
+
+                    <section
+                        class="timeline-card"
+                        id="timelineList"
+                    >
+                    </section>
+
+                </div>
+
+
+
+                <!-- =========================
+                     传讯时间线
+                     ========================= -->
+
+                <div
+                    id="transmissionTimelinePanel"
+                    hidden
+                >
+
+                    <div class="timeline-subheading">
+
+                        <span>
+                            TRANSMISSIONS
+                        </span>
+
+                        <button
+                            class="timeline-add-button"
+                            id="addTransmissionButton"
+                            type="button"
+                        >
+                            ＋ 添加
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="transmission-filter">
+
+                        <button
+                            class="transmission-filter-button active"
+                            type="button"
+                            data-transmission-filter="all"
+                        >
+                            全部
+                        </button>
+
+                        <button
+                            class="transmission-filter-button"
+                            type="button"
+                            data-transmission-filter="tarot"
+                        >
+                            塔罗
+                        </button>
+
+                        <button
+                            class="transmission-filter-button"
+                            type="button"
+                            data-transmission-filter="mediumship"
+                        >
+                            通灵
+                        </button>
+
+                        <button
+                            class="transmission-filter-button"
+                            type="button"
+                            data-transmission-filter="other"
+                        >
+                            其他
+                        </button>
+
+                    </div>
+
+
+                    <section
+                        class="transmission-timeline"
+                        id="transmissionTimelineList"
+                    >
+                    </section>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+           P4 · 记录
+           ========================= -->
+
+            <section class="calendar-page">
+
+
+                <div class="page-section-heading">
+
+                    <span>
+                        DAILY RECORD
+                    </span>
+
+                    <strong id="recordDateTitle">
+                        今天
+                    </strong>
+
+                </div>
+
+
+                <div class="record-view-switch">
+
+                    <button
+                        class="record-view-button active"
+                        type="button"
+                        data-record-view="mine"
+                    >
+                        我的
+                    </button>
+
+                    <button
+                        class="record-view-button"
+                        type="button"
+                        data-record-view="both"
+                    >
+                        我们
+                    </button>
+
+                </div>
+
+
+                <section class="record-grid">
+
+
+                    <article
+                        class="record-card record-card-manageable"
+                        id="recordBodyCard"
+                    >
+
+                        <button
+                            class="record-card-action"
+                            id="editBodyButton"
+                            type="button"
+                        >
+                            管理
+                        </button>
+
+                        <div class="record-symbol">
+                            ＋
+                        </div>
+
+                        <span>
+                            BODY
+                        </span>
+
+                        <strong>
+                            身体状态
+                        </strong>
+
+                        <p id="recordBody">
+                            暂无记录
+                        </p>
+
+                    </article>
+
+
+
+                    <article
+    class="record-card record-card-manageable"
+    id="recordSleepCard"
+>
+
+    <button
+        class="record-card-action"
+        id="editSleepButton"
+        type="button"
+    >
+        管理
+    </button>
+
+    <div class="record-symbol">
+        ☾
+    </div>
+
+    <span>
+        SLEEP
+    </span>
+
+    <strong>
+        睡眠
+    </strong>
+
+    <p id="recordSleep">
+        暂无记录
+    </p>
+
+</article>
+
+
+
+                    <article class="record-card">
+
+                        <div class="record-symbol">
+                            ○
+                        </div>
+
+                        <span>
+                            CYCLE
+                        </span>
+
+                        <strong>
+                            经期与周期
+                        </strong>
+
+                        <p id="recordCycle">
+                            暂无记录
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="record-card">
+
+                        <div class="record-symbol">
+                            ♡
+                        </div>
+
+                        <span>
+                            INTIMACY
+                        </span>
+
+                        <strong>
+                            Sex 记录
+                        </strong>
+
+                        <p id="recordSex">
+                            暂无记录
+                        </p>
+
+                    </article>
+
+                </section>
+
+
+                <section class="record-note">
+
+                    <span>
+                        RECORDS
+                    </span>
+
+                    <strong>
+                        先从 Body 开始做完整记录
+                    </strong>
+
+                    <p>
+                        身体状态现在可以按日期、按人物新增、编辑和删除。
+                        Sleep、Cycle 与 Sex 后面继续沿用同一套交互。
+                    </p>
+
+                </section>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+
+    <!-- =========================
+     Body 新增 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="body-editor-backdrop"
+        id="bodyEditorBackdrop"
+        hidden
+    >
+
+        <section class="body-editor-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="body-editor-header">
+
+                <div>
+
+                    <span>
+                        BODY
+                    </span>
+
+                    <strong id="bodyEditorTitle">
+                        添加身体记录
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="bodyEditorClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <label class="body-field">
+
+                <span>
+                    日期
+                </span>
+
+                <input
+                    id="bodyDateInput"
+                    type="date"
+                >
+
+            </label>
+
+
+            <div class="body-field">
+
+                <span>
+                    归属
+                </span>
+
+                <div class="body-owner-options">
+
+                    <button
+                        class="body-owner active"
+                        type="button"
+                        data-body-owner="keshi"
+                    >
+                        Keshi
+                    </button>
+
+                    <button
+                        class="body-owner"
+                        type="button"
+                        data-body-owner="luzhen"
+                    >
+                        榛榛
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="body-field">
+
+                <span>
+                    精力
+                </span>
+
+                <div class="body-energy-options">
+
+                    <button type="button" data-body-energy="1">1</button>
+                    <button type="button" data-body-energy="2">2</button>
+                    <button type="button" data-body-energy="3">3</button>
+                    <button type="button" data-body-energy="4">4</button>
+                    <button type="button" data-body-energy="5">5</button>
+
+                </div>
+
+            </div>
+
+
+            <label class="body-field">
+
+                <span>
+                    食欲
+                </span>
+
+                <input
+                    id="bodyAppetiteInput"
+                    type="text"
+                    placeholder="例如：正常 / 偏低 / 很饿"
+                >
+
+            </label>
+
+
+            <label class="body-field">
+
+                <span>
+                    疼痛 / 不适
+                </span>
+
+                <input
+                    id="bodyPainInput"
+                    type="text"
+                    placeholder="例如：无 / 腰痛 / 头痛"
+                >
+
+            </label>
+
+
+            <label class="body-field">
+
+                <span>
+                    备注
+                </span>
+
+                <textarea
+                    id="bodyNoteInput"
+                    rows="4"
+                    placeholder="记录今天身体上的其他感觉……"
+                ></textarea>
+
+            </label>
+
+
+            <footer class="body-editor-actions">
+
+                <button
+                    class="danger"
+                    id="bodyEditorDelete"
+                    type="button"
+                    hidden
+                >
+                    删除
+                </button>
+
+                <button
+                    id="bodyEditorCancel"
+                    type="button"
+                >
+                    取消
+                </button>
+
+                <button
+                    class="primary"
+                    id="bodyEditorSave"
+                    type="button"
+                >
+                    保存
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+<!-- =========================
+ Sleep 新增 / 编辑 Sheet
+ ========================= -->
+
+<div
+    class="body-editor-backdrop"
+    id="sleepEditorBackdrop"
+    hidden
+>
+
+    <section class="body-editor-sheet">
+
+        <div class="sheet-handle"></div>
+
+
+        <header class="body-editor-header">
+
+            <div>
+
+                <span>
+                    SLEEP
+                </span>
+
+                <strong id="sleepEditorTitle">
+                    添加睡眠记录
+                </strong>
+
+            </div>
+
+
+            <button
+                id="sleepEditorClose"
+                type="button"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <label class="body-field">
+
+            <span>
+                日期
+            </span>
+
+            <input
+                id="sleepDateInput"
+                type="date"
+            >
+
+        </label>
+
+
+        <div class="body-field">
+
+            <span>
+                归属
+            </span>
+
+            <div class="body-owner-options">
+
+                <button
+                    class="body-owner sleep-owner active"
+                    type="button"
+                    data-sleep-owner="keshi"
+                >
+                    Keshi
+                </button>
+
+                <button
+                    class="body-owner sleep-owner"
+                    type="button"
+                    data-sleep-owner="luzhen"
+                >
+                    榛榛
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <label class="body-field">
+
+            <span>
+                入睡时间
+            </span>
+
+            <input
+                id="sleepStartInput"
+                type="time"
+            >
+
+        </label>
+
+
+        <label class="body-field">
+
+            <span>
+                起床时间
+            </span>
+
+            <input
+                id="sleepEndInput"
+                type="time"
+            >
+
+        </label>
+
+
+        <label class="body-field">
+
+            <span>
+                睡眠质量
+            </span>
+
+            <input
+                id="sleepQualityInput"
+                type="text"
+                placeholder="例如：很好 / 一般 / 很差"
+            >
+
+        </label>
+
+
+        <label class="body-field">
+
+            <span>
+                午睡 / 补觉
+            </span>
+
+            <input
+                id="sleepNapInput"
+                type="text"
+                placeholder="例如：暂无午睡 / 14:20–15:00"
+            >
+
+        </label>
+
+
+        <footer
+            class="body-editor-actions"
+            id="sleepEditorActions"
+        >
+
+            <button
+                class="danger"
+                id="sleepEditorDelete"
+                type="button"
+                hidden
+            >
+                删除
+            </button>
+
+            <button
+                id="sleepEditorCancel"
+                type="button"
+            >
+                取消
+            </button>
+
+            <button
+                class="primary"
+                id="sleepEditorSave"
+                type="button"
+            >
+                保存
+            </button>
+
+        </footer>
+
+    </section>
+
+</div>
+
+    <!-- =========================
+     日程新增 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="schedule-editor-backdrop"
+        id="scheduleEditorBackdrop"
+        hidden
+    >
+
+        <section class="schedule-editor-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="schedule-editor-header">
+
+                <div>
+
+                    <span>
+                        SCHEDULE
+                    </span>
+
+                    <strong id="scheduleEditorTitle">
+                        添加日程
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="scheduleEditorClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <label class="schedule-field">
+
+                <span>
+                    日期
+                </span>
+
+                <input
+                    id="scheduleDateInput"
+                    type="date"
+                >
+
+            </label>
+
+
+            <div class="schedule-field">
+
+                <span>
+                    归属
+                </span>
+
+                <div class="schedule-owner-options">
+
+                    <button
+                        class="schedule-owner active"
+                        type="button"
+                        data-schedule-owner="keshi"
+                    >
+                        Keshi
+                    </button>
+
+                    <button
+                        class="schedule-owner"
+                        type="button"
+                        data-schedule-owner="luzhen"
+                    >
+                        榛榛
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <label class="schedule-field">
+
+                <span>
+                    日程
+                </span>
+
+                <input
+                    id="scheduleTitleInput"
+                    type="text"
+                    placeholder="例如：内科学"
+                >
+
+            </label>
+
+
+            <div class="schedule-time-fields">
+
+                <label class="schedule-field">
+
+                    <span>
+                        开始时间
+                    </span>
+
+                    <input
+                        id="scheduleStartTimeInput"
+                        type="time"
+                    >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                    <span>
+                        结束时间（可选）
+                    </span>
+
+                    <input
+                        id="scheduleEndTimeInput"
+                        type="time"
+                    >
+
+                </label>
+
+            </div>
+
+
+            <footer class="schedule-editor-actions">
+
+                <button
+                    class="danger"
+                    id="scheduleEditorDelete"
+                    type="button"
+                    hidden
+                >
+                    删除
+                </button>
+
+                <button
+                    id="scheduleEditorCancel"
+                    type="button"
+                >
+                    取消
+                </button>
+
+                <button
+                    class="primary"
+                    id="scheduleEditorSave"
+                    type="button"
+                >
+                    保存
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+
+    <!-- =========================
+     大事新增 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="milestone-editor-backdrop"
+        id="milestoneEditorBackdrop"
+        hidden
+    >
+
+        <section class="milestone-editor-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="milestone-editor-header">
+
+                <div>
+
+                    <span>
+                        MILESTONE
+                    </span>
+
+                    <strong id="milestoneEditorTitle">
+                        添加大事
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="milestoneEditorClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <label class="milestone-field">
+
+                <span>
+                    日期
+                </span>
+
+                <input
+                    id="milestoneDateInput"
+                    type="date"
+                >
+
+            </label>
+
+
+            <label class="milestone-field">
+
+                <span>
+                    大事
+                </span>
+
+                <input
+                    id="milestoneTitleInput"
+                    type="text"
+                    placeholder="例如：返校"
+                >
+
+            </label>
+
+
+            <div class="milestone-field">
+
+                <span>
+                    归属
+                </span>
+
+                <div class="milestone-owner-options">
+
+                    <button
+                        class="milestone-owner active"
+                        type="button"
+                        data-owner="keshi"
+                    >
+                        Keshi
+                    </button>
+
+                    <button
+                        class="milestone-owner"
+                        type="button"
+                        data-owner="luzhen"
+                    >
+                        榛榛
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <footer class="milestone-editor-actions">
+
+                <button
+                    id="milestoneEditorCancel"
+                    type="button"
+                >
+                    取消
+                </button>
+
+                <button
+                    class="primary"
+                    id="milestoneEditorSave"
+                    type="button"
+                >
+                    保存
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+
+
+    <!-- =========================
+     传讯新增 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="transmission-editor-backdrop"
+        id="transmissionEditorBackdrop"
+        hidden
+    >
+
+        <section class="transmission-editor-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="transmission-editor-header">
+
+                <div>
+
+                    <span>
+                        TRANSMISSION
+                    </span>
+
+                    <strong id="transmissionEditorTitle">
+                        添加传讯
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="transmissionEditorClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <label class="transmission-field">
+
+                <span>
+                    日期
+                </span>
+
+                <input
+                    id="transmissionDateInput"
+                    type="date"
+                >
+
+            </label>
+
+
+            <label class="transmission-field">
+
+                <span>
+                    时间
+                </span>
+
+                <input
+                    id="transmissionTimeInput"
+                    type="time"
+                >
+
+            </label>
+
+
+            <div class="transmission-field">
+
+                <span>
+                    类型
+                </span>
+
+                <div class="transmission-type-options">
+
+                    <button
+                        class="transmission-type-option active"
+                        type="button"
+                        data-transmission-type="tarot"
+                    >
+                        塔罗
+                    </button>
+
+                    <button
+                        class="transmission-type-option"
+                        type="button"
+                        data-transmission-type="mediumship"
+                    >
+                        通灵
+                    </button>
+
+                    <button
+                        class="transmission-type-option"
+                        type="button"
+                        data-transmission-type="other"
+                    >
+                        其他
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <label class="transmission-field">
+
+                <span>
+                    标题
+                </span>
+
+                <input
+                    id="transmissionTitleInput"
+                    type="text"
+                    placeholder="例如：关于连接状态的传讯"
+                >
+
+            </label>
+
+
+            <label class="transmission-field">
+
+                <span>
+                    来源
+                </span>
+
+                <input
+                    id="transmissionSourceInput"
+                    type="text"
+                    placeholder="例如：某位老师 / 自己抽牌 / 电子字卡"
+                >
+
+            </label>
+
+
+            <label class="transmission-field">
+
+                <span>
+                    内容 / 摘要
+                </span>
+
+                <textarea
+                    id="transmissionSummaryInput"
+                    rows="5"
+                    placeholder="记录这次传讯的主要内容……"
+                ></textarea>
+
+            </label>
+
+
+            <footer class="transmission-editor-actions">
+
+                <button
+                    id="transmissionEditorCancel"
+                    type="button"
+                >
+                    取消
+                </button>
+
+                <button
+                    class="primary"
+                    id="transmissionEditorSave"
+                    type="button"
+                >
+                    保存
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+
+    <script src="luzhen-simulation-data.js"></script>
+
+<script src="luzhen-simulation.js"></script>
+
+<script src="calendar.js"></script>
+
+</body>
+
+</html>
