@@ -9,6 +9,7 @@
     <title>Liminal</title>
 
     <link rel="stylesheet" href="home.css">
+  <script src="storage-migrations.js"></script>
 </head>
 
 <body>
@@ -43,7 +44,11 @@
 
 
                         <!-- 1. Calendar -->
-                        <article class="home-widget-card calendar-widget-card">
+                        <a
+                            class="home-widget-card calendar-widget-card app-link"
+                            href="calendar.html"
+                            aria-label="打开 Calendar"
+                        >
 
                             <div class="widget-topline">
                                 <div>
@@ -120,7 +125,7 @@
                                 <strong>Tuesday · 18 August</strong>
                             </div>
 
-                        </article>
+                        </a>
 
 
                         <!-- 2. Body -->
@@ -477,7 +482,7 @@
             <section class="desktop-page">
 
                 <div class="page-heading">
-                    <span>DATA & SYSTEM</span>
+                    <span>DATA &amp; SYSTEM</span>
                     <h2>数据与系统</h2>
                 </div>
 
@@ -551,7 +556,11 @@
                 </div>
 
 
-                <a class="app-item app-link" href="settings.html">
+                <a
+                    class="app-item app-link"
+                    href="settings.html"
+                    aria-label="打开设置"
+                >
                     <div class="app-icon settings-icon">⚙</div>
                     <span>设置</span>
                 </a>

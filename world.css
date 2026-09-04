@@ -530,6 +530,31 @@ a {
 }
 
 
+/*
+  Settings 中已经接入页面的整行导航。
+
+  明确让链接本身成为命中层，避免行内文字或箭头
+  在部分浏览器中成为独立的触控目标。
+*/
+
+a.settings-menu-item[href="data-management.html"] {
+  position: relative;
+  z-index: 1;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+a.settings-menu-item[href="data-management.html"] > * {
+  pointer-events: none;
+}
+
+
 .settings-menu-item +
 .settings-menu-item {
   border-top:

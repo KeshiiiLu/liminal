@@ -58,264 +58,10 @@ const currentPerson =
    频率规则定义
    ========================================= */
 
-const FREQUENCY_RULES = [
-
-
-  /* =========================
-     消息
-     ========================= */
-
-  {
-    group: "message",
-
-    domainId: "chat",
-
-    domainLabel: "Chat",
-
-    ruleId: "reply",
-
-    label: "回复",
-
-    description:
-      "收到你的消息后，选择回应的概率",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  {
-    group: "message",
-
-    domainId: "chat",
-
-    domainLabel: "Chat",
-
-    ruleId: "message",
-
-    label: "主动发消息",
-
-    description:
-      "没有由你先开口时，主动发送消息",
-
-    defaults: {
-      luzhen: [30.0, 60.0],
-      jasper: [20.0, 50.0]
-    }
-  },
-
-
-  {
-    group: "message",
-
-    domainId: "chat",
-
-    domainLabel: "Chat",
-
-    ruleId: "continue",
-
-    label: "继续说",
-
-    description:
-      "一条消息之后继续补充内容",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  {
-    group: "message",
-
-    domainId: "chat",
-
-    domainLabel: "Chat",
-
-    ruleId: "poke",
-
-    label: "拍一拍",
-
-    description:
-      "主动触发拍一拍互动",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  {
-    group: "message",
-
-    domainId: "chat",
-
-    domainLabel: "Chat",
-
-    ruleId: "recall",
-
-    label: "撤回消息",
-
-    description:
-      "发送消息后主动撤回",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  /* =========================
-   通话
-   ========================= */
-
-{
-  group: "call",
-
-  domainId: "chat",
-
-  domainLabel: "Chat",
-
-  ruleId: "call",
-
-  label: "主动拨打",
-
-  description:
-    "对方主动给你拨打视频通话",
-
-  defaults: {
-
-    luzhen: [0.0, 0.0],
-
-    jasper: [0.0, 0.0]
-
-  }
-
-},
-
-
-{
-  group: "call",
-
-  domainId: "chat",
-
-  domainLabel: "Chat",
-
-  ruleId: "answerCall",
-
-  label: "接听",
-
-  description:
-    "你主动拨打时选择接听",
-
-  defaults: {
-
-    luzhen: [0.0, 0.0],
-
-    jasper: [0.0, 0.0]
-
-  }
-
-},
-
-
-{
-  group: "call",
-
-  domainId: "chat",
-
-  domainLabel: "Chat",
-
-  ruleId: "rejectCall",
-
-  label: "拒接",
-
-  description:
-    "未选择接听时，主动拒绝通话",
-
-  defaults: {
-
-    luzhen: [0.0, 0.0],
-
-    jasper: [0.0, 0.0]
-
-  }
-
-},
-
-
-/* =========================
-   礼物与金钱
-   ========================= */
-
-  {
-    group: "money",
-
-    domainId: "wallet",
-
-    domainLabel: "Wallet",
-
-    ruleId: "redPacket",
-
-    label: "主动发红包",
-
-    description:
-      "主动发送红包",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  {
-    group: "money",
-
-    domainId: "wallet",
-
-    domainLabel: "Wallet",
-
-    ruleId: "transfer",
-
-    label: "主动转账",
-
-    description:
-      "主动向你发起转账",
-
-    defaults: {
-      luzhen: [0.0, 0.0],
-      jasper: [0.0, 0.0]
-    }
-  },
-
-
-  {
-    group: "money",
-
-    domainId: "mall",
-
-    domainLabel: "Mall",
-
-    ruleId: "gift",
-
-    label: "主动买礼物",
-
-    description:
-      "主动购买并赠送礼物",
-
-    defaults: {
-      luzhen: [10.0, 30.0],
-      jasper: [8.0, 20.0]
-    }
-  }
-
-];
+const FREQUENCY_RULES =
+  window
+    .LiminalWorldRulesDefaults
+    .rules;
 
 
 /* =========================================
@@ -522,7 +268,7 @@ function loadWorldRules() {
 
 
 /* =========================================
-   确保当前人物和频率规则存在
+   确保 v2 人物和频率规则存在
 
    只补缺失内容，
    不覆盖现有 Rules 数值。
@@ -532,594 +278,34 @@ function ensureFrequencyRules(
   worldData
 ) {
 
-  let changed =
-    false;
+  const result =
+    window
+      .LiminalWorldRulesDefaults
+      .ensureWorldRules(
+        worldData
+      );
 
 
-  if (
-    !worldData.people
-  ) {
-
-    worldData.people = {};
-
-    changed =
-      true;
-
-  }
-
+  /*
+    这里只做增量补全，不改变规则更新时间，
+    也不删除或强制重建已有的今日概率。
+  */
 
   if (
-    !worldData.people[
-      currentPerson.id
-    ]
+    result.changed
   ) {
-
-    worldData.people[
-      currentPerson.id
-    ] = {
-
-      id:
-        currentPerson.id,
-
-      name:
-        currentPerson.name,
-
-      domains: {}
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  const person =
-    worldData.people[
-      currentPerson.id
-    ];
-
-
-  if (
-    !person.domains
-  ) {
-
-    person.domains = {};
-
-    changed =
-      true;
-
-  }
-
-
-  FREQUENCY_RULES.forEach(
-    function (definition) {
-
-      let domain =
-        person.domains[
-          definition.domainId
-        ];
-
-
-      if (!domain) {
-
-        domain = {
-
-          id:
-            definition.domainId,
-
-          label:
-            definition.domainLabel,
-
-          rules: {}
-
-        };
-
-
-        person.domains[
-          definition.domainId
-        ] =
-          domain;
-
-
-        changed =
-          true;
-
-      }
-
-
-      if (
-        !domain.rules
-      ) {
-
-        domain.rules = {};
-
-        changed =
-          true;
-
-      }
-
-
-      if (
-        !domain.rules[
-          definition.ruleId
-        ]
-      ) {
-
-        const defaults =
-          definition.defaults[
-            currentPerson.id
-          ] || [0, 0];
-
-
-        domain.rules[
-          definition.ruleId
-        ] = {
-
-          id:
-            definition.ruleId,
-
-          label:
-            definition.label,
-
-          type:
-            "probability",
-
-          min:
-            defaults[0],
-
-          max:
-            defaults[1]
-
-        };
-
-
-        changed =
-          true;
-
-      }
-
-    }
-  );
-
-/* 回复专属参数 */
-
-const replyRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.reply;
-
-
-if (replyRule) {
-
-  if (
-    !replyRule.delaySeconds
-  ) {
-
-    replyRule.delaySeconds = {
-
-      min: 5,
-
-      max: 60
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  if (
-    !replyRule.messageCount
-  ) {
-
-    replyRule.messageCount = {
-
-      min: 1,
-
-      max: 3
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  if (
-    !replyRule.messageIntervalSeconds
-  ) {
-
-    replyRule.messageIntervalSeconds = {
-
-      min: 2,
-
-      max: 12
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-
-/* 主动发消息专属参数 */
-
-const messageRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.message;
-
-
-if (messageRule) {
-
-  if (
-    !messageRule.waitMinutes
-  ) {
-
-    messageRule.waitMinutes = {
-
-      min: 30,
-
-      max: 180
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  if (
-    !messageRule.messageCount
-  ) {
-
-    messageRule.messageCount = {
-
-      min: 1,
-
-      max: 4
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  if (
-    !messageRule.messageIntervalSeconds
-  ) {
-
-    messageRule.messageIntervalSeconds = {
-
-      min: 2,
-
-      max: 12
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 继续说专属参数 */
-
-const continueRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.continue;
-
-
-if (continueRule) {
-
-  if (
-    !continueRule.messageCount
-  ) {
-
-    continueRule.messageCount = {
-
-      min: 1,
-
-      max: 4
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-
-  if (
-    !continueRule.messageIntervalSeconds
-  ) {
-
-    continueRule.messageIntervalSeconds = {
-
-      min: 2,
-
-      max: 12
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 拍一拍专属参数 */
-
-const pokeRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.poke;
-
-
-if (pokeRule) {
-
-  if (
-    !pokeRule.roundGap
-  ) {
-
-    pokeRule.roundGap = {
-
-      min: 2,
-
-      max: 6
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 撤回消息专属参数 */
-
-const recallRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.recall;
-
-
-if (recallRule) {
-
-  if (
-    !recallRule.delaySeconds
-  ) {
-
-    recallRule.delaySeconds = {
-
-      min: 5,
-
-      max: 120
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 主动拨打专属参数 */
-
-const callRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.call;
-
-
-if (callRule) {
-
-  if (
-    !callRule.waitHours
-  ) {
-
-    callRule.waitHours = {
-
-      min: 3,
-
-      max: 12
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 接听专属参数 */
-
-const answerCallRule =
-  person.domains
-    ?.chat
-    ?.rules
-    ?.answerCall;
-
-
-if (answerCallRule) {
-
-  if (
-    !answerCallRule.delaySeconds
-  ) {
-
-    answerCallRule.delaySeconds = {
-
-      min: 3,
-
-      max: 30
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-/* 主动发红包专属参数 */
-
-const redPacketRule =
-  person.domains
-    ?.wallet
-    ?.rules
-    ?.redPacket;
-
-
-if (redPacketRule) {
-
-  if (
-    !redPacketRule.waitDays
-  ) {
-
-    redPacketRule.waitDays = {
-
-      min: 1,
-
-      max: 7
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-
-/* 主动转账专属参数 */
-
-const transferRule =
-  person.domains
-    ?.wallet
-    ?.rules
-    ?.transfer;
-
-
-if (transferRule) {
-
-  if (
-    !transferRule.waitDays
-  ) {
-
-    transferRule.waitDays = {
-
-      min: 3,
-
-      max: 14
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-
-/* 主动买礼物专属参数 */
-
-const giftRule =
-  person.domains
-    ?.mall
-    ?.rules
-    ?.gift;
-
-
-if (giftRule) {
-
-  if (
-    !giftRule.waitDays
-  ) {
-
-    giftRule.waitDays = {
-
-      min: 7,
-
-      max: 30
-
-    };
-
-
-    changed =
-      true;
-
-  }
-
-}
-
-  if (
-    changed
-  ) {
-
-    worldData.updatedAt =
-      Date.now();
-
 
     localStorage.setItem(
       RULES_STORAGE_KEY,
       JSON.stringify(
-        worldData
+        result.worldData
       )
-    );
-
-
-    /*
-      世界规则发生变化，
-      今日概率下一次重新生成。
-    */
-
-    localStorage.removeItem(
-      TODAY_ODDS_STORAGE_KEY
     );
 
   }
 
 
-  return worldData;
+  return result.worldData;
 
 }
 
@@ -1488,6 +674,16 @@ function createFrequencyRow(
     );
 
 
+  const probabilityDefaults =
+    definition.defaults[
+      currentPerson.id
+    ] || [0, 0];
+
+
+  const parameterDefaults =
+    definition.parameters || {};
+
+
   const row =
     document.createElement(
       "div"
@@ -1618,7 +814,8 @@ function createFrequencyRow(
     )
     .value =
       normalizeProbability(
-        rule?.min || 0
+        rule?.min ??
+          probabilityDefaults[0]
       ).toFixed(1);
 
 
@@ -1628,7 +825,8 @@ function createFrequencyRow(
     )
     .value =
       normalizeProbability(
-        rule?.max || 0
+        rule?.max ??
+          probabilityDefaults[1]
       ).toFixed(1);
 
 /* =========================
@@ -1859,7 +1057,9 @@ if (
     )
     .value =
       rule.delaySeconds?.min ??
-      5;
+      parameterDefaults
+        .delaySeconds
+        .min;
 
 
   extra
@@ -1868,7 +1068,9 @@ if (
     )
     .value =
       rule.delaySeconds?.max ??
-      60;
+      parameterDefaults
+        .delaySeconds
+        .max;
 
 
   extra
@@ -1877,7 +1079,9 @@ if (
     )
     .value =
       rule.messageCount?.min ??
-      1;
+      parameterDefaults
+        .messageCount
+        .min;
 
 
   extra
@@ -1886,7 +1090,9 @@ if (
     )
     .value =
       rule.messageCount?.max ??
-      3;
+      parameterDefaults
+        .messageCount
+        .max;
 
 
   extra
@@ -1895,7 +1101,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.min ??
-      2;
+      parameterDefaults
+        .messageIntervalSeconds
+        .min;
 
 
   extra
@@ -1904,7 +1112,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.max ??
-      12;
+      parameterDefaults
+        .messageIntervalSeconds
+        .max;
 
 
   /*
@@ -2162,7 +1372,9 @@ if (
     )
     .value =
       rule.waitMinutes?.min ??
-      30;
+      parameterDefaults
+        .waitMinutes
+        .min;
 
 
   extra
@@ -2171,7 +1383,9 @@ if (
     )
     .value =
       rule.waitMinutes?.max ??
-      180;
+      parameterDefaults
+        .waitMinutes
+        .max;
 
 
   extra
@@ -2180,7 +1394,9 @@ if (
     )
     .value =
       rule.messageCount?.min ??
-      1;
+      parameterDefaults
+        .messageCount
+        .min;
 
 
   extra
@@ -2189,7 +1405,9 @@ if (
     )
     .value =
       rule.messageCount?.max ??
-      4;
+      parameterDefaults
+        .messageCount
+        .max;
 
 
   extra
@@ -2198,7 +1416,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.min ??
-      2;
+      parameterDefaults
+        .messageIntervalSeconds
+        .min;
 
 
   extra
@@ -2207,7 +1427,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.max ??
-      12;
+      parameterDefaults
+        .messageIntervalSeconds
+        .max;
 
 
   /*
@@ -2399,7 +1621,9 @@ if (
     )
     .value =
       rule.messageCount?.min ??
-      1;
+      parameterDefaults
+        .messageCount
+        .min;
 
 
   extra
@@ -2408,7 +1632,9 @@ if (
     )
     .value =
       rule.messageCount?.max ??
-      4;
+      parameterDefaults
+        .messageCount
+        .max;
 
 
   extra
@@ -2417,7 +1643,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.min ??
-      2;
+      parameterDefaults
+        .messageIntervalSeconds
+        .min;
 
 
   extra
@@ -2426,7 +1654,9 @@ if (
     )
     .value =
       rule.messageIntervalSeconds?.max ??
-      12;
+      parameterDefaults
+        .messageIntervalSeconds
+        .max;
 
 
   /*
@@ -2552,7 +1782,9 @@ if (
     )
     .value =
       rule.roundGap?.min ??
-      2;
+      parameterDefaults
+        .roundGap
+        .min;
 
 
   extra
@@ -2561,7 +1793,9 @@ if (
     )
     .value =
       rule.roundGap?.max ??
-      6;
+      parameterDefaults
+        .roundGap
+        .max;
 
 
   /*
@@ -2687,7 +1921,9 @@ if (
     )
     .value =
       rule.delaySeconds?.min ??
-      5;
+      parameterDefaults
+        .delaySeconds
+        .min;
 
 
   extra
@@ -2696,7 +1932,9 @@ if (
     )
     .value =
       rule.delaySeconds?.max ??
-      120;
+      parameterDefaults
+        .delaySeconds
+        .max;
 
 
   /*
@@ -2822,7 +2060,9 @@ if (
     )
     .value =
       rule.waitHours?.min ??
-      3;
+      parameterDefaults
+        .waitHours
+        .min;
 
 
   extra
@@ -2831,7 +2071,9 @@ if (
     )
     .value =
       rule.waitHours?.max ??
-      12;
+      parameterDefaults
+        .waitHours
+        .max;
 
 
   /*
@@ -2957,7 +2199,9 @@ if (
     )
     .value =
       rule.delaySeconds?.min ??
-      3;
+      parameterDefaults
+        .delaySeconds
+        .min;
 
 
   extra
@@ -2966,7 +2210,9 @@ if (
     )
     .value =
       rule.delaySeconds?.max ??
-      30;
+      parameterDefaults
+        .delaySeconds
+        .max;
 
 
   /*
@@ -3001,36 +2247,12 @@ if (
    等待时间（天）
    ========================= */
 
-const waitDaysDefaults = {
-
-  redPacket: {
-    min: 1,
-    max: 7
-  },
-
-  transfer: {
-    min: 3,
-    max: 14
-  },
-
-  gift: {
-    min: 7,
-    max: 30
-  }
-
-};
-
-
 if (
-  waitDaysDefaults[
-    definition.ruleId
-  ]
+  parameterDefaults.waitDays
 ) {
 
   const defaults =
-    waitDaysDefaults[
-      definition.ruleId
-    ];
+    parameterDefaults.waitDays;
 
 
   const extra =

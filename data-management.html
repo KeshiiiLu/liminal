@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!-- Liminal data management: localStorage backup and restore, schema v1. -->
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>数据与存储 · Liminal</title>
+
+  <link
+    rel="stylesheet"
+    href="world.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="data-management.css"
+  >
+
+  <script src="storage-migrations.js"></script>
+</head>
+
+
+<body>
+
+  <main class="world-shell data-shell">
+
+    <header class="world-header">
+
+      <button
+        class="back-button"
+        type="button"
+        aria-label="返回设置"
+        onclick="window.location.href='settings.html'"
+      >
+        ‹
+      </button>
+
+      <div>
+        <span>LIMINAL DATA</span>
+        <h1>数据与存储</h1>
+      </div>
+
+    </header>
+
+
+    <section class="data-summary" aria-label="当前存储状态">
+
+      <div>
+        <span>STORAGE SCHEMA</span>
+        <strong id="schemaVersion">—</strong>
+      </div>
+
+      <div>
+        <span>LIMINAL KEYS</span>
+        <strong id="storageEntryCount">—</strong>
+      </div>
+
+    </section>
+
+
+    <section class="data-card">
+
+      <div class="data-card-heading">
+        <span>EXPORT</span>
+        <h2>导出全部数据</h2>
+      </div>
+
+      <p>
+        将当前网站下所有以 liminal_ 开头的 localStorage 数据原样保存为 UTF-8 JSON 文件。
+      </p>
+
+      <button
+        class="data-primary-button"
+        id="exportDataButton"
+        type="button"
+      >
+        导出 Liminal 备份
+      </button>
+
+      <p class="data-meta">
+        最近一次导出：
+        <span id="lastExportTime">本次会话尚未导出</span>
+      </p>
+
+    </section>
+
+
+    <section class="data-card data-restore-card">
+
+      <div class="data-card-heading">
+        <span>RESTORE</span>
+        <h2>从备份恢复</h2>
+      </div>
+
+      <p>
+        完整恢复会替换本设备现有的 liminal_* 数据，但绝不会操作同一网站下的其他 key。
+      </p>
+
+      <label
+        class="data-file-button"
+        for="backupFileInput"
+      >
+        选择 JSON 备份文件
+      </label>
+
+      <input
+        class="data-file-input"
+        id="backupFileInput"
+        type="file"
+        accept="application/json,.json"
+      >
+
+      <p
+        class="data-selected-file"
+        id="selectedFileName"
+      >
+        尚未选择文件
+      </p>
+
+
+      <div
+        class="restore-preview"
+        id="restorePreview"
+        hidden
+      >
+
+        <div class="restore-preview-row">
+          <span>备份时间</span>
+          <strong id="backupExportedAt">—</strong>
+        </div>
+
+        <div class="restore-preview-row">
+          <span>备份内 Liminal 条目</span>
+          <strong id="backupEntryCount">—</strong>
+        </div>
+
+        <div class="restore-preview-row">
+          <span>当前设备 Liminal 条目</span>
+          <strong id="currentEntryCount">—</strong>
+        </div>
+
+        <div class="restore-preview-row">
+          <span>迁移路径</span>
+          <strong id="migrationPath">—</strong>
+        </div>
+
+        <p
+          class="migration-warnings"
+          id="migrationWarnings"
+          hidden
+        ></p>
+
+        <p class="restore-warning">
+          恢复前会先自动下载一份当前设备安全备份。确认后，当前 liminal_* 数据将被完整替换，操作不可直接撤销。
+        </p>
+
+        <button
+          class="data-danger-button"
+          id="restoreDataButton"
+          type="button"
+        >
+          确认覆盖并恢复
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section class="data-card data-note-card">
+
+      <div class="data-card-heading">
+        <span>SCOPE</span>
+        <h2>本版备份范围</h2>
+      </div>
+
+      <p>
+        包含聊天、Wallet、Mall、Calendar、互动频率、今日概率、通话与互动运行状态等所有 liminal_* localStorage。
+      </p>
+
+      <p>
+        电脑端字卡编辑器的 IndexedDB 文件句柄不能跨设备恢复，本版不包含该句柄；字卡正文仍由项目文件管理。
+      </p>
+
+      <p>
+        iPhone Safari 若打开 JSON 预览，请使用系统分享菜单中的“存储到文件”。
+      </p>
+
+      <p>
+        备份是未加密的 JSON，可能包含聊天、地址和账目等隐私数据，请保存到可信位置。
+      </p>
+
+    </section>
+
+
+    <p
+      class="data-status"
+      id="dataStatus"
+      role="status"
+      aria-live="polite"
+    ></p>
+
+
+    <button
+      class="data-reload-button"
+      id="reloadLiminalButton"
+      type="button"
+      hidden
+    >
+      重新加载 Liminal
+    </button>
+
+  </main>
+
+
+  <script src="data-management.js"></script>
+
+</body>
+
+</html>
