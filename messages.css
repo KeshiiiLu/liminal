@@ -408,3 +408,71 @@ body {
       0 0 30px rgba(0, 0, 0, 0.03);
   }
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .messages-page {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  .back-button {
+    width: 44px;
+    height: 44px;
+    left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .profile-card,
+  .contacts-section {
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .contact-item {
+    min-width: 0;
+    min-height: 72px;
+  }
+
+  .contact-info {
+    min-width: 0;
+  }
+
+  .contact-info strong,
+  .contact-info span {
+    overflow-wrap: anywhere;
+  }
+
+  .profile-bio {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  .messages-bottom-bar {
+    width:
+      calc(100% - 32px);
+    max-width:
+      calc(520px - 32px);
+  }
+
+  .messages-bottom-bar button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+}

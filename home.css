@@ -950,3 +950,106 @@ min-width: 100%;
 .companion-icon {
   background: #e5e3eb;
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .home-shell {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  .home-header {
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .desktop-pages,
+  .home-widget-track {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  .desktop-page {
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .app-grid,
+  .finance-grid,
+  .system-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    column-gap: 8px;
+  }
+
+  .app-item {
+    min-width: 0;
+    min-height: 88px;
+    overflow-wrap: anywhere;
+  }
+
+  .home-widget-card {
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .widget-topline,
+  .sleep-main,
+  .widget-footer-line {
+    min-width: 0;
+  }
+
+  .widget-topline > *,
+  .sleep-main > *,
+  .widget-footer-line > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .intimacy-center button {
+    min-height: 44px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .home-header,
+  .desktop-page {
+    padding-right:
+      max(14px, env(safe-area-inset-right));
+    padding-left:
+      max(14px, env(safe-area-inset-left));
+  }
+
+  .home-widget-card {
+    padding-right: 17px;
+    padding-left: 17px;
+  }
+
+  .app-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+}

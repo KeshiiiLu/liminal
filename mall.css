@@ -571,3 +571,111 @@ body {
   color: inherit;
   text-decoration: none;
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .mall-page {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .mall-header {
+    grid-template-columns:
+      44px minmax(0, 1fr) 44px;
+  }
+
+  .mall-back,
+  .mall-more,
+  .mall-bottom-bar button,
+  .hero-content button,
+  .section-heading button,
+  .product-bottom button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .mall-search input {
+    min-width: 0;
+    font-size: 16px;
+  }
+
+  .mall-hero,
+  .hero-content,
+  .category-grid,
+  .mall-shortcuts,
+  .product-grid,
+  .shortcut-card,
+  .product-card,
+  .product-info,
+  .product-bottom {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .category-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+  .mall-shortcuts,
+  .product-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-content h1,
+  .hero-content p,
+  .shortcut-card strong,
+  .shortcut-card small,
+  .product-info strong,
+  .product-info p,
+  .product-bottom > span {
+    overflow-wrap: anywhere;
+  }
+
+  .mall-bottom-bar {
+    padding-right:
+      max(8px, env(safe-area-inset-right));
+    padding-left:
+      max(8px, env(safe-area-inset-left));
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .mall-page {
+    padding-right:
+      max(12px, env(safe-area-inset-right));
+    padding-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .category-grid {
+    gap: 6px;
+  }
+
+  .mall-shortcuts,
+  .product-grid {
+    gap: 9px;
+  }
+
+}

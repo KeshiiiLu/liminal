@@ -616,3 +616,35 @@ button {
 
   line-height: 1.7;
 }
+
+
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .favorites-page {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-bottom:
+      calc(32px + env(safe-area-inset-bottom));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .favorites-header {
+    min-height:
+      calc(64px + env(safe-area-inset-top));
+    padding-top:
+      env(safe-area-inset-top);
+  }
+
+  .favorites-back {
+    width: 44px;
+    height: 44px;
+  }
+}

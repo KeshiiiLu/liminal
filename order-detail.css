@@ -722,3 +722,24 @@ button {
   }
 
 }
+
+
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .detail-page {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+    font-size: 16px;
+  }
+}

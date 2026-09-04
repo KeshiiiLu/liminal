@@ -336,3 +336,59 @@ button {
   color:
     #a56f6f;
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .chat-settings-page {
+    min-height: 100dvh;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-bottom:
+      calc(32px + env(safe-area-inset-bottom));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .settings-header {
+    min-height:
+      calc(64px + env(safe-area-inset-top));
+    padding-top:
+      env(safe-area-inset-top);
+  }
+
+  .settings-back {
+    width: 44px;
+    height: 44px;
+    touch-action: manipulation;
+  }
+
+  .person-card,
+  .person-info,
+  .settings-item,
+  .settings-text {
+    min-width: 0;
+  }
+
+  .settings-item {
+    min-height: 56px;
+    touch-action: manipulation;
+  }
+
+  .settings-text strong,
+  .settings-text span {
+    overflow-wrap: anywhere;
+  }
+
+}

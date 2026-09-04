@@ -3018,3 +3018,242 @@ span:last-child {
   }
 
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .calendar-shell {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  .calendar-header {
+    grid-template-columns:
+      44px minmax(0, 1fr) 44px;
+    gap: 8px;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .calendar-back,
+  .calendar-today,
+  .month-arrow {
+    width: 44px;
+    height: 44px;
+    touch-action: manipulation;
+  }
+
+  .calendar-title {
+    min-width: 0;
+  }
+
+  .calendar-title h1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .calendar-tabs {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    margin-right:
+      max(16px, env(safe-area-inset-right));
+    margin-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .calendar-tab,
+  .timeline-mode-button,
+  .transmission-filter-button,
+  .schedule-add-button,
+  .record-view-button,
+  .day-view-button,
+  .timeline-add-button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .calendar-pages {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  .calendar-page {
+    width: 100%;
+    max-width: 100%;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .month-card,
+  .schedule-card,
+  .timeline-card,
+  .transmission-timeline,
+  .record-card,
+  .record-note,
+  .day-overview {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .month-card {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .month-grid,
+  .month-week {
+    grid-template-columns:
+      repeat(7, minmax(0, 1fr));
+  }
+
+  .month-grid {
+    gap: 2px;
+  }
+
+  .calendar-day {
+    min-width: 0;
+    min-height: 54px;
+  }
+
+  .day-event,
+  .schedule-event-title,
+  .schedule-event-range,
+  .transmission-summary,
+  .lane-content,
+  .record-card,
+  .record-note,
+  .sheet-value {
+    overflow-wrap: anywhere;
+  }
+
+  .schedule-head,
+  .schedule-row {
+    grid-template-columns:
+      36px minmax(0, 1fr) minmax(0, 1fr) 36px;
+  }
+
+  .schedule-head,
+  .schedule-row {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  .schedule-date-row button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .transmission-filter {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+  .dual-timeline-head,
+  .dual-timeline-grid {
+    gap: 14px;
+  }
+
+  .body-editor-sheet,
+  .schedule-editor-sheet,
+  .milestone-editor-sheet,
+  .transmission-editor-sheet {
+    max-height:
+      calc(100dvh - env(safe-area-inset-top));
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .body-editor-header button,
+  .schedule-editor-header button,
+  .milestone-editor-header button,
+  .transmission-editor-header button,
+  .body-owner,
+  .schedule-owner,
+  .milestone-owner,
+  .transmission-type-option,
+  .body-energy-options button,
+  .body-editor-actions button,
+  .schedule-editor-actions button,
+  .milestone-editor-actions button,
+  .transmission-editor-actions button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .body-editor-header button,
+  .schedule-editor-header button,
+  .milestone-editor-header button,
+  .transmission-editor-header button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .body-field input,
+  .body-field textarea,
+  .schedule-field input,
+  .milestone-field input,
+  .transmission-field input,
+  .transmission-field textarea {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .calendar-header,
+  .calendar-page {
+    padding-right:
+      max(12px, env(safe-area-inset-right));
+    padding-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .calendar-tabs {
+    margin-right:
+      max(12px, env(safe-area-inset-right));
+    margin-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .month-card {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .calendar-day {
+    min-height: 50px;
+    padding-right: 1px;
+    padding-left: 1px;
+  }
+
+  .schedule-head,
+  .schedule-row {
+    grid-template-columns:
+      32px minmax(0, 1fr) minmax(0, 1fr) 32px;
+  }
+
+}

@@ -520,3 +520,97 @@ input {
 
   font-size: 11px;
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .frequency-page {
+    min-height: 100dvh;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-bottom:
+      calc(32px + env(safe-area-inset-bottom));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .frequency-header {
+    min-height:
+      calc(64px + env(safe-area-inset-top));
+    padding-top:
+      env(safe-area-inset-top);
+  }
+
+  .frequency-back {
+    width: 44px;
+    height: 44px;
+    touch-action: manipulation;
+  }
+
+  .frequency-person-card,
+  .frequency-person-card > div:last-child,
+  .frequency-rule-head,
+  .frequency-rule-name,
+  .frequency-field {
+    min-width: 0;
+  }
+
+  .frequency-rule-name strong,
+  .frequency-rule-name span {
+    overflow-wrap: anywhere;
+  }
+
+  .frequency-range,
+  .frequency-extra-range {
+    grid-template-columns:
+      minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .frequency-input-wrap {
+    min-height: 44px;
+  }
+
+  .frequency-input-wrap input {
+    font-size: 16px;
+  }
+
+  .frequency-save,
+  .frequency-today-button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .frequency-page {
+    padding-right:
+      max(12px, env(safe-area-inset-right));
+    padding-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .frequency-row {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .frequency-range,
+  .frequency-extra-range {
+    gap: 5px;
+  }
+
+}

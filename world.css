@@ -771,3 +771,105 @@ a.settings-menu-item[href="data-management.html"] > * {
 
   background: #ffffff;
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .world-shell {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .world-header {
+    min-width: 0;
+  }
+
+  .world-header > div {
+    min-width: 0;
+  }
+
+  .world-header h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .back-button,
+  .primary-button,
+  .secondary-link,
+  .today-probability-button,
+  .settings-menu-item {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .back-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .rule-row,
+  .rule-name,
+  .range-inputs,
+  .range-inputs label,
+  .settings-menu-item,
+  .settings-menu-item > div,
+  .person-switch-row,
+  .person-select-wrap {
+    min-width: 0;
+  }
+
+  .rule-name span,
+  .rule-name strong,
+  .settings-menu-item strong,
+  .settings-menu-item span,
+  .settings-note,
+  .info-card p {
+    overflow-wrap: anywhere;
+  }
+
+  .range-inputs {
+    grid-template-columns:
+      minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .range-inputs input,
+  .person-select {
+    font-size: 16px;
+  }
+
+  .settings-menu-item {
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .world-shell {
+    padding-right:
+      max(12px, env(safe-area-inset-right));
+    padding-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .range-inputs {
+    gap: 5px;
+  }
+
+}

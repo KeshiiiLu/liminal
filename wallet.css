@@ -1360,3 +1360,123 @@ button {
   }
 
 }
+
+
+/* =========================
+   Mobile · Phase 1
+   ========================= */
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .wallet-page {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .wallet-header {
+    grid-template-columns:
+      44px minmax(0, 1fr) 44px;
+  }
+
+  .wallet-back,
+  .wallet-more,
+  .text-button,
+  .expected-confirm,
+  .sheet-close,
+  .type-button,
+  .period-button,
+  .account-filter-button,
+  .save-transaction {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .summary-top,
+  .summary-stats,
+  .action-grid,
+  .account-row,
+  .transaction-row,
+  .asset-link,
+  .chart-layout,
+  .chart-legend {
+    min-width: 0;
+  }
+
+  .summary-card,
+  .action-card,
+  .wallet-section,
+  .account-row,
+  .transaction-row,
+  .asset-link {
+    max-width: 100%;
+  }
+
+  .main-balance,
+  .light-balance,
+  .account-info,
+  .transaction-text,
+  .transaction-money,
+  .asset-link strong,
+  .asset-link p {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .record-sheet {
+    max-height:
+      calc(100dvh - env(safe-area-inset-top));
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-field > textarea,
+  .form-field > select,
+  .amount-input input {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  .account-filter {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 374px) {
+
+  .wallet-page {
+    padding-right:
+      max(12px, env(safe-area-inset-right));
+    padding-left:
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .summary-card,
+  .wallet-section {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .transaction-row {
+    grid-template-columns:
+      36px minmax(0, 1fr) auto;
+  }
+
+}

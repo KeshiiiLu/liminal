@@ -356,3 +356,37 @@ input {
   font-size: 9px;
   line-height: 1.6;
 }
+
+
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .random-shell {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-top:
+      calc(24px + env(safe-area-inset-top));
+    padding-right:
+      max(16px, env(safe-area-inset-right));
+    padding-bottom:
+      calc(32px + env(safe-area-inset-bottom));
+    padding-left:
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .back-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+    font-size: 16px;
+  }
+}

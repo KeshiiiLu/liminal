@@ -1362,3 +1362,30 @@ button {
   }
 
 }
+
+
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .editor-shell {
+    width:
+      calc(100% - 32px);
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-top:
+      calc(32px + env(safe-area-inset-top));
+    padding-bottom:
+      calc(48px + env(safe-area-inset-bottom));
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+    font-size: 16px;
+  }
+}
