@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#f4f3f0">
 
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Liminal">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <title>Liminal</title>
 
     <link rel="stylesheet" href="home.css">
@@ -53,10 +59,14 @@
                             <div class="widget-topline">
                                 <div>
                                     <span class="widget-eyebrow">CALENDAR</span>
-                                    <h2>八月</h2>
+                                    <h2 id="homeCalendarMonth" aria-live="polite"></h2>
                                 </div>
 
-                                <span class="widget-date-number">18</span>
+                                <span
+                                    class="widget-date-number"
+                                    id="homeCalendarDay"
+                                    aria-live="polite"
+                                ></span>
                             </div>
 
 
@@ -72,57 +82,18 @@
                                     <span>日</span>
                                 </div>
 
-                                <div class="calendar-days">
-                                    <span class="muted">27</span>
-                                    <span class="muted">28</span>
-                                    <span class="muted">29</span>
-                                    <span class="muted">30</span>
-                                    <span class="muted">31</span>
-
-                                    <span>1</span>
-                                    <span>2</span>
-
-                                    <span>3</span>
-                                    <span>4</span>
-                                    <span>5</span>
-                                    <span>6</span>
-                                    <span>7</span>
-                                    <span>8</span>
-                                    <span>9</span>
-
-                                    <span>10</span>
-                                    <span>11</span>
-                                    <span>12</span>
-                                    <span>13</span>
-                                    <span>14</span>
-                                    <span>15</span>
-                                    <span>16</span>
-
-                                    <span>17</span>
-                                    <span class="today">18</span>
-                                    <span>19</span>
-                                    <span>20</span>
-                                    <span>21</span>
-                                    <span>22</span>
-                                    <span>23</span>
-
-                                    <span>24</span>
-                                    <span>25</span>
-                                    <span>26</span>
-                                    <span>27</span>
-                                    <span>28</span>
-                                    <span>29</span>
-                                    <span>30</span>
-
-                                    <span>31</span>
-                                </div>
+                                <div
+                                    class="calendar-days"
+                                    id="homeCalendarDays"
+                                    aria-live="polite"
+                                ></div>
 
                             </div>
 
 
                             <div class="widget-footer-line">
                                 <span>今天</span>
-                                <strong>Tuesday · 18 August</strong>
+                                <strong id="homeCalendarFooterDate"></strong>
                             </div>
 
                         </a>
@@ -550,10 +521,14 @@
 
             <div class="app-grid system-grid">
 
-                <div class="app-item">
+                <a
+                    class="app-item app-link"
+                    href="data-management.html"
+                    aria-label="打开数据与存储"
+                >
                     <div class="app-icon backup-icon">↥</div>
                     <span>导出·备份</span>
-                </div>
+                </a>
 
 
                 <a

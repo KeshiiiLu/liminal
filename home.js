@@ -6,6 +6,248 @@ const desktopDots =
 
 
 /* =========================
+   首页 Calendar Widget
+   使用设备本地日期生成当前月份
+   ========================= */
+
+const homeCalendarMonthNames = [
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月"
+];
+
+const homeCalendarWeekdayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+
+const homeCalendarEnglishMonthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
+
+function isSameLocalDate(firstDate, secondDate) {
+
+  return (
+    firstDate.getFullYear() ===
+      secondDate.getFullYear() &&
+    firstDate.getMonth() ===
+      secondDate.getMonth() &&
+    firstDate.getDate() ===
+      secondDate.getDate()
+  );
+
+}
+
+
+function formatHomeCalendarDateLabel(date) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(date.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(date.getDate())
+      .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
+
+function renderHomeCalendarWidget(currentDate) {
+
+  const monthElement =
+    document.getElementById(
+      "homeCalendarMonth"
+    );
+
+  const dayElement =
+    document.getElementById(
+      "homeCalendarDay"
+    );
+
+  const daysElement =
+    document.getElementById(
+      "homeCalendarDays"
+    );
+
+  const footerDateElement =
+    document.getElementById(
+      "homeCalendarFooterDate"
+    );
+
+
+  if (
+    !monthElement ||
+    !dayElement ||
+    !daysElement ||
+    !footerDateElement ||
+    !(currentDate instanceof Date) ||
+    Number.isNaN(currentDate.getTime())
+  ) {
+    return;
+  }
+
+
+  const year =
+    currentDate.getFullYear();
+
+  const month =
+    currentDate.getMonth();
+
+  const monthStart =
+    new Date(year, month, 1);
+
+  const mondayFirstOffset =
+    (monthStart.getDay() + 6) % 7;
+
+  const daysInMonth =
+    new Date(year, month + 1, 0)
+      .getDate();
+
+  const cellCount =
+    Math.max(
+      35,
+      Math.ceil(
+        (mondayFirstOffset +
+          daysInMonth) /
+        7
+      ) * 7
+    );
+
+  const calendarStart =
+    new Date(
+      year,
+      month,
+      1 - mondayFirstOffset
+    );
+
+
+  monthElement.textContent =
+    homeCalendarMonthNames[month];
+
+  dayElement.textContent =
+    String(currentDate.getDate());
+
+  footerDateElement.textContent =
+    `${homeCalendarWeekdayNames[currentDate.getDay()]} · ` +
+    `${currentDate.getDate()} ` +
+    homeCalendarEnglishMonthNames[month];
+
+
+  const calendarFragment =
+    document.createDocumentFragment();
+
+
+  for (
+    let cellIndex = 0;
+    cellIndex < cellCount;
+    cellIndex += 1
+  ) {
+
+    const cellDate =
+      new Date(
+        calendarStart.getFullYear(),
+        calendarStart.getMonth(),
+        calendarStart.getDate() +
+          cellIndex
+      );
+
+    const dayCell =
+      document.createElement("span");
+
+
+    dayCell.textContent =
+      String(cellDate.getDate());
+
+    dayCell.setAttribute(
+      "aria-label",
+      formatHomeCalendarDateLabel(
+        cellDate
+      )
+    );
+
+
+    if (
+      cellDate.getFullYear() !== year ||
+      cellDate.getMonth() !== month
+    ) {
+      dayCell.classList.add("muted");
+    }
+
+
+    if (
+      isSameLocalDate(
+        cellDate,
+        currentDate
+      )
+    ) {
+
+      dayCell.classList.add("today");
+      dayCell.setAttribute(
+        "aria-current",
+        "date"
+      );
+
+    }
+
+
+    calendarFragment.appendChild(
+      dayCell
+    );
+
+  }
+
+
+  while (daysElement.firstChild) {
+    daysElement.removeChild(
+      daysElement.firstChild
+    );
+  }
+
+
+  daysElement.appendChild(
+    calendarFragment
+  );
+
+}
+
+
+renderHomeCalendarWidget(
+  new Date()
+);
+
+
+/* =========================
    Home 无限循环桌面
    ========================= */
 
