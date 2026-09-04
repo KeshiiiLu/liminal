@@ -109,6 +109,26 @@
 
       </button>
 
+
+      <a
+        class="settings-menu-item"
+        href="changelog.html"
+        aria-label="打开版本与更新"
+      >
+
+        <div>
+          <span>ABOUT</span>
+          <strong>版本与更新</strong>
+        </div>
+
+        <em
+          class="settings-version-label"
+          id="settingsVersionLabel"
+          aria-label="当前版本"
+        ></em>
+
+      </a>
+
     </section>
 
 
@@ -116,7 +136,16 @@
       设置项目会随着 Liminal 的开发逐步接入。
     </p>
 
+    <p
+      class="settings-note settings-version-footer"
+      id="settingsVersionFooter"
+      aria-live="polite"
+    ></p>
+
   </main>
+
+  <script src="version-data.js"></script>
+  <script src="version-ui.js"></script>
 
 </body>
 

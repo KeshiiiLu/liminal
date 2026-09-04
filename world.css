@@ -537,7 +537,7 @@ a {
   在部分浏览器中成为独立的触控目标。
 */
 
-a.settings-menu-item[href="data-management.html"] {
+a.settings-menu-item[href] {
   position: relative;
   z-index: 1;
 
@@ -550,7 +550,7 @@ a.settings-menu-item[href="data-management.html"] {
 }
 
 
-a.settings-menu-item[href="data-management.html"] > * {
+a.settings-menu-item[href] > * {
   pointer-events: none;
 }
 
@@ -593,6 +593,21 @@ a.settings-menu-item[href="data-management.html"] > * {
 }
 
 
+.settings-menu-item
+.settings-version-label {
+  margin-left: 14px;
+
+  color: #8d8981;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.04em;
+
+  white-space: nowrap;
+}
+
+
 .settings-note {
   margin: 15px 4px 0;
 
@@ -600,6 +615,14 @@ a.settings-menu-item[href="data-management.html"] > * {
 
   font-size: 9px;
   line-height: 1.7;
+}
+
+
+.settings-version-footer {
+  margin-top: 8px;
+
+  text-align: center;
+  letter-spacing: 0.08em;
 }
 
 
