@@ -1,0 +1,4 @@
+# Cloudflare Workers local-only secrets and dependencies
+.dev.vars*
+.env*
+node_modules/

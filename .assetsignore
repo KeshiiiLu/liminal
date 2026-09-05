@@ -1,0 +1,22 @@
+# Repository and development metadata
+.git/
+.github/
+.gitignore
+.gitattributes
+.assetsignore
+README.md
+AGENTS.md
+
+# Cloudflare Worker server code and deployment configuration
+worker/
+wrangler.jsonc
+
+# Local secrets and optional package-manager tooling
+.dev.vars*
+.env*
+node_modules/
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+pnpm-workspace.yaml
