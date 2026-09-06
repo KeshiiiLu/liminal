@@ -1,1464 +1,757 @@
-const STORAGE_KEY = "liminal_wallet_v1";
+const finance = window.LiminalFinance;
+const financeData = window.LiminalFinanceData;
+
+if (!finance || !financeData) {
+  throw new Error("Wallet finance data layer failed to load.");
+}
 
 let currentWorld = "main";
-let currentType = "expense";
+let currentTab = "overview";
+let ownerFilter = "all";
+let analyticsPeriod = "month";
+let ledgerTypeFilter = "all";
+let ledgerAccountFilter = "all";
+let editingTransactionId = "";
+let editorType = "expense";
 
-let mainStatsPeriod = "month";
-let liminalStatsPeriod = "month";
-let liminalAccountFilter = "all";
+const $ = (id) => document.getElementById(id);
 
-let walletData = loadWalletData();
-
-
-/* =========================
-   固定分类
-   ========================= */
-
-const expenseCategories = [
-  "餐饮",
-  "外卖",
-  "零食饮料",
-  "购物",
-  "日用品",
-  "交通",
-  "学习",
-  "医疗",
-  "娱乐",
-  "礼物",
-  "居住",
-  "其他"
-];
-
-const incomeCategories = [
-  "生活费",
-  "工资",
-  "兼职",
-  "咨询",
-  "督导",
-  "讲座",
-  "企业项目",
-  "转账",
-  "红包",
-  "退款",
-  "礼金",
-  "其他"
-];
-
-
-/*
-  饼状图颜色。
-
-  以后如果你不喜欢这套，
-  我们可以单独调成更符合 Liminal 的配色。
-*/
-
-const categoryColors = [
-  "#858f83",
-  "#b8a58d",
-  "#c9b7a7",
-  "#8f9ca3",
-  "#aaa69a",
-  "#9290a0",
-  "#b0a58f",
-  "#9aa999",
-  "#b29da1",
-  "#aa927f",
-  "#8e887d",
-  "#cbc8c0"
-];
-
-
-/* =========================
-   数据
-   ========================= */
-
-function loadWalletData() {
-
-  const saved =
-    localStorage.getItem(STORAGE_KEY);
-
-  if (!saved) {
-
-    return {
-      main: [],
-      liminal: []
-    };
-
-  }
-
-  try {
-
-    const parsed =
-      JSON.parse(saved);
-
-    return {
-      main:
-        Array.isArray(parsed.main)
-          ? parsed.main
-          : [],
-
-      liminal:
-        Array.isArray(parsed.liminal)
-          ? parsed.liminal
-          : []
-    };
-
-  } catch {
-
-    return {
-      main: [],
-      liminal: []
-    };
-
-  }
-
+function make(tag, className = "", text = "") {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text !== "") element.textContent = text;
+  return element;
 }
 
+function localDateParts(date = new Date()) {
+  return {
+    date: [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0")
+    ].join("-"),
+    time: [
+      String(date.getHours()).padStart(2, "0"),
+      String(date.getMinutes()).padStart(2, "0")
+    ].join(":")
+  };
+}
 
-function saveWalletData() {
+function formatMoney(amount, currency = "CNY", digits = 2) {
+  return new Intl.NumberFormat("zh-CN", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(Number(amount) || 0);
+}
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(walletData)
+function formatCompactMoney(amount, currency = "CNY") {
+  return formatMoney(amount, currency, 0);
+}
+
+function formatTotals(totals, digits = 2) {
+  const parts = [];
+  if (Object.prototype.hasOwnProperty.call(totals, "CNY")) {
+    parts.push(formatMoney(totals.CNY, "CNY", digits));
+  }
+  if (Object.prototype.hasOwnProperty.call(totals, "EUR")) {
+    parts.push(formatMoney(totals.EUR, "EUR", digits));
+  }
+  return parts.length ? parts.join(" + ") : formatMoney(0, "CNY", digits);
+}
+
+function getAccountLabel(accountId) {
+  return finance.getAccount(accountId)?.shortName || accountId || "未记录账户";
+}
+
+function getOwnerLabel(owner) {
+  return financeData.ledgerOwners.find((item) => item.id === owner)?.label || "未归属";
+}
+
+function getTypeLabel(type) {
+  return financeData.transactionTypes.find((item) => item.id === type)?.label || "流水";
+}
+
+function getSourceLabel(transaction) {
+  if (currentWorld === "sub" && transaction.originWorld === "main") return "现实同步";
+  const labels = { manual: "手动", mall: "Mall", chat: "Chat", system: "系统", main_world_sync: "现实同步" };
+  return labels[transaction.source] || transaction.source || "手动";
+}
+
+function isInPeriod(transaction, period) {
+  if (period === "all") return true;
+  const now = new Date();
+  const prefix = period === "month"
+    ? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+    : String(now.getFullYear());
+  return String(transaction.date || "").startsWith(prefix);
+}
+
+function getVisibleTransactions(period = "all") {
+  return finance.getTransactionsForWorld(currentWorld).filter((transaction) => (
+    isInPeriod(transaction, period) &&
+    (currentWorld === "main" || ownerFilter === "all" || transaction.ledgerOwner === ownerFilter)
+  ));
+}
+
+function totalsForTransactions(transactions) {
+  return transactions.reduce((totals, transaction) => {
+    const currency = transaction.currency || "CNY";
+    if (!totals[currency]) totals[currency] = { income: 0, expense: 0 };
+    if (transaction.type === "income") totals[currency].income += Number(transaction.amount) || 0;
+    if (["expense", "repayment"].includes(transaction.type)) totals[currency].expense += Number(transaction.amount) || 0;
+    return totals;
+  }, {});
+}
+
+function createMetric(label, value, note = "") {
+  const card = make("article", "metric-card");
+  card.append(make("span", "", label), make("strong", "", value));
+  if (note) card.appendChild(make("small", "", note));
+  return card;
+}
+
+function activateTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".wallet-tab").forEach((button) => {
+    button.classList.toggle("active", button.dataset.tab === tab);
+  });
+  document.querySelectorAll(".wallet-panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === tab);
+  });
+  renderCurrentTab();
+}
+
+function setWorld(world) {
+  currentWorld = world === "sub" ? "sub" : "main";
+  if (currentWorld === "main") ownerFilter = "all";
+  document.querySelectorAll(".world-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.world === currentWorld);
+  });
+  $("ownerFilter").hidden = currentWorld === "main";
+  document.querySelectorAll(".owner-filter-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.owner === ownerFilter);
+  });
+  ledgerAccountFilter = "all";
+  renderAll();
+}
+
+function accountTotalsForView() {
+  return finance.getCurrencyTotals(currentWorld, currentWorld === "sub" ? ownerFilter : "all");
+}
+
+function renderOverview() {
+  const totals = accountTotalsForView();
+  const ownerName = currentWorld === "main"
+    ? "Keshi"
+    : (ownerFilter === "all" ? "家庭财务" : getOwnerLabel(ownerFilter));
+  $("overviewOwner").textContent = ownerName;
+  $("overviewWorldBadge").textContent = currentWorld === "main" ? "主世界" : "副世界";
+  $("overviewPosition").textContent = formatTotals(totals);
+  $("overviewPositionNote").textContent = "金融资产 · 不含房产与车辆 · 不进行币种换算";
+
+  const monthTotals = totalsForTransactions(getVisibleTransactions("month"));
+  const income = {};
+  const expense = {};
+  Object.entries(monthTotals).forEach(([currency, values]) => {
+    income[currency] = values.income;
+    expense[currency] = values.expense;
+  });
+  const availableAccount = currentWorld === "main" || ownerFilter === "keshi"
+    ? "keshi_main"
+    : (ownerFilter === "family" ? "" : "cmb_daily");
+  const liabilities = financeData.liabilities.reduce((sum, item) => sum + item.balance, 0);
+
+  const metrics = $("overviewMetrics");
+  metrics.innerHTML = "";
+  metrics.append(
+    createMetric(
+      "日常可用",
+      availableAccount
+        ? formatMoney(finance.getAccountBalance(availableAccount, currentWorld), finance.getAccount(availableAccount)?.currency || "CNY")
+        : "—",
+      availableAccount ? getAccountLabel(availableAccount) : "家庭不是独立银行账户"
+    ),
+    createMetric("金融资产", formatTotals(totals), "各币种独立汇总"),
+    createMetric("本月收入", formatTotals(income), "不含账户内部划转"),
+    createMetric("本月支出", formatTotals(expense), "不含账户内部划转"),
+    createMetric("住房负债", formatCompactMoney(liabilities), "银行房贷 + 家庭借款")
   );
 
+  renderStructure();
+  renderTransactions($("overviewTransactions"), getVisibleTransactions("all").slice(0, 6));
 }
 
-
-/* =========================
-   世界切换
-   ========================= */
-
-const worldButtons =
-  document.querySelectorAll(".world-button");
-
-const mainWorldPanel =
-  document.getElementById("mainWorldPanel");
-
-const liminalWorldPanel =
-  document.getElementById("liminalWorldPanel");
-
-
-worldButtons.forEach((button) => {
-
-  button.addEventListener("click", () => {
-
-    currentWorld =
-      button.dataset.world;
-
-
-    worldButtons.forEach((item) => {
-
-      item.classList.toggle(
-        "active",
-        item === button
-      );
-
-    });
-
-
-    mainWorldPanel.classList.toggle(
-      "active",
-      currentWorld === "main"
-    );
-
-    liminalWorldPanel.classList.toggle(
-      "active",
-      currentWorld === "liminal"
-    );
-
+function renderStructure() {
+  const container = $("overviewStructure");
+  container.innerHTML = "";
+  const accounts = finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all");
+  const groups = [
+    { label: "现金 / 活期", kinds: ["cash"], currency: "CNY" },
+    { label: "应急储备", ids: ["emergency_fund"], currency: "CNY" },
+    { label: "低风险储备", kinds: ["reserve", "fixed_income"], exclude: ["emergency_fund"], currency: "CNY" },
+    { label: "投资", kinds: ["investment"], currency: "CNY" },
+    { label: "欧元资金", kinds: ["foreign"], currency: "EUR" }
+  ];
+  const values = groups.map((group) => ({
+    ...group,
+    value: accounts.filter((account) => (
+      account.currency === group.currency &&
+      (!group.kinds || group.kinds.includes(account.kind)) &&
+      (!group.ids || group.ids.includes(account.id)) &&
+      (!group.exclude || !group.exclude.includes(account.id))
+    )).reduce((sum, account) => sum + finance.getAccountBalance(account.id, currentWorld), 0)
+  }));
+  const maxByCurrency = {
+    CNY: Math.max(1, ...values.filter((item) => item.currency === "CNY").map((item) => item.value)),
+    EUR: Math.max(1, ...values.filter((item) => item.currency === "EUR").map((item) => item.value))
+  };
+  values.forEach((item) => {
+    const row = make("div", "structure-row");
+    const meta = make("div", "structure-meta");
+    meta.append(make("span", "", item.label), make("span", "", formatCompactMoney(item.value, item.currency)));
+    const track = make("div", "structure-track");
+    const fill = make("div", "structure-fill");
+    fill.style.width = `${Math.max(0, item.value / maxByCurrency[item.currency] * 100)}%`;
+    track.appendChild(fill);
+    row.append(meta, track);
+    container.appendChild(row);
   });
-
-});
-
-
-/* =========================
-   记账弹窗
-   ========================= */
-
-const recordOverlay =
-  document.getElementById("recordOverlay");
-
-const closeRecord =
-  document.getElementById("closeRecord");
-
-const amountInput =
-  document.getElementById("transactionAmount");
-
-const titleInput =
-  document.getElementById("transactionTitle");
-
-const categoryInput =
-  document.getElementById("transactionCategory");
-
-const accountSelect =
-  document.getElementById("transactionAccount");
-
-const noteInput =
-  document.getElementById("transactionNote");
-
-const syncOption =
-  document.getElementById("syncOption");
-
-const syncToLiminal =
-  document.getElementById("syncToLiminal");
-
-const saveTransactionButton =
-  document.getElementById("saveTransaction");
-
-const typeButtons =
-  document.querySelectorAll(".type-button");
-
-
-document
-  .querySelectorAll("[data-open-record]")
-  .forEach((button) => {
-
-    button.addEventListener("click", () => {
-
-      openRecordSheet(
-        button.dataset.openRecord
-      );
-
-    });
-
-  });
-
-
-function openRecordSheet(
-  world,
-  preset = null
-) {
-
-  currentWorld = world;
-
-  resetRecordForm();
-
-  updateAccountOptions();
-
-  syncOption.hidden =
-    currentWorld !== "main";
-
-
-  if (preset) {
-
-    currentType =
-      preset.type || "income";
-
-    updateTypeButtons();
-
-    amountInput.value =
-      preset.amount || "";
-
-    titleInput.value =
-      preset.title || "";
-
-    noteInput.value =
-      preset.note || "";
-
-    syncToLiminal.checked =
-      Boolean(preset.sync);
-
-
-    if (
-      preset.category &&
-      [
-        ...expenseCategories,
-        ...incomeCategories
-      ].includes(preset.category)
-    ) {
-
-      categoryInput.value =
-        preset.category;
-
-    }
-
+  if (currentWorld === "sub" && ["all", "luzhen"].includes(ownerFilter)) {
+    const debt = financeData.liabilities.reduce((sum, item) => sum + item.balance, 0);
+    const row = make("div", "structure-row");
+    const meta = make("div", "structure-meta");
+    meta.append(make("span", "", "住房负债"), make("span", "", formatCompactMoney(debt)));
+    const track = make("div", "structure-track");
+    const fill = make("div", "structure-fill");
+    fill.style.width = "100%";
+    fill.style.background = "#b69a95";
+    track.appendChild(fill);
+    row.append(meta, track);
+    container.appendChild(row);
   }
-
-
-  recordOverlay.hidden = false;
-
-
-  setTimeout(() => {
-
-    amountInput.focus();
-
-  }, 100);
-
 }
 
-
-function closeRecordSheet() {
-
-  recordOverlay.hidden = true;
-
+function transactionAmountText(transaction) {
+  const money = formatMoney(transaction.amount, transaction.currency);
+  if (transaction.type === "income") return `+ ${money}`;
+  if (["expense", "repayment"].includes(transaction.type)) return `− ${money}`;
+  if (["transfer", "asset_transfer", "investment"].includes(transaction.type)) return `↔ ${money}`;
+  return money;
 }
 
-
-closeRecord.addEventListener(
-  "click",
-  closeRecordSheet
-);
-
-
-recordOverlay.addEventListener(
-  "click",
-  (event) => {
-
-    if (event.target === recordOverlay) {
-
-      closeRecordSheet();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   收入 / 支出切换
-   ========================= */
-
-typeButtons.forEach((button) => {
-
-  button.addEventListener("click", () => {
-
-    currentType =
-      button.dataset.type;
-
-    updateTypeButtons();
-
-  });
-
-});
-
-
-function updateTypeButtons() {
-
-  typeButtons.forEach((button) => {
-
-    button.classList.toggle(
-      "active",
-      button.dataset.type === currentType
-    );
-
-  });
-
-  updateCategoryOptions();
-
-}
-
-
-/* =========================
-   分类
-   ========================= */
-
-function updateCategoryOptions() {
-
-  categoryInput.innerHTML = "";
-
-
-  const categories =
-    currentType === "income"
-      ? incomeCategories
-      : expenseCategories;
-
-
-  categories.forEach((category) => {
-
-    const option =
-      document.createElement("option");
-
-    option.value =
-      category;
-
-    option.textContent =
-      category;
-
-    categoryInput.appendChild(option);
-
-  });
-
-}
-
-
-/* =========================
-   账户选择
-   ========================= */
-
-function updateAccountOptions() {
-
-  accountSelect.innerHTML = "";
-
-
-  if (currentWorld === "main") {
-
-    addAccountOption(
-      "Keshi",
-      "Keshi · 主世界个人账户"
-    );
-
+function renderTransactions(container, transactions) {
+  container.innerHTML = "";
+  if (!transactions.length) {
+    container.appendChild(make("div", "empty-state", "还没有符合当前条件的流水。"));
     return;
-
   }
-
-
-  addAccountOption(
-    "Keshi",
-    "Keshi · 个人账户"
-  );
-
-  addAccountOption(
-    "Lennon",
-    "榛榛 · 个人账户"
-  );
-
-  addAccountOption(
-    "Family",
-    "家庭账户"
-  );
-
+  transactions.forEach((transaction) => {
+    const row = make("button", "transaction-row");
+    row.type = "button";
+    const icon = make("span", `transaction-icon ${transaction.type}`, getTypeLabel(transaction.type).slice(0, 1));
+    const text = make("span", "transaction-text");
+    text.appendChild(make("strong", "", transaction.title));
+    const accountText = ["transfer", "asset_transfer", "investment"].includes(transaction.type) && transaction.toAccountId
+      ? `${getAccountLabel(transaction.fromAccountId)} → ${getAccountLabel(transaction.toAccountId)}`
+      : getAccountLabel(transaction.fromAccountId);
+    text.appendChild(make("span", "", `${transaction.date} ${transaction.timeOfDay} · ${accountText} · ${transaction.category}`));
+    const tags = make("span", "transaction-tags");
+    tags.append(make("i", "", getOwnerLabel(transaction.ledgerOwner)), make("i", "", getSourceLabel(transaction)));
+    text.appendChild(tags);
+    const money = make("strong", `transaction-money ${transaction.type}`, transactionAmountText(transaction));
+    row.append(icon, text, money);
+    row.addEventListener("click", () => openTransactionEditor(transaction.transactionId));
+    container.appendChild(row);
+  });
 }
 
-
-function addAccountOption(
-  value,
-  text
-) {
-
-  const option =
-    document.createElement("option");
-
-  option.value = value;
-  option.textContent = text;
-
-  accountSelect.appendChild(option);
-
-}
-
-
-/* =========================
-   重置表单
-   ========================= */
-
-function resetRecordForm() {
-
-  currentType = "expense";
-
-  updateTypeButtons();
-
-  amountInput.value = "";
-  titleInput.value = "";
-  noteInput.value = "";
-
-  syncToLiminal.checked = false;
-
-}
-
-
-/* =========================
-   生活费确认到账
-   ========================= */
-
-document
-  .querySelectorAll(".expected-confirm")
-  .forEach((button) => {
-
-    button.addEventListener("click", () => {
-
-      const amount =
-        button.dataset.amount;
-
-      const day =
-        button.dataset.day;
-
-
-      openRecordSheet(
-        "main",
-        {
-          type: "income",
-          amount: amount,
-          title: "生活费",
-          category: "生活费",
-          note:
-            `常见到账节奏：每月${day}日`,
-          sync: true
-        }
-      );
-
+function renderAccounts() {
+  const container = $("accountGroups");
+  container.innerHTML = "";
+  const accounts = finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all");
+  const groups = new Map();
+  accounts.forEach((account) => {
+    if (!groups.has(account.institution)) groups.set(account.institution, []);
+    groups.get(account.institution).push(account);
+  });
+  groups.forEach((items, institution) => {
+    const group = make("section", "account-group");
+    group.appendChild(make("h2", "", institution));
+    const list = make("div", "account-list");
+    items.forEach((account) => {
+      const card = make("button", "account-card");
+      card.type = "button";
+      const info = make("div");
+      info.append(make("span", "", account.currency), make("h3", "", account.name));
+      const tags = make("div", "account-tags");
+      account.tags.forEach((tag) => tags.appendChild(make("i", "", tag)));
+      info.appendChild(tags);
+      card.append(info, make("strong", "", formatMoney(finance.getAccountBalance(account.id, currentWorld), account.currency)));
+      card.addEventListener("click", () => openAccountDetail(account.id));
+      list.appendChild(card);
     });
+    group.appendChild(list);
+    container.appendChild(group);
+  });
+  if (!accounts.length) container.appendChild(make("div", "empty-state", "当前筛选下没有对应账户。"));
+}
 
+function populateLedgerAccountFilter() {
+  const select = $("ledgerAccountFilter");
+  const previous = ledgerAccountFilter;
+  select.innerHTML = "";
+  const all = make("option", "", "全部账户");
+  all.value = "all";
+  select.appendChild(all);
+  finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all").forEach((account) => {
+    const option = make("option", "", `${account.shortName} · ${account.currency}`);
+    option.value = account.id;
+    select.appendChild(option);
+  });
+  ledgerAccountFilter = [...select.options].some((option) => option.value === previous) ? previous : "all";
+  select.value = ledgerAccountFilter;
+}
+
+function filteredLedgerTransactions() {
+  return getVisibleTransactions("all").filter((transaction) => (
+    (ledgerTypeFilter === "all" || transaction.type === ledgerTypeFilter) &&
+    (ledgerAccountFilter === "all" || transaction.fromAccountId === ledgerAccountFilter || transaction.toAccountId === ledgerAccountFilter)
+  ));
+}
+
+function renderLedger() {
+  populateLedgerAccountFilter();
+  const transactions = filteredLedgerTransactions();
+  const totals = totalsForTransactions(transactions);
+  const income = {};
+  const expense = {};
+  Object.entries(totals).forEach(([currency, values]) => {
+    income[currency] = values.income;
+    expense[currency] = values.expense;
+  });
+  const summary = $("ledgerSummary");
+  summary.innerHTML = "";
+  const incomeCard = make("div");
+  incomeCard.append(make("span", "", "筛选收入"), make("strong", "", formatTotals(income)));
+  const expenseCard = make("div");
+  expenseCard.append(make("span", "", "筛选支出"), make("strong", "", formatTotals(expense)));
+  summary.append(incomeCard, expenseCard);
+  renderTransactions($("ledgerTransactions"), transactions);
+}
+
+function renderAssets() {
+  const totals = accountTotalsForView();
+  const totalCard = $("financialAssetTotals");
+  totalCard.innerHTML = "";
+  ["CNY", "EUR"].forEach((currency) => {
+    const item = make("div");
+    item.append(make("span", "", currency === "CNY" ? "人民币金融资产" : "欧元金融资产"), make("strong", "", formatMoney(totals[currency] || 0, currency)));
+    totalCard.appendChild(item);
   });
 
+  const financial = $("financialAssetList");
+  financial.innerHTML = "";
+  finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all").forEach((account) => {
+    const card = make("button", "asset-card");
+    card.type = "button";
+    card.dataset.accountId = account.id;
+    const info = make("div");
+    info.append(make("span", "", account.institution), make("h3", "", account.name));
+    card.append(info, make("strong", "", formatMoney(finance.getAccountBalance(account.id, currentWorld), account.currency)));
+    card.addEventListener("click", () => openAccountDetail(account.id));
+    financial.appendChild(card);
+  });
 
-/* =========================
-   保存流水
-   ========================= */
+  const physical = $("physicalAssetList");
+  physical.innerHTML = "";
+  const shouldShowLuzhenAssets = currentWorld === "sub" && ["all", "luzhen", "family"].includes(ownerFilter);
+  if (shouldShowLuzhenAssets) {
+    financeData.physicalAssets.forEach((asset) => {
+      const card = make("button", "asset-card");
+      card.type = "button";
+      card.dataset.assetId = asset.id;
+      const info = make("div");
+      info.append(make("span", "", `${asset.owner} · ${asset.use}`), make("h3", "", asset.name));
+      const value = asset.purchaseCost
+        ? `约 ${formatCompactMoney(asset.purchaseCost)}`
+        : `约 ${formatCompactMoney(asset.purchaseCostRange[0])}–${formatCompactMoney(asset.purchaseCostRange[1])}`;
+      card.append(info, make("strong", "", value));
+      card.addEventListener("click", () => openAssetDetail(asset.id));
+      physical.appendChild(card);
+    });
+  } else {
+    physical.appendChild(make("div", "empty-state", "当前世界或归属下没有实物资产。"));
+  }
 
-saveTransactionButton.addEventListener(
-  "click",
-  saveTransaction
-);
+  const liabilities = $("liabilityList");
+  liabilities.innerHTML = "";
+  if (currentWorld === "sub" && ["all", "luzhen", "family"].includes(ownerFilter)) {
+    financeData.liabilities.forEach((liability) => {
+      const card = make("article", "liability-card");
+      const info = make("div");
+      info.append(make("span", "", liability.owner), make("h3", "", liability.name));
+      card.append(info, make("strong", "", `约 ${formatCompactMoney(liability.balance, liability.currency)}`));
+      liabilities.appendChild(card);
+    });
+  } else {
+    liabilities.appendChild(make("div", "empty-state", "当前世界或归属下没有负债记录。"));
+  }
+}
 
+function aggregateBreakdown(transactions, type) {
+  const result = new Map();
+  transactions.filter((transaction) => transaction.type === type).forEach((transaction) => {
+    const key = `${transaction.currency}|${transaction.category || "其他"}`;
+    result.set(key, (result.get(key) || 0) + Number(transaction.amount || 0));
+  });
+  return [...result.entries()].map(([key, amount]) => {
+    const [currency, label] = key.split("|");
+    return { currency, label, amount };
+  }).sort((a, b) => b.amount - a.amount);
+}
+
+function renderBreakdown(container, items, emptyText) {
+  container.innerHTML = "";
+  if (!items.length) {
+    container.appendChild(make("div", "empty-state", emptyText));
+    return;
+  }
+  const totals = items.reduce((result, item) => {
+    result[item.currency] = (result[item.currency] || 0) + item.amount;
+    return result;
+  }, {});
+  items.forEach((item) => {
+    const row = make("div", "breakdown-row");
+    const meta = make("div", "breakdown-meta");
+    meta.append(make("span", "", item.label), make("span", "", formatMoney(item.amount, item.currency)));
+    const track = make("div", "breakdown-track");
+    const fill = make("div", "breakdown-fill");
+    fill.style.width = `${totals[item.currency] ? item.amount / totals[item.currency] * 100 : 0}%`;
+    track.appendChild(fill);
+    row.append(meta, track);
+    container.appendChild(row);
+  });
+}
+
+function renderAnalytics() {
+  const transactions = getVisibleTransactions(analyticsPeriod);
+  const totals = totalsForTransactions(transactions);
+  const income = {};
+  const expense = {};
+  Object.entries(totals).forEach(([currency, values]) => {
+    income[currency] = values.income;
+    expense[currency] = values.expense;
+  });
+  const summary = $("analyticsSummary");
+  summary.innerHTML = "";
+  const incomeCard = make("div");
+  incomeCard.append(make("span", "", "收入"), make("strong", "", formatTotals(income)));
+  const expenseCard = make("div");
+  expenseCard.append(make("span", "", "支出"), make("strong", "", formatTotals(expense)));
+  summary.append(incomeCard, expenseCard);
+  renderBreakdown($("expenseBreakdown"), aggregateBreakdown(transactions, "expense"), "当前范围内还没有消费。账户内部划转不会出现在这里。");
+  renderBreakdown($("incomeBreakdown"), aggregateBreakdown(transactions, "income"), "当前范围内还没有收入。账户内部划转不会出现在这里。");
+  renderBalanceChanges(transactions);
+  renderAssetAllocation();
+  renderCashflow();
+}
+
+function renderBalanceChanges(transactions) {
+  const container = $("balanceChanges");
+  container.innerHTML = "";
+  const changes = finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all").map((account) => ({
+    account,
+    value: transactions.reduce((sum, transaction) => sum + finance.transactionDeltaForAccount(transaction, account.id), 0)
+  })).filter((item) => item.value !== 0);
+  if (!changes.length) {
+    container.appendChild(make("div", "empty-state", "当前范围内没有账户余额变化。"));
+    return;
+  }
+  changes.forEach(({ account, value }) => {
+    const row = make("div", "change-row");
+    row.append(make("span", "", account.shortName), make("strong", "", `${value > 0 ? "+ " : "− "}${formatMoney(Math.abs(value), account.currency)}`));
+    container.appendChild(row);
+  });
+}
+
+function renderAssetAllocation() {
+  const kindNames = { cash: "现金 / 活期", reserve: "储备资金", fixed_income: "低风险固收", investment: "长期投资", foreign: "欧元资金" };
+  const map = new Map();
+  finance.getAccounts(currentWorld, currentWorld === "sub" ? ownerFilter : "all").forEach((account) => {
+    const key = `${account.currency}|${account.kind}`;
+    map.set(key, (map.get(key) || 0) + finance.getAccountBalance(account.id, currentWorld));
+  });
+  const items = [...map.entries()].map(([key, amount]) => {
+    const [currency, kind] = key.split("|");
+    return { currency, label: `${kindNames[kind] || kind} · ${currency}`, amount };
+  }).filter((item) => item.amount > 0);
+  renderBreakdown($("assetAllocation"), items, "当前筛选下没有金融资产配置。" );
+}
+
+function renderCashflow() {
+  const container = $("cashflowChart");
+  container.innerHTML = "";
+  const now = new Date();
+  const months = [];
+  for (let offset = 5; offset >= 0; offset -= 1) {
+    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    const rows = getVisibleTransactions("all").filter((item) => item.date.startsWith(key) && item.currency === "CNY");
+    const summary = totalsForTransactions(rows).CNY || { income: 0, expense: 0 };
+    months.push({ key, label: `${date.getMonth() + 1}月`, ...summary });
+  }
+  const max = Math.max(1, ...months.flatMap((item) => [item.income, item.expense]));
+  months.forEach((month) => {
+    const column = make("div", "cashflow-month");
+    const bars = make("div", "cashflow-bars");
+    const income = make("div", "cashflow-bar income");
+    income.style.height = `${Math.max(2, month.income / max * 100)}%`;
+    income.title = `收入 ${formatMoney(month.income)}`;
+    const expense = make("div", "cashflow-bar expense");
+    expense.style.height = `${Math.max(2, month.expense / max * 100)}%`;
+    expense.title = `支出 ${formatMoney(month.expense)}`;
+    bars.append(income, expense);
+    column.append(bars, make("span", "", month.label));
+    container.appendChild(column);
+  });
+}
+
+function openAccountDetail(accountId) {
+  const account = finance.getAccount(accountId);
+  if (!account) return;
+  $("accountDetailTitle").textContent = account.name;
+  const content = $("accountDetailContent");
+  content.innerHTML = "";
+  const hero = make("div", "detail-hero");
+  hero.append(make("span", "", `${account.institution} · ${account.currency}`), make("strong", "", formatMoney(finance.getAccountBalance(account.id, currentWorld), account.currency)));
+  const details = make("div", "detail-list");
+  const owner = make("div", "detail-row"); owner.append(make("span", "", "归属"), make("strong", "", getOwnerLabel(account.owner)));
+  const purpose = make("div", "detail-row"); purpose.append(make("span", "", "用途"), make("strong", "", account.tags.join(" / ")));
+  const baseline = make("div", "detail-row"); baseline.append(make("span", "", `初始余额 · ${financeData.baselineDate}`), make("strong", "", formatMoney(finance.getState().accounts[account.id].openingBalance, account.currency)));
+  details.append(owner, purpose, baseline);
+  const button = make("button", "primary-small-button", "查看该账户流水");
+  button.type = "button";
+  button.addEventListener("click", () => {
+    ledgerAccountFilter = account.id;
+    $("accountDetailBackdrop").hidden = true;
+    activateTab("ledger");
+  });
+  content.append(hero, details, button);
+  $("accountDetailBackdrop").hidden = false;
+}
+
+function detailRow(label, value) {
+  const row = make("div", "detail-row");
+  row.append(make("span", "", label), make("strong", "", value));
+  return row;
+}
+
+function openAssetDetail(assetId) {
+  const asset = financeData.physicalAssets.find((item) => item.id === assetId);
+  if (!asset) return;
+  $("assetDetailTitle").textContent = asset.name;
+  const content = $("assetDetailContent");
+  content.innerHTML = "";
+  const hero = make("div", "detail-hero");
+  hero.append(make("span", "", `${asset.owner} · ${asset.use}`));
+  const value = asset.purchaseCost
+    ? `约 ${formatMoney(asset.purchaseCost, asset.currency, 0)}`
+    : `约 ${formatMoney(asset.purchaseCostRange[0], asset.currency, 0)}–${formatMoney(asset.purchaseCostRange[1], asset.currency, 0)}`;
+  hero.appendChild(make("strong", "", value));
+  const list = make("div", "detail-list");
+  list.append(detailRow("产权人", asset.owner), detailRow("用途", asset.use));
+  if (asset.id === "loft") {
+    list.append(
+      detailRow("购入成本", `约 ${formatCompactMoney(asset.purchaseCost)}`),
+      detailRow("银行房贷余额", `约 ${formatCompactMoney(asset.bankMortgageBalance)}`),
+      detailRow("家庭内部借款", `约 ${formatCompactMoney(asset.familyLoanBalance)}`),
+      detailRow("按购入成本粗略权益", `约 ${formatCompactMoney(asset.roughEquity)}`),
+      detailRow("历史装修投入", `${asset.renovationPeriod} · 约 ${formatCompactMoney(asset.renovationInvestment)}`)
+    );
+    const timeline = make("div", "detail-timeline");
+    asset.timeline.forEach((item) => {
+      const row = make("div");
+      row.append(make("span", "", item.date), make("strong", "", item.text));
+      timeline.appendChild(row);
+    });
+    content.append(hero, list, timeline);
+  } else {
+    list.append(detailRow("购置时间", asset.purchasedAt), detailRow("车贷", asset.vehicleLoan ? formatMoney(asset.vehicleLoan) : "无"));
+    content.append(hero, list);
+  }
+  $("assetDetailBackdrop").hidden = false;
+}
+
+function renderTypeOptions() {
+  const container = $("transactionTypeOptions");
+  container.innerHTML = "";
+  financeData.transactionTypes.forEach((type) => {
+    const button = make("button", type.id === editorType ? "active" : "", type.label);
+    button.type = "button";
+    button.addEventListener("click", () => {
+      editorType = type.id;
+      renderEditorControls();
+    });
+    container.appendChild(button);
+  });
+}
+
+function populateSelect(select, options, selected) {
+  select.innerHTML = "";
+  options.forEach((item) => {
+    const option = make("option", "", item.label);
+    option.value = item.value;
+    select.appendChild(option);
+  });
+  if ([...select.options].some((option) => option.value === selected)) select.value = selected;
+}
+
+function renderEditorControls() {
+  renderTypeOptions();
+  const isTransfer = ["transfer", "asset_transfer", "investment"].includes(editorType);
+  const isIncome = editorType === "income";
+  $("transactionFromAccountLabel").textContent = isIncome ? "收款账户" : "付款账户";
+  $("transactionToAccountField").hidden = !isTransfer;
+  const currency = $("transactionCurrency").value;
+  const accounts = finance.getAccounts(currentWorld).filter((account) => account.currency === currency);
+  const fromValue = $("transactionFromAccount").value;
+  const toValue = $("transactionToAccount").value;
+  const options = accounts.map((account) => ({ value: account.id, label: `${account.institution} · ${account.name}` }));
+  populateSelect($("transactionFromAccount"), options, fromValue);
+  populateSelect($("transactionToAccount"), options, toValue);
+  const categories = editorType === "income"
+    ? financeData.incomeCategories
+    : (isTransfer ? [editorType === "investment" ? "投资" : "账户划转"] : financeData.expenseCategories);
+  const categoryValue = $("transactionCategory").value;
+  populateSelect($("transactionCategory"), categories.map((item) => ({ value: item, label: item })), categoryValue);
+}
+
+function openTransactionEditor(transactionId = "") {
+  let transaction = transactionId ? finance.getTransaction(transactionId) : null;
+  if (transaction && currentWorld === "sub" && transaction.originWorld === "main") {
+    setWorld("main");
+    transaction = finance.getTransaction(transactionId);
+  }
+  editingTransactionId = transaction?.transactionId || "";
+  const now = localDateParts();
+  editorType = transaction?.type || "expense";
+  $("transactionEditorTitle").textContent = transaction ? "编辑流水" : "记一笔";
+  $("transactionWorldNote").textContent = currentWorld === "main"
+    ? "主世界流水会以同一 transactionId 自动在副世界显示；修改和删除会同步体现。"
+    : "副世界流水只存在于副世界，不会改变主世界账本或余额。";
+  $("transactionDate").value = transaction?.date || now.date;
+  $("transactionTime").value = transaction?.timeOfDay || now.time;
+  $("transactionTitle").value = transaction?.title || "";
+  $("transactionAmount").value = transaction?.amount || "";
+  $("transactionCurrency").value = transaction?.currency || "CNY";
+  populateSelect($("transactionOwner"), financeData.ledgerOwners.map((item) => ({ value: item.id, label: item.label })), transaction?.ledgerOwner || (currentWorld === "main" ? "keshi" : ownerFilter === "all" ? "luzhen" : ownerFilter));
+  $("transactionOwner").disabled = currentWorld === "main";
+  $("transactionNote").value = transaction?.note || "";
+  renderEditorControls();
+  if (transaction) {
+    $("transactionFromAccount").value = transaction.fromAccountId;
+    $("transactionToAccount").value = transaction.toAccountId || "";
+    $("transactionCategory").value = transaction.category;
+  }
+  $("transactionDelete").hidden = !transaction;
+  $("transactionEditorActions").classList.toggle("editing", Boolean(transaction));
+  $("transactionEditorBackdrop").hidden = false;
+  setTimeout(() => $("transactionTitle").focus(), 80);
+}
+
+function closeTransactionEditor() {
+  $("transactionEditorBackdrop").hidden = true;
+  editingTransactionId = "";
+}
 
 function saveTransaction() {
-
-  const amount =
-    Number(amountInput.value);
-
-  const title =
-    titleInput.value.trim();
-
-  const category =
-    categoryInput.value;
-
-  const note =
-    noteInput.value.trim();
-
-  const account =
-    accountSelect.value;
-
-
-  if (!amount || amount <= 0) {
-
-    alert("先填一个金额吧。");
-
-    return;
-
-  }
-
-
-  if (!title) {
-
-    alert("给这笔账写个名称吧。");
-
-    return;
-
-  }
-
-
-  if (!category) {
-
-    alert("给这笔账选一个分类吧。");
-
-    return;
-
-  }
-
-
-  const transaction = {
-
-    id:
-      createId(),
-
-    type:
-      currentType,
-
-    amount:
-      amount,
-
-    title:
-      title,
-
-    category:
-      category,
-
-    note:
-      note,
-
-    account:
-      account,
-
-    time:
-      new Date().toISOString()
-
-  };
-
-
-  walletData[currentWorld]
-    .unshift(transaction);
-
-
-  /*
-    主世界勾选同步以后：
-
-    生成一条独立的副世界流水，
-    并不是两个世界共享同一条记录。
-  */
-
-  if (
-    currentWorld === "main" &&
-    syncToLiminal.checked
-  ) {
-
-    const mirroredTransaction = {
-
-      ...transaction,
-
-      id:
-        createId(),
-
-      account:
-        "Keshi",
-
-      mirroredFrom:
-        transaction.id
-
-    };
-
-
-    walletData.liminal
-      .unshift(mirroredTransaction);
-
-  }
-
-
-  saveWalletData();
-
-  renderWallet();
-
-  closeRecordSheet();
-
-}
-
-
-function createId() {
-
-  if (
-    window.crypto &&
-    typeof crypto.randomUUID === "function"
-  ) {
-
-    return crypto.randomUUID();
-
-  }
-
-  return (
-    Date.now().toString() +
-    Math.random().toString(16).slice(2)
-  );
-
-}
-
-
-/* =========================
-   时间范围
-   ========================= */
-
-function isInPeriod(
-  isoTime,
-  period
-) {
-
-  const date =
-    new Date(isoTime);
-
-  const now =
-    new Date();
-
-
-  if (
-    date.getFullYear() !==
-    now.getFullYear()
-  ) {
-
-    return false;
-
-  }
-
-
-  if (period === "year") {
-
-    return true;
-
-  }
-
-
-  return (
-    date.getMonth() ===
-    now.getMonth()
-  );
-
-}
-
-
-/* =========================
-   金额计算
-   ========================= */
-
-function calculateSummary(
-  transactions,
-  period = null
-) {
-
-  let income = 0;
-  let expense = 0;
-
-
-  transactions.forEach((item) => {
-
-    if (
-      period &&
-      !isInPeriod(item.time, period)
-    ) {
-
-      return;
-
-    }
-
-
-    if (item.type === "income") {
-
-      income += item.amount;
-
-    } else {
-
-      expense += item.amount;
-
-    }
-
+  const amount = Number($("transactionAmount").value);
+  const title = $("transactionTitle").value.trim();
+  const date = $("transactionDate").value;
+  const timeOfDay = $("transactionTime").value;
+  const fromAccountId = $("transactionFromAccount").value;
+  const toAccountId = $("transactionToAccountField").hidden ? "" : $("transactionToAccount").value;
+  if (!title) return window.alert("请填写流水标题。");
+  if (!Number.isFinite(amount) || amount <= 0) return window.alert("金额必须大于 0。");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return window.alert("请选择有效日期。");
+  if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(timeOfDay)) return window.alert("请选择有效时间。");
+  if (!fromAccountId) return window.alert("请选择账户。");
+  if (toAccountId && toAccountId === fromAccountId) return window.alert("转出与转入账户不能相同。");
+
+  const existing = editingTransactionId ? finance.getTransaction(editingTransactionId) : null;
+  finance.upsertTransaction({
+    ...(existing || {}),
+    transactionId: existing?.transactionId || finance.createId("transaction"),
+    originWorld: existing?.originWorld || currentWorld,
+    type: editorType,
+    amount,
+    currency: $("transactionCurrency").value,
+    title,
+    category: $("transactionCategory").value || "其他",
+    note: $("transactionNote").value.trim(),
+    fromAccountId,
+    toAccountId,
+    ledgerOwner: currentWorld === "main" ? "keshi" : $("transactionOwner").value,
+    source: existing?.source || "manual",
+    date,
+    timeOfDay,
+    occurredAt: `${date}T${timeOfDay}:00`,
+    createdAt: existing?.createdAt || new Date().toISOString()
   });
-
-
-  return {
-
-    income,
-
-    expense,
-
-    balance:
-      income - expense
-
-  };
-
+  closeTransactionEditor();
+  renderAll();
 }
 
-
-function calculateAccountBalance(
-  account
-) {
-
-  let balance = 0;
-
-
-  walletData.liminal
-    .forEach((item) => {
-
-      if (item.account !== account) {
-
-        return;
-
-      }
-
-
-      if (item.type === "income") {
-
-        balance += item.amount;
-
-      } else {
-
-        balance -= item.amount;
-
-      }
-
-    });
-
-
-  return balance;
-
+function deleteEditingTransaction() {
+  if (!editingTransactionId || !window.confirm("确定删除这笔流水吗？")) return;
+  finance.deleteTransaction(editingTransactionId);
+  closeTransactionEditor();
+  renderAll();
 }
 
-
-/* =========================
-   格式化
-   ========================= */
-
-function formatMoney(amount) {
-
-  return new Intl.NumberFormat(
-    "zh-CN",
-    {
-      style: "currency",
-      currency: "CNY",
-      minimumFractionDigits: 2
-    }
-  ).format(amount);
-
+function renderCurrentTab() {
+  if (currentTab === "overview") renderOverview();
+  if (currentTab === "accounts") renderAccounts();
+  if (currentTab === "ledger") renderLedger();
+  if (currentTab === "assets") renderAssets();
+  if (currentTab === "analytics") renderAnalytics();
 }
 
-
-function formatCompactMoney(amount) {
-
-  return new Intl.NumberFormat(
-    "zh-CN",
-    {
-      style: "currency",
-      currency: "CNY",
-      maximumFractionDigits: 0
-    }
-  ).format(amount);
-
+function renderAll() {
+  $("ownerFilter").hidden = currentWorld === "main";
+  document.querySelectorAll(".world-button").forEach((button) => button.classList.toggle("active", button.dataset.world === currentWorld));
+  document.querySelectorAll(".owner-filter-button").forEach((button) => button.classList.toggle("active", button.dataset.owner === ownerFilter));
+  renderCurrentTab();
 }
 
-
-function formatTime(isoTime) {
-
-  const date =
-    new Date(isoTime);
-
-
-  return date.toLocaleString(
-    "zh-CN",
-    {
-      month: "numeric",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false
-    }
-  );
-
-}
-
-
-function getAccountName(account) {
-
-  if (account === "Family") {
-
-    return "家庭账户";
-
-  }
-
-  if (account === "Lennon") {
-
-    return "榛榛";
-
-  }
-
-  return "Keshi";
-
-}
-
-
-/* =========================
-   渲染流水
-   ========================= */
-
-function renderTransactions(
-  container,
-  transactions,
-  worldName
-) {
-
-  container.innerHTML = "";
-
-
-  if (transactions.length === 0) {
-
-    const empty =
-      document.createElement("div");
-
-    empty.className =
-      "empty-transactions";
-
-    empty.textContent =
-      "还没有流水。";
-
-    container.appendChild(empty);
-
-    return;
-
-  }
-
-
-  transactions
-    .slice(0, 8)
-    .forEach((item) => {
-
-      const row =
-        document.createElement("article");
-
-      row.className =
-        "transaction-row";
-
-
-      const icon =
-        document.createElement("div");
-
-      icon.className =
-        `transaction-icon ${item.type}`;
-
-      icon.textContent =
-        item.type === "income"
-          ? "收"
-          : "支";
-
-
-      const text =
-        document.createElement("div");
-
-      text.className =
-        "transaction-text";
-
-
-      const title =
-        document.createElement("strong");
-
-      title.textContent =
-        item.title;
-
-
-      const detail =
-        document.createElement("span");
-
-      detail.textContent =
-        `${getAccountName(item.account)} · ${worldName} · ${item.category} · ${formatTime(item.time)}`;
-
-
-      text.appendChild(title);
-      text.appendChild(detail);
-
-
-      const money =
-        document.createElement("div");
-
-      money.className =
-        `transaction-money ${item.type}`;
-
-      money.textContent =
-        `${item.type === "income" ? "+" : "-"} ${formatMoney(item.amount)}`;
-
-
-      row.appendChild(icon);
-      row.appendChild(text);
-      row.appendChild(money);
-
-      container.appendChild(row);
-
-    });
-
-}
-
-
-/* =========================
-   消费统计
-   ========================= */
-
-function getExpenseStats(
-  world,
-  period,
-  accountFilter = "all"
-) {
-
-  const result = {};
-
-
-  walletData[world]
-    .forEach((item) => {
-
-      if (item.type !== "expense") {
-
-        return;
-
-      }
-
-
-      if (
-        !isInPeriod(
-          item.time,
-          period
-        )
-      ) {
-
-        return;
-
-      }
-
-
-      if (
-        accountFilter !== "all" &&
-        item.account !== accountFilter
-      ) {
-
-        return;
-
-      }
-
-
-      const category =
-        item.category || "其他";
-
-
-      if (!result[category]) {
-
-        result[category] = 0;
-
-      }
-
-
-      result[category] +=
-        Number(item.amount);
-
-    });
-
-
-  return result;
-
-}
-
-
-/* =========================
-   饼状图
-   ========================= */
-
-function renderPieChart(
-  chartElement,
-  totalElement,
-  legendElement,
-  stats
-) {
-
-  const entries =
-    Object.entries(stats)
-      .filter(([, amount]) => amount > 0)
-      .sort((a, b) => b[1] - a[1]);
-
-
-  const total =
-    entries.reduce(
-      (sum, [, amount]) =>
-        sum + amount,
-      0
-    );
-
-
-  totalElement.textContent =
-    formatCompactMoney(total);
-
-
-  legendElement.innerHTML = "";
-
-
-  if (total <= 0) {
-
-    chartElement.style.background =
-      "#eceae5";
-
-
-    const empty =
-      document.createElement("div");
-
-    empty.className =
-      "chart-empty";
-
-    empty.textContent =
-      "还没有符合当前条件的支出。";
-
-    legendElement.appendChild(empty);
-
-    return;
-
-  }
-
-
-  let currentAngle = 0;
-
-  const gradientParts = [];
-
-
-  entries.forEach(
-    ([category, amount], index) => {
-
-      const percent =
-        amount / total;
-
-      const startAngle =
-        currentAngle;
-
-      const endAngle =
-        currentAngle +
-        percent * 360;
-
-      const color =
-        categoryColors[
-          index % categoryColors.length
-        ];
-
-
-      gradientParts.push(
-        `${color} ${startAngle}deg ${endAngle}deg`
-      );
-
-
-      currentAngle =
-        endAngle;
-
-
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "legend-row";
-
-
-      const dot =
-        document.createElement("span");
-
-      dot.className =
-        "legend-dot";
-
-      dot.style.background =
-        color;
-
-
-      const name =
-        document.createElement("span");
-
-      name.className =
-        "legend-name";
-
-      name.textContent =
-        category;
-
-
-      const value =
-        document.createElement("div");
-
-      value.className =
-        "legend-value";
-
-
-      const money =
-        document.createElement("span");
-
-      money.textContent =
-        formatCompactMoney(amount);
-
-
-      const percentText =
-        document.createElement("small");
-
-      percentText.textContent =
-        `${Math.round(percent * 100)}%`;
-
-
-      value.appendChild(money);
-      value.appendChild(percentText);
-
-
-      row.appendChild(dot);
-      row.appendChild(name);
-      row.appendChild(value);
-
-
-      legendElement.appendChild(row);
-
-    }
-  );
-
-
-  chartElement.style.background =
-    `conic-gradient(${gradientParts.join(", ")})`;
-
-}
-
-
-/* =========================
-   本月 / 全年按钮
-   ========================= */
-
-document
-  .querySelectorAll(".period-switch")
-  .forEach((switchElement) => {
-
-    const world =
-      switchElement.dataset.statsWorld;
-
-
-    switchElement
-      .querySelectorAll(".period-button")
-      .forEach((button) => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            switchElement
-              .querySelectorAll(".period-button")
-              .forEach((item) => {
-
-                item.classList.toggle(
-                  "active",
-                  item === button
-                );
-
-              });
-
-
-            if (world === "main") {
-
-              mainStatsPeriod =
-                button.dataset.period;
-
-            } else {
-
-              liminalStatsPeriod =
-                button.dataset.period;
-
-            }
-
-
-            renderCharts();
-
-          }
-        );
-
-      });
-
-  });
-
-
-/* =========================
-   副世界账户筛选
-   ========================= */
-
-document
-  .querySelectorAll(
-    ".account-filter-button"
-  )
-  .forEach((button) => {
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        liminalAccountFilter =
-          button.dataset.accountFilter;
-
-
-        document
-          .querySelectorAll(
-            ".account-filter-button"
-          )
-          .forEach((item) => {
-
-            item.classList.toggle(
-              "active",
-              item === button
-            );
-
-          });
-
-
-        renderCharts();
-
-      }
-    );
-
-  });
-
-
-/* =========================
-   刷新图表
-   ========================= */
-
-function renderCharts() {
-
-  const mainStats =
-    getExpenseStats(
-      "main",
-      mainStatsPeriod
-    );
-
-
-  renderPieChart(
-    document.getElementById(
-      "mainPieChart"
-    ),
-
-    document.getElementById(
-      "mainPieTotal"
-    ),
-
-    document.getElementById(
-      "mainChartLegend"
-    ),
-
-    mainStats
-  );
-
-
-  const liminalStats =
-    getExpenseStats(
-      "liminal",
-      liminalStatsPeriod,
-      liminalAccountFilter
-    );
-
-
-  renderPieChart(
-    document.getElementById(
-      "liminalPieChart"
-    ),
-
-    document.getElementById(
-      "liminalPieTotal"
-    ),
-
-    document.getElementById(
-      "liminalChartLegend"
-    ),
-
-    liminalStats
-  );
-
-}
-
-
-/* =========================
-   整体刷新
-   ========================= */
-
-function renderWallet() {
-
-  /*
-    余额 = 当前所有已录入流水累计
-
-    顶部“本月收入 / 本月支出”
-    则只统计本月。
-  */
-
-  const mainAll =
-    calculateSummary(
-      walletData.main
-    );
-
-  const mainMonth =
-    calculateSummary(
-      walletData.main,
-      "month"
-    );
-
-
-  const liminalAll =
-    calculateSummary(
-      walletData.liminal
-    );
-
-  const liminalMonth =
-    calculateSummary(
-      walletData.liminal,
-      "month"
-    );
-
-
-  document.getElementById(
-    "mainBalance"
-  ).textContent =
-    formatMoney(
-      mainAll.balance
-    );
-
-
-  document.getElementById(
-    "mainIncome"
-  ).textContent =
-    formatMoney(
-      mainMonth.income
-    );
-
-
-  document.getElementById(
-    "mainExpense"
-  ).textContent =
-    formatMoney(
-      mainMonth.expense
-    );
-
-
-  document.getElementById(
-    "liminalBalance"
-  ).textContent =
-    formatMoney(
-      liminalAll.balance
-    );
-
-
-  document.getElementById(
-    "liminalIncome"
-  ).textContent =
-    formatMoney(
-      liminalMonth.income
-    );
-
-
-  document.getElementById(
-    "liminalExpense"
-  ).textContent =
-    formatMoney(
-      liminalMonth.expense
-    );
-
-
-  document.getElementById(
-    "keshiBalance"
-  ).textContent =
-    formatMoney(
-      calculateAccountBalance(
-        "Keshi"
-      )
-    );
-
-
-  document.getElementById(
-    "lennonBalance"
-  ).textContent =
-    formatMoney(
-      calculateAccountBalance(
-        "Lennon"
-      )
-    );
-
-
-  document.getElementById(
-    "familyBalance"
-  ).textContent =
-    formatMoney(
-      calculateAccountBalance(
-        "Family"
-      )
-    );
-
-
-  renderTransactions(
-    document.getElementById(
-      "mainTransactions"
-    ),
-
-    walletData.main,
-
-    "主世界"
-  );
-
-
-  renderTransactions(
-    document.getElementById(
-      "liminalTransactions"
-    ),
-
-    walletData.liminal,
-
-    "副世界"
-  );
-
-
-  renderCharts();
-
-}
-
-
-/* 第一次加载 */
-
-updateCategoryOptions();
-
-renderWallet();
+document.querySelectorAll(".world-button").forEach((button) => button.addEventListener("click", () => setWorld(button.dataset.world)));
+document.querySelectorAll(".owner-filter-button").forEach((button) => button.addEventListener("click", () => {
+  ownerFilter = button.dataset.owner;
+  ledgerAccountFilter = "all";
+  renderAll();
+}));
+document.querySelectorAll(".wallet-tab").forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.tab)));
+document.querySelectorAll("[data-go-tab]").forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.goTab)));
+$("headerAddTransaction").addEventListener("click", () => openTransactionEditor());
+$("ledgerAddTransaction").addEventListener("click", () => openTransactionEditor());
+$("ledgerTypeFilter").addEventListener("change", (event) => { ledgerTypeFilter = event.target.value; renderLedger(); });
+$("ledgerAccountFilter").addEventListener("change", (event) => { ledgerAccountFilter = event.target.value; renderLedger(); });
+$("analyticsPeriod").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
+  analyticsPeriod = button.dataset.period;
+  $("analyticsPeriod").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+  renderAnalytics();
+}));
+$("transactionCurrency").addEventListener("change", renderEditorControls);
+$("transactionEditorClose").addEventListener("click", closeTransactionEditor);
+$("transactionCancel").addEventListener("click", closeTransactionEditor);
+$("transactionSave").addEventListener("click", saveTransaction);
+$("transactionDelete").addEventListener("click", deleteEditingTransaction);
+$("accountDetailClose").addEventListener("click", () => { $("accountDetailBackdrop").hidden = true; });
+$("assetDetailClose").addEventListener("click", () => { $("assetDetailBackdrop").hidden = true; });
+[$("transactionEditorBackdrop"), $("accountDetailBackdrop"), $("assetDetailBackdrop")].forEach((backdrop) => backdrop.addEventListener("click", (event) => {
+  if (event.target === backdrop) backdrop.hidden = true;
+}));
+
+renderAll();

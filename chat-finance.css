@@ -1,0 +1,51 @@
+.chat-finance-backdrop {
+  position: fixed;
+  z-index: 1300;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(35, 34, 31, 0.24);
+  backdrop-filter: blur(4px);
+}
+
+.chat-finance-backdrop[hidden] { display: none; }
+
+.chat-finance-sheet {
+  width: 100%;
+  max-width: 520px;
+  padding: 8px 20px calc(26px + env(safe-area-inset-bottom));
+  border-radius: 25px 25px 0 0;
+  background: #f8f7f4;
+  box-shadow: 0 -16px 50px rgba(30, 30, 30, 0.12);
+}
+
+.chat-finance-handle {
+  width: 38px;
+  height: 4px;
+  margin: 3px auto 12px;
+  border-radius: 999px;
+  background: #d6d3cd;
+}
+
+.chat-finance-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid rgba(55,52,47,.07); }
+.chat-finance-header div { display: grid; gap: 3px; }
+.chat-finance-header span { color: #aaa79f; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.chat-finance-header strong { font-size: 17px; }
+.chat-finance-header button { width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(70,68,62,.055); color: #89857e; font-size: 20px; }
+.chat-finance-direction { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; margin-top: 14px; padding: 4px; border-radius: 14px; background: #e8e6e0; }
+.chat-finance-direction button { min-height: 42px; border: 0; border-radius: 10px; background: transparent; color: #918e87; font-size: 11px; }
+.chat-finance-direction button.active { background: white; color: #33322e; font-weight: 600; }
+.chat-finance-field { display: grid; gap: 7px; margin-top: 14px; }
+.chat-finance-field > span { color: #8f8b84; font-size: 11px; font-weight: 600; }
+.chat-finance-field input { width: 100%; min-width: 0; height: 46px; padding: 10px 11px; border: 1px solid rgba(55,52,47,.07); border-radius: 12px; outline: 0; background: rgba(255,255,255,.78); color: #53514c; font-size: 16px; }
+.chat-finance-amount { display: grid; grid-template-columns: 36px minmax(0,1fr); align-items: center; border: 1px solid rgba(55,52,47,.07); border-radius: 12px; background: rgba(255,255,255,.78); }
+.chat-finance-amount b { color: #77736d; font-size: 15px; text-align: center; }
+.chat-finance-amount input { border: 0; background: transparent; }
+.chat-finance-sheet > p { margin: 12px 1px 0; color: #9a968f; font-size: 10px; line-height: 1.5; }
+.chat-finance-submit { width: 100%; min-height: 46px; margin-top: 18px; border: 0; border-radius: 13px; background: #33342f; color: white; font-size: 12px; }
+
+@media (max-width: 767px) {
+  .chat-finance-sheet { padding-right: max(16px, env(safe-area-inset-right)); padding-left: max(16px, env(safe-area-inset-left)); }
+  .chat-finance-direction button, .chat-finance-submit { min-height: 44px; touch-action: manipulation; }
+}

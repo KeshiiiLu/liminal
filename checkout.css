@@ -762,6 +762,32 @@ button {
 
 }
 
+.ledger-owner-list {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.ledger-owner-option {
+  min-height: 42px;
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.07);
+  border-radius: 12px;
+  background:
+    rgba(255, 255, 255, 0.62);
+  color: #918e87;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.ledger-owner-option.active {
+  background: #e1e5e2;
+  color: #565a56;
+  font-weight: 600;
+}
+
 
 @media (max-width: 767px) {
   html,

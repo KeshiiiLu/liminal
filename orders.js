@@ -631,6 +631,22 @@ function getPaymentName(
   account
 ) {
 
+  const financeNames = {
+    cmb_daily:
+      "陆榛 · 招商银行生活账户",
+    boc_main:
+      "陆榛 · 中国银行主资金账户",
+    keshi_main:
+      "Keshi · 主世界账户"
+  };
+
+
+  if (financeNames[account]) {
+
+    return financeNames[account];
+
+  }
+
   if (
     account === "Lennon"
   ) {

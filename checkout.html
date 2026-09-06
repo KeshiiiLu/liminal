@@ -300,7 +300,45 @@
 
         <button
           class="payment-option active"
-          data-account="Keshi"
+          data-account="cmb_daily"
+        >
+
+          <span class="payment-avatar">
+            L
+          </span>
+
+          <div>
+            <strong>陆榛 · 招商银行</strong>
+            <small>日常生活账户</small>
+          </div>
+
+          <i>✓</i>
+
+        </button>
+
+
+        <button
+          class="payment-option"
+          data-account="boc_main"
+        >
+
+          <span class="payment-avatar">
+            L
+          </span>
+
+          <div>
+            <strong>陆榛 · 中国银行</strong>
+            <small>工资 / 主资金账户</small>
+          </div>
+
+          <i>✓</i>
+
+        </button>
+
+
+        <button
+          class="payment-option"
+          data-account="keshi_main"
         >
 
           <span class="payment-avatar">
@@ -309,51 +347,31 @@
 
           <div>
             <strong>Keshi</strong>
-            <small>副世界 · 个人账户</small>
+            <small>主世界账户 · 副世界追加层</small>
           </div>
 
           <i>✓</i>
 
         </button>
 
+      </div>
 
-        <button
-          class="payment-option"
-          data-account="Lennon"
-        >
-
-          <span class="payment-avatar">
-            L
-          </span>
-
-          <div>
-            <strong>榛榛</strong>
-            <small>副世界 · 个人账户</small>
-          </div>
-
-          <i>✓</i>
-
-        </button>
+    </section>
 
 
-        <button
-          class="payment-option"
-          data-account="Family"
-        >
+    <section class="checkout-card">
 
-          <span class="payment-avatar household-avatar">
-            家
-          </span>
+      <div class="card-heading">
+        <div>
+          <span class="eyebrow">LEDGER OWNER</span>
+          <h2>账本归属</h2>
+        </div>
+      </div>
 
-          <div>
-            <strong>家庭账户</strong>
-            <small>副世界 · 共同生活</small>
-          </div>
-
-          <i>✓</i>
-
-        </button>
-
+      <div class="ledger-owner-list">
+        <button class="ledger-owner-option active" type="button" data-ledger-owner="keshi">Keshi</button>
+        <button class="ledger-owner-option" type="button" data-ledger-owner="luzhen">陆榛</button>
+        <button class="ledger-owner-option" type="button" data-ledger-owner="family">家庭</button>
       </div>
 
     </section>
@@ -456,6 +474,8 @@
   </nav>
 
 
+  <script src="finance-data.js"></script>
+  <script src="finance-store.js"></script>
   <script src="checkout.js"></script>
 
 </body>

@@ -57,168 +57,196 @@
 
 
       <!-- =========================
-           店铺
-      ========================== -->
-      <section class="shop">
+     店铺
+========================== -->
+<section class="shop">
 
-        <!-- Keshi 固定桌 -->
-        <div class="keshi-corner">
+  <!-- 背景窗景：只做氛围 -->
+  <div class="shop-window-bg" aria-hidden="true"></div>
 
-          <div class="window">
-            <div class="window-sky"></div>
-          </div>
+  <!-- 左上：楼梯 / 我们的部分 -->
+  <div class="fixture stairs">
+    <span class="fixture-icon">↟</span>
+    <span>二楼楼梯</span>
+  </div>
 
-          <div
-            id="keshiCharacter"
-            class="character keshi"
-            aria-label="Keshi"
-          >
-            <div class="head">
-              <div class="glasses"></div>
-            </div>
+  <div class="fixture coffee-station">
+    <span class="fixture-icon">☕</span>
+    <span>咖啡机</span>
+  </div>
 
-            <div class="body"></div>
-          </div>
+  <!-- 中上：明档厨房 -->
+  <div class="fixture kitchen-sink">
+    <span class="fixture-icon">◫</span>
+    <span>水池</span>
+  </div>
 
-          <div class="study-desk">
-            <div class="book">📖</div>
-          </div>
+  <div class="fixture stove-two">
+    <span class="fixture-icon">♨</span>
+    <span>灶台2</span>
+  </div>
 
-          <div
-            id="keshiStatus"
-            class="character-label"
-          >
-            Keshi · 等你开始
-          </div>
+  <div class="fixture prep-table prep-table-top">
+    <span>置物台</span>
+  </div>
 
-        </div>
-
-
-        <!-- 顾客区 -->
-        <div class="customer-area">
-
-          <div class="table table-one">
-            <div class="chair chair-a"></div>
-            <div class="chair chair-b"></div>
-          </div>
-
-          <div class="table table-two">
-            <div class="chair chair-a"></div>
-            <div class="chair chair-b"></div>
-          </div>
-
-          <div
-            id="staffCharacter"
-            class="character staff"
-          >
-            <div class="head"></div>
-            <div class="body"></div>
-
-            <div class="character-label">
-              店员
-            </div>
-          </div>
-
-        </div>
+  <div class="storage-room">
+    <span>仓房</span>
+  </div>
 
 
-        <!-- 厨房 / 柜台 -->
-        <div class="service-area">
+  <!-- Keshi 固定专注位 -->
+  <div class="keshi-zone">
 
-          <div class="counter">
-            <div class="counter-top"></div>
-          </div>
+    <div class="study-desk">
+      <div class="book">📖</div>
+    </div>
 
-          <div class="kitchen">
-            <div class="stove">♨</div>
-            <div class="shelf"></div>
-          </div>
+    <div
+      id="keshiCharacter"
+      class="character keshi"
+      aria-label="Keshi"
+    >
+      <div class="head">
+        <div class="glasses"></div>
+      </div>
 
-          <div
-            id="luzhenCharacter"
-            class="character luzhen"
-          >
-            <div class="head"></div>
-            <div class="body"></div>
+      <div class="body"></div>
+    </div>
 
-            <div
-              id="luzhenStatus"
-              class="character-label"
-            >
-              陆榛 · 等待营业
-            </div>
-          </div>
+    <div
+      id="keshiStatus"
+      class="character-label keshi-label"
+    >
+      Keshi · 等你开始
+    </div>
 
-        </div>
-
-
-        <!--
-          顾客故意放在 customer-area 外面，
-          直接作为整个 shop 的子元素。
-
-          这样顾客才能跨越：
-          门口 → 顾客区 → 柜台 → 顾客区 → 柜台 → 门口
-        -->
-        <div
-          id="customer"
-          class="character customer customer-at-entry"
-          aria-label="顾客"
-        >
-          <div class="head"></div>
-          <div class="body"></div>
-
-          <div
-            id="customerStatus"
-            class="character-label"
-          >
-            等待营业
-          </div>
-        </div>
-
-      </section>
+  </div>
 
 
-      <!-- =========================
-           底部状态
-      ========================== -->
-      <footer class="bottom-bar">
+  <!-- 主前台：更宽 -->
+  <div class="front-counter">
+    <div class="counter-top"></div>
 
-        <div class="session-info">
-          <span id="worldStatus">
-            店铺还没有开始营业。
-          </span>
-        </div>
+    <span class="counter-label">
+      收银台 & 灶台1
+    </span>
 
-        <div class="controls">
+    <span class="counter-stove">♨</span>
+  </div>
 
-          <button
-            id="startButton"
-            type="button"
-          >
-            开始专注
-          </button>
+  <!-- 炸薯条机 -->
+  <div class="fixture fryer">
+    <span class="fixture-icon">🍟</span>
+    <span>炸薯条机</span>
+  </div>
 
-          <button
-            id="pauseButton"
-            type="button"
-            disabled
-          >
-            暂停
-          </button>
+  <!-- 面向餐桌的出餐台 -->
+  <div class="fixture prep-table prep-table-front">
+    <span>出餐台</span>
+  </div>
 
-          <button
-            id="finishButton"
-            type="button"
-            disabled
-          >
-            结束专注
-          </button>
+  <!-- 靠门口的置物台：以后也能做外卖取餐 -->
+  <div class="entry-shelf">
+    <span>置物台</span>
+    <small>杂物 / 未来外卖取餐</small>
+  </div>
 
-        </div>
 
-      </footer>
+  <!-- 顾客区 -->
+  <div class="dining-area">
 
-    </section>
+    <div class="table table-one">
+      <span>餐桌</span>
+    </div>
+
+    <div class="table table-two">
+      <span>餐桌</span>
+    </div>
+
+    <div class="table table-three">
+      <span>餐桌</span>
+    </div>
+
+    <div class="table table-four">
+      <span>餐桌</span>
+    </div>
+
+    <div class="table table-five">
+      <span>餐桌</span>
+    </div>
+
+    <div class="table table-six">
+      <span>餐桌</span>
+    </div>
+
+  </div>
+
+
+  <!-- 右下：洗手区 / 洗手间 -->
+  <div class="restroom-area">
+    <span class="washbasin">洗手台</span>
+    <span class="restroom">洗手间</span>
+  </div>
+
+
+  <!-- 门口 -->
+  <div class="entrance">
+    <span>门口</span>
+  </div>
+
+
+  <!-- 陆榛 -->
+  <div
+    id="luzhenCharacter"
+    class="character luzhen"
+    aria-label="陆榛"
+  >
+    <div class="head"></div>
+    <div class="body"></div>
+
+    <div
+      id="luzhenStatus"
+      class="character-label"
+    >
+      陆榛 · 等待营业
+    </div>
+  </div>
+
+
+  <!-- 店员 -->
+  <div
+    id="staffCharacter"
+    class="character staff"
+    aria-label="店员"
+  >
+    <div class="head"></div>
+    <div class="body"></div>
+
+    <div class="character-label">
+      店员
+    </div>
+  </div>
+
+
+  <!-- 顾客 -->
+  <div
+    id="customer"
+    class="character customer customer-at-entry"
+    aria-label="顾客"
+  >
+    <div class="head"></div>
+    <div class="body"></div>
+
+    <div
+      id="customerStatus"
+      class="character-label"
+    >
+      等待营业
+    </div>
+  </div>
+
+</section>
 
 
     <!-- =========================

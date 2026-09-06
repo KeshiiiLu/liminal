@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="style.css">
 
   <link rel="stylesheet" href="chat-corpus.css">
+  <link rel="stylesheet" href="chat-finance.css">
 
   <script src="storage-migrations.js"></script>
 </head>
@@ -333,7 +334,7 @@
 
         <section class="more-page">
 
-          <button class="more-item">
+          <button class="more-item" id="chatRedPacketButton" type="button">
             <span class="more-icon">▧</span>
             <small>相片</small>
           </button>
@@ -353,7 +354,7 @@
             <small>视频通话</small>
           </button>
 
-          <button class="more-item">
+          <button class="more-item" id="chatTransferButton" type="button">
             <span class="more-icon">⌖</span>
             <small>位置</small>
           </button>
@@ -683,6 +684,24 @@
 
   </div>
 
+  <div class="chat-finance-backdrop" id="chatFinanceBackdrop" hidden>
+    <section class="chat-finance-sheet" role="dialog" aria-modal="true" aria-labelledby="chatFinanceTitle">
+      <div class="chat-finance-handle"></div>
+      <header class="chat-finance-header">
+        <div><span>WALLET</span><strong id="chatFinanceTitle">转账</strong></div>
+        <button id="chatFinanceClose" type="button" aria-label="关闭">×</button>
+      </header>
+      <div class="chat-finance-direction" id="chatFinanceDirectionOptions">
+        <button class="active" type="button" data-finance-direction="outgoing">我发给陆榛</button>
+        <button type="button" data-finance-direction="incoming">陆榛发给我</button>
+      </div>
+      <label class="chat-finance-field"><span>金额</span><div class="chat-finance-amount"><b>¥</b><input id="chatFinanceAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"></div></label>
+      <label class="chat-finance-field"><span>备注</span><input id="chatFinanceNote" type="text" placeholder="可以留空"></label>
+      <p>这是一笔副世界交易，不会影响主世界账本。</p>
+      <button class="chat-finance-submit" id="chatFinanceSubmit" type="button">确认并发送</button>
+    </section>
+  </div>
+
 <script src="cards-corpus-data.js"></script>
 
 <script src="phrases-data.js"></script>
@@ -693,7 +712,11 @@
 <script src="corpus-random.js"></script>
 <script src="poke-random.js"></script>
 
+<script src="finance-data.js"></script>
+<script src="finance-store.js"></script>
+
 <script src="chat.js"></script>
+<script src="chat-finance.js"></script>
 <script src="chat-corpus.js"></script>
 
 <script src="chat-actions.js"></script>

@@ -907,3 +907,434 @@ button {
     animation: none;
   }
 }
+/* =========================================================
+   MEANWHILE v0.3
+   明档厨房 + loft 一楼新版布局
+========================================================= */
+
+.shop {
+  position: relative !important;
+  display: block !important;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #e8ddcf 0%,
+      #dfcfb8 48%,
+      #c9a47e 48%,
+      #b98d67 100%
+    );
+}
+
+.shop-window-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 27%;
+  opacity: 0.4;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      #a9bcc0 0%,
+      #d8c9b0 100%
+    );
+  border-bottom: 5px solid rgba(116, 83, 59, 0.12);
+}
+
+/* ===== 通用家具 ===== */
+
+.fixture {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  border: 2px solid rgba(91, 67, 49, 0.24);
+  border-radius: 5px;
+  background: #b48763;
+  color: #fff5e6;
+  font-size: 10px;
+  z-index: 2;
+}
+
+.fixture-icon {
+  font-size: 14px;
+}
+
+/* ===== 楼梯 / 我们自己的区域 ===== */
+
+.stairs {
+  left: 2%;
+  top: 5%;
+  width: 11%;
+  height: 17%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #947052 0,
+      #947052 10px,
+      #805f47 10px,
+      #805f47 13px
+    );
+}
+
+.coffee-station {
+  left: 14%;
+  top: 8%;
+  width: 8%;
+  height: 12%;
+  background: #77665a;
+}
+
+/* ===== 明档厨房上排 ===== */
+
+.kitchen-sink {
+  left: 32%;
+  top: 8%;
+  width: 8%;
+  height: 12%;
+  background: #8d9694;
+}
+
+.stove-two {
+  left: 43%;
+  top: 7%;
+  width: 14%;
+  height: 14%;
+  background: #8e6a4e;
+}
+
+.prep-table-top {
+  left: 58%;
+  top: 8%;
+  width: 12%;
+  height: 12%;
+}
+
+.storage-room {
+  position: absolute;
+  top: 4%;
+  right: 3%;
+  width: 20%;
+  height: 34%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #765a43;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #aa8667 0,
+      #aa8667 18px,
+      #a27b5d 18px,
+      #a27b5d 20px
+    );
+  font-size: 11px;
+  font-weight: 650;
+  z-index: 2;
+}
+
+/* ===== Keshi 专注区 ===== */
+
+.keshi-zone {
+  position: absolute;
+  left: 11%;
+  top: 35%;
+  width: 12%;
+  height: 15%;
+  z-index: 3;
+}
+
+.keshi-zone .study-desk {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: #896347;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 -5px rgba(53, 34, 23, 0.14);
+}
+
+.keshi-zone .book {
+  position: absolute;
+  top: -16px;
+  right: 14%;
+  font-size: 18px;
+}
+
+.keshi-zone .keshi {
+  left: 27%;
+  bottom: 42%;
+}
+
+.keshi-label {
+  position: absolute;
+  left: 50% !important;
+  top: auto !important;
+  bottom: -24px;
+  transform: translateX(-50%) !important;
+}
+
+/* ===== 主前台：更宽 ===== */
+
+.front-counter {
+  position: absolute;
+  left: 24%;
+  top: 34%;
+  width: 29%;
+  height: 18%;
+  border-radius: 5px;
+  background: #805c42;
+  box-shadow:
+    inset 0 -8px rgba(53, 34, 23, 0.15);
+  z-index: 2;
+}
+
+.front-counter .counter-top {
+  position: absolute;
+  top: -6px;
+  left: -2%;
+  width: 104%;
+  height: 8px;
+  border-radius: 4px;
+  background: #604633;
+}
+
+.counter-label {
+  position: absolute;
+  left: 8%;
+  top: 32%;
+  font-size: 10px;
+  color: #f8ead8;
+}
+
+.counter-stove {
+  position: absolute;
+  right: 8%;
+  top: 20%;
+  font-size: 20px;
+  color: #f5ddc4;
+}
+
+/* ===== 炸薯条机 ===== */
+
+.fryer {
+  left: 23%;
+  top: 8%;
+  width: 8%;
+  height: 12%;
+  background: #8f7b63;
+  font-size: 9px;
+}
+
+/* ===== 出餐台 ===== */
+
+.prep-table-front {
+  left: 56%;
+  top: 35%;
+  width: 13%;
+  height: 16%;
+}
+
+/* ===== 门口置物台 ===== */
+
+.entry-shelf {
+  position: absolute;
+  left: 14%;
+  bottom: 10%;
+  width: 16%;
+  height: 9%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 5px;
+  border: 3px solid #78583f;
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #9b7252 0,
+      #9b7252 15px,
+      #825f46 15px,
+      #825f46 18px
+    );
+  color: #fff3e0;
+  text-align: center;
+  z-index: 2;
+}
+
+.entry-shelf span {
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.entry-shelf small {
+  font-size: 7px;
+  opacity: 0.8;
+  line-height: 1.25;
+}
+
+/* ===== 六张餐桌 ===== */
+
+.dining-area {
+  position: absolute;
+  left: 33%;
+  top: 57%;
+  width: 42%;
+  height: 24%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 8%;
+  row-gap: 18%;
+  align-items: center;
+  justify-items: center;
+  z-index: 1;
+}
+
+.dining-area .table {
+  position: relative !important;
+  inset: auto !important;
+  width: 72%;
+  height: 58%;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #906848;
+  box-shadow:
+    inset 0 -6px rgba(52, 34, 22, 0.14);
+  transform: none !important;
+  font-size: 8px;
+  color: rgba(255, 245, 231, 0.75);
+}
+
+/* ===== 洗手区 ===== */
+
+.restroom-area {
+  position: absolute;
+  right: 3%;
+  bottom: 5%;
+  width: 18%;
+  height: 20%;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  border: 3px solid #78614f;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #d8cec0;
+  z-index: 2;
+}
+
+.washbasin,
+.restroom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+}
+
+.washbasin {
+  background: #aeb9b7;
+  border-right: 2px solid #78614f;
+}
+
+.restroom {
+  background: #d8c6af;
+}
+
+/* ===== 门口 ===== */
+
+.entrance {
+  position: absolute;
+  left: 2%;
+  bottom: 3%;
+  width: 10%;
+  height: 13%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 3px;
+  border-bottom: 5px solid #71523d;
+  font-size: 9px;
+  z-index: 1;
+}
+
+/* ===== 人物初始位置 ===== */
+
+.luzhen {
+  left: 38% !important;
+  right: auto !important;
+  top: 38% !important;
+  bottom: auto !important;
+  z-index: 8;
+}
+
+.staff {
+  left: 58% !important;
+  top: auto !important;
+  bottom: 14% !important;
+  z-index: 7;
+}
+
+/* ===== 顾客路线：按新版布局重排 ===== */
+
+.customer {
+  z-index: 9;
+  transition:
+    left 1.2s ease,
+    bottom 1.2s ease,
+    opacity 0.45s ease;
+}
+
+/* 门口 */
+.customer-at-entry {
+  left: 7% !important;
+  bottom: 7% !important;
+  opacity: 1;
+}
+
+/* 收银台点单 */
+.customer-at-menu {
+  left: 31% !important;
+  bottom: 45% !important;
+  opacity: 1;
+}
+
+/* 出餐台等/取餐 */
+.customer-at-counter {
+  left: 58% !important;
+  bottom: 43% !important;
+  opacity: 1;
+}
+
+/* 回餐桌用餐 */
+.customer-at-eating {
+  left: 49% !important;
+  bottom: 20% !important;
+  opacity: 1;
+}
+
+/* 回前台付款 */
+.customer-at-paying {
+  left: 34% !important;
+  bottom: 45% !important;
+  opacity: 1;
+}
+
+/* 离店 */
+.customer-at-exit {
+  left: 7% !important;
+  bottom: 5% !important;
+  opacity: 0;
+}

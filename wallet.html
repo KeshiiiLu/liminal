@@ -1,929 +1,127 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4f3ef">
-
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liminal">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
   <title>Wallet · Liminal</title>
-
   <link rel="stylesheet" href="wallet.css">
   <script src="storage-migrations.js"></script>
 </head>
-
 <body>
-
   <main class="wallet-page">
-
-    <!-- 顶部 -->
     <header class="wallet-header">
-
-      <button
-        class="wallet-back"
-        onclick="window.location.href='index.html?page=2'"
-        aria-label="返回"
-      >
-        ‹
-      </button>
-
-      <div class="wallet-title">
-        <strong>Wallet</strong>
-        <span>ENGEL HOUSEHOLD</span>
-      </div>
-
-      <button class="wallet-more" aria-label="更多">
-        ···
-      </button>
-
+      <a class="wallet-back" href="index.html?page=2" aria-label="返回首页">‹</a>
+      <div class="wallet-title"><strong>Wallet</strong><span>FINANCE CENTER</span></div>
+      <button class="wallet-add" id="headerAddTransaction" type="button" aria-label="新增流水">＋</button>
     </header>
 
-
-    <!-- 主世界 / 副世界 -->
-    <section class="world-switch">
-
-      <button
-        class="world-button active"
-        data-world="main"
-      >
-        主世界
-      </button>
-
-      <button
-        class="world-button"
-        data-world="liminal"
-      >
-        副世界
-      </button>
-
+    <section class="world-switch" aria-label="世界">
+      <button class="world-button active" type="button" data-world="main">主世界</button>
+      <button class="world-button" type="button" data-world="sub">副世界</button>
     </section>
 
-
-    <!-- =========================
-         主世界
-         ========================= -->
-
-    <section
-      class="world-panel active"
-      id="mainWorldPanel"
-    >
-
-      <!-- 主世界余额 -->
-      <section class="summary-card main-summary">
-
-        <div class="summary-top">
-
-          <div>
-            <span class="eyebrow">REAL WORLD</span>
-            <h1>我的账户</h1>
-          </div>
-
-          <span class="account-tag">
-            Keshi
-          </span>
-
-        </div>
-
-
-        <p class="balance-label">
-          当前结余
-        </p>
-
-        <div
-          class="main-balance"
-          id="mainBalance"
-        >
-          ¥0.00
-        </div>
-
-
-        <div class="summary-stats">
-
-          <div>
-            <span>本月收入</span>
-            <strong id="mainIncome">
-              ¥0.00
-            </strong>
-          </div>
-
-          <div>
-            <span>本月支出</span>
-            <strong id="mainExpense">
-              ¥0.00
-            </strong>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- 主世界快捷入口 -->
-      <section class="action-grid">
-
-        <button
-          class="action-card primary-action"
-          data-open-record="main"
-        >
-          <span>＋</span>
-
-          <div>
-            <strong>记一笔</strong>
-            <small>收入或支出</small>
-          </div>
-        </button>
-
-
-        <button class="action-card">
-
-          <span>评</span>
-
-          <div>
-            <strong>账目评论</strong>
-            <small>榛榛的留言</small>
-          </div>
-
-        </button>
-
-      </section>
-
-      <!-- 主世界消费分析 -->
-<section class="wallet-section">
-
-  <div class="section-heading">
-
-    <div>
-      <span class="eyebrow dark">
-        SPENDING ANALYSIS
-      </span>
-
-      <h2>消费分析</h2>
-    </div>
-
-    <div
-      class="period-switch"
-      data-stats-world="main"
-    >
-      <button
-        class="period-button active"
-        data-period="month"
-      >
-        本月
-      </button>
-
-      <button
-        class="period-button"
-        data-period="year"
-      >
-        全年
-      </button>
-    </div>
-
-  </div>
-
-
-  <div class="chart-layout">
-
-    <div
-      class="pie-chart"
-      id="mainPieChart"
-    >
-      <div class="pie-center">
-        <span>总支出</span>
-        <strong id="mainPieTotal">
-          ¥0
-        </strong>
-      </div>
-    </div>
-
-
-    <div
-      class="chart-legend"
-      id="mainChartLegend"
-    >
-    </div>
-
-  </div>
-
-</section>
-
-      <!-- 预计生活费 -->
-      <section class="wallet-section">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow dark">
-              EXPECTED INCOME
-            </span>
-
-            <h2>生活费</h2>
-          </div>
-
-          <span class="section-note">
-            仅作提示
-          </span>
-
-        </div>
-
-
-        <p class="income-description">
-          大概的到账节奏。实际收到后再确认，不会自动计入余额。
-        </p>
-
-
-        <div class="expected-list">
-
-          <article class="expected-item">
-
-            <div class="expected-date">
-              <strong>01</strong>
-              <span>每月</span>
-            </div>
-
-            <div class="expected-info">
-              <strong>约 ¥1,200</strong>
-              <span>妈妈 · 生活费</span>
-            </div>
-
-            <button
-              class="expected-confirm"
-              data-amount="1200"
-              data-day="1"
-            >
-              确认到账
-            </button>
-
-          </article>
-
-
-          <article class="expected-item">
-
-            <div class="expected-date">
-              <strong>11</strong>
-              <span>每月</span>
-            </div>
-
-            <div class="expected-info">
-              <strong>约 ¥800</strong>
-              <span>妈妈 · 生活费</span>
-            </div>
-
-            <button
-              class="expected-confirm"
-              data-amount="800"
-              data-day="11"
-            >
-              确认到账
-            </button>
-
-          </article>
-
-
-          <article class="expected-item">
-
-            <div class="expected-date">
-              <strong>21</strong>
-              <span>每月</span>
-            </div>
-
-            <div class="expected-info">
-              <strong>约 ¥800</strong>
-              <span>妈妈 · 生活费</span>
-            </div>
-
-            <button
-              class="expected-confirm"
-              data-amount="800"
-              data-day="21"
-            >
-              确认到账
-            </button>
-
-          </article>
-
-        </div>
-
-      </section>
-
-
-      <!-- 主世界流水 -->
-      <section class="wallet-section">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow dark">
-              TRANSACTIONS
-            </span>
-
-            <h2>最近流水</h2>
-          </div>
-
-          <button class="text-button">
-            全部
-          </button>
-
-        </div>
-
-
-        <div
-          class="transaction-list"
-          id="mainTransactions"
-        >
-        </div>
-
-      </section>
-
-
-      <!-- 榛榛评论 -->
-      <section class="comment-card">
-
-        <div class="comment-avatar">
-          L
-        </div>
-
-        <div class="comment-content">
-
-          <span>榛榛的账目评论</span>
-
-          <strong>
-            这里以后会出现他对主世界账目的留言。
-          </strong>
-
-          <p>
-            先把位置留好，下一步再接评论和记账监督。
-          </p>
-
-        </div>
-
-      </section>
-
+    <section class="owner-filter" id="ownerFilter" aria-label="副世界账本归属" hidden>
+      <button class="owner-filter-button active" type="button" data-owner="all">全部</button>
+      <button class="owner-filter-button" type="button" data-owner="keshi">Keshi</button>
+      <button class="owner-filter-button" type="button" data-owner="luzhen">陆榛</button>
+      <button class="owner-filter-button" type="button" data-owner="family">家庭</button>
     </section>
 
+    <nav class="wallet-tabs" aria-label="Wallet 页面">
+      <button class="wallet-tab active" type="button" data-tab="overview">总览</button>
+      <button class="wallet-tab" type="button" data-tab="accounts">账户</button>
+      <button class="wallet-tab" type="button" data-tab="ledger">流水</button>
+      <button class="wallet-tab" type="button" data-tab="assets">资产</button>
+      <button class="wallet-tab" type="button" data-tab="analytics">统计</button>
+    </nav>
 
-    <!-- =========================
-         副世界
-         ========================= -->
-
-    <section
-      class="world-panel"
-      id="liminalWorldPanel"
-    >
-
-      <!-- 副世界家庭总览 -->
-      <section class="summary-card liminal-summary">
-
-        <div class="summary-top">
-
-          <div>
-            <span class="eyebrow light">
-              LIMINAL WORLD
-            </span>
-
-            <h1>家庭钱包</h1>
-          </div>
-
-
-          <div class="member-avatars">
-
-            <div class="mini-avatar">
-              K
-            </div>
-
-            <div class="mini-avatar second">
-              L
-            </div>
-
-          </div>
-
+    <section class="wallet-panel active" data-panel="overview">
+      <article class="position-card">
+        <div class="position-heading">
+          <div><span id="overviewOwner">Keshi</span><strong>FINANCIAL POSITION</strong></div>
+          <span class="world-badge" id="overviewWorldBadge">主世界</span>
         </div>
-
-
-        <p class="balance-label light-label">
-          已记录账户总余额
-        </p>
-
-        <div
-          class="main-balance light-balance"
-          id="liminalBalance"
-        >
-          ¥0.00
-        </div>
-
-
-        <div class="summary-stats light-stats">
-
-          <div>
-            <span>本月收入</span>
-            <strong id="liminalIncome">
-              ¥0.00
-            </strong>
-          </div>
-
-          <div>
-            <span>本月支出</span>
-            <strong id="liminalExpense">
-              ¥0.00
-            </strong>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- 副世界账户 -->
+        <div class="position-total" id="overviewPosition">¥0.00</div>
+        <p id="overviewPositionNote">金融资产 · 不含房产与车辆</p>
+      </article>
+      <section class="metric-grid" id="overviewMetrics"></section>
       <section class="wallet-section">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow dark">
-              ACCOUNTS
-            </span>
-
-            <h2>账户</h2>
-          </div>
-
-          <button class="text-button">
-            管理
-          </button>
-
-        </div>
-
-
-        <div class="account-list">
-
-          <article class="account-row">
-
-            <div class="account-icon household-icon">
-              家
-            </div>
-
-            <div class="account-info">
-              <strong>家庭账户</strong>
-              <span>共同生活与家庭消费</span>
-            </div>
-
-            <strong
-              class="account-balance"
-              id="familyBalance"
-            >
-              ¥0.00
-            </strong>
-
-          </article>
-
-
-          <article class="account-row">
-
-            <div class="account-icon">
-              K
-            </div>
-
-            <div class="account-info">
-              <strong>Keshi</strong>
-              <span>个人账户</span>
-            </div>
-
-            <strong
-              class="account-balance"
-              id="keshiBalance"
-            >
-              ¥0.00
-            </strong>
-
-          </article>
-
-
-          <article class="account-row">
-
-            <div class="account-icon">
-              L
-            </div>
-
-            <div class="account-info">
-              <strong>榛榛</strong>
-              <span>个人账户</span>
-            </div>
-
-            <strong
-              class="account-balance"
-              id="lennonBalance"
-            >
-              ¥0.00
-            </strong>
-
-          </article>
-
-        </div>
-
+        <div class="section-heading"><div><span>STRUCTURE</span><h2>财务结构概览</h2></div></div>
+        <div class="structure-list" id="overviewStructure"></div>
       </section>
-
-
-      <!-- 副世界快捷入口 -->
-      <section class="action-grid liminal-actions">
-
-        <button
-          class="action-card primary-action"
-          data-open-record="liminal"
-        >
-          <span>＋</span>
-
-          <div>
-            <strong>记一笔</strong>
-            <small>手动添加流水</small>
-          </div>
-        </button>
-
-
-        <button class="action-card">
-
-          <span>转</span>
-
-          <div>
-            <strong>转账</strong>
-            <small>账户间转账</small>
-          </div>
-
-        </button>
-
-
-        <button class="action-card">
-
-          <span>包</span>
-
-          <div>
-            <strong>红包</strong>
-            <small>副世界红包</small>
-          </div>
-
-        </button>
-
-
-        <button class="action-card">
-
-          <span>产</span>
-
-          <div>
-            <strong>资产</strong>
-            <small>家庭与个人资产</small>
-          </div>
-
-        </button>
-
-      </section>
-
-      <!-- 副世界消费分析 -->
-<section class="wallet-section">
-
-  <div class="section-heading">
-
-    <div>
-      <span class="eyebrow dark">
-        SPENDING ANALYSIS
-      </span>
-
-      <h2>消费分析</h2>
-    </div>
-
-    <div
-      class="period-switch"
-      data-stats-world="liminal"
-    >
-      <button
-        class="period-button active"
-        data-period="month"
-      >
-        本月
-      </button>
-
-      <button
-        class="period-button"
-        data-period="year"
-      >
-        全年
-      </button>
-    </div>
-
-  </div>
-
-
-  <div class="account-filter">
-
-    <button
-      class="account-filter-button active"
-      data-account-filter="all"
-    >
-      全部
-    </button>
-
-    <button
-      class="account-filter-button"
-      data-account-filter="Keshi"
-    >
-      Keshi
-    </button>
-
-    <button
-      class="account-filter-button"
-      data-account-filter="Lennon"
-    >
-      榛榛
-    </button>
-
-    <button
-      class="account-filter-button"
-      data-account-filter="Family"
-    >
-      家庭
-    </button>
-
-  </div>
-
-
-  <div class="chart-layout">
-
-    <div
-      class="pie-chart"
-      id="liminalPieChart"
-    >
-      <div class="pie-center">
-        <span>总支出</span>
-        <strong id="liminalPieTotal">
-          ¥0
-        </strong>
-      </div>
-    </div>
-
-
-    <div
-      class="chart-legend"
-      id="liminalChartLegend"
-    >
-    </div>
-
-  </div>
-
-</section>
-
-      <!-- 副世界流水 -->
       <section class="wallet-section">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow dark">
-              TRANSACTIONS
-            </span>
-
-            <h2>最近流水</h2>
-          </div>
-
-          <button class="text-button">
-            全部
-          </button>
-
-        </div>
-
-
-        <div
-          class="transaction-list"
-          id="liminalTransactions"
-        >
-        </div>
-
+        <div class="section-heading"><div><span>RECENT</span><h2>最近流水</h2></div><button class="text-button" type="button" data-go-tab="ledger">查看全部</button></div>
+        <div class="transaction-list" id="overviewTransactions"></div>
       </section>
-
-
-      <!-- 资产入口 -->
-      <section class="wallet-section">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow dark">
-              ASSETS
-            </span>
-
-            <h2>资产</h2>
-          </div>
-
-          <button class="text-button">
-            查看全部
-          </button>
-
-        </div>
-
-
-        <div class="asset-links">
-
-          <article class="asset-link">
-
-            <span>HOUSEHOLD</span>
-
-            <strong>家庭资产</strong>
-
-            <p>
-              住宅、车辆、共同储蓄等
-            </p>
-
-          </article>
-
-
-          <article class="asset-link">
-
-            <span>PERSONAL</span>
-
-            <strong>个人资产</strong>
-
-            <p>
-              Keshi 与榛榛各自持有的资产
-            </p>
-
-          </article>
-
-        </div>
-
-      </section>
-
     </section>
 
+    <section class="wallet-panel" data-panel="accounts">
+      <div class="panel-intro"><span>ACCOUNTS</span><h1>账户</h1><p>银行卡、储备、投资与欧元资金分别计算。家庭是账本归属，不是联名账户。</p></div>
+      <div class="account-groups" id="accountGroups"></div>
+    </section>
+
+    <section class="wallet-panel" data-panel="ledger">
+      <div class="panel-intro ledger-heading"><div><span>LEDGER</span><h1>流水</h1></div><button class="primary-small-button" id="ledgerAddTransaction" type="button">＋ 记一笔</button></div>
+      <section class="ledger-filters">
+        <label><span>类型</span><select id="ledgerTypeFilter"><option value="all">全部类型</option><option value="income">收入</option><option value="expense">支出</option><option value="transfer">转账</option><option value="asset_transfer">资产划转</option><option value="investment">投资</option><option value="repayment">还款</option></select></label>
+        <label><span>账户</span><select id="ledgerAccountFilter"><option value="all">全部账户</option></select></label>
+      </section>
+      <div class="ledger-summary" id="ledgerSummary"></div>
+      <div class="transaction-list full-ledger" id="ledgerTransactions"></div>
+    </section>
+
+    <section class="wallet-panel" data-panel="assets">
+      <div class="panel-intro"><span>ASSETS &amp; LIABILITIES</span><h1>资产</h1><p>金融资产使用当前账户余额；房产与车辆按固定设定展示，不自动估算市场价格。</p></div>
+      <section class="asset-section"><div class="section-heading compact-heading"><div><span>FINANCIAL</span><h2>金融资产</h2></div></div><div class="asset-total-card" id="financialAssetTotals"></div><div class="asset-list" id="financialAssetList"></div></section>
+      <section class="asset-section"><div class="section-heading compact-heading"><div><span>PHYSICAL</span><h2>实物资产</h2></div></div><div class="asset-list" id="physicalAssetList"></div></section>
+      <section class="asset-section"><div class="section-heading compact-heading"><div><span>LIABILITIES</span><h2>负债</h2></div></div><div class="liability-list" id="liabilityList"></div></section>
+    </section>
+
+    <section class="wallet-panel" data-panel="analytics">
+      <div class="panel-intro analytics-heading"><div><span>ANALYTICS</span><h1>统计</h1></div><div class="period-switch" id="analyticsPeriod"><button class="active" type="button" data-period="month">本月</button><button type="button" data-period="year">今年</button><button type="button" data-period="all">全部</button></div></div>
+      <section class="analytics-summary" id="analyticsSummary"></section>
+      <section class="wallet-section analytics-card"><div class="section-heading compact-heading"><div><span>EXPENSE</span><h2>消费构成</h2></div></div><div class="breakdown-list" id="expenseBreakdown"></div></section>
+      <section class="wallet-section analytics-card"><div class="section-heading compact-heading"><div><span>INCOME</span><h2>收入构成</h2></div></div><div class="breakdown-list" id="incomeBreakdown"></div></section>
+      <section class="wallet-section analytics-card"><div class="section-heading compact-heading"><div><span>BALANCE CHANGE</span><h2>账户余额变化</h2></div></div><div class="balance-change-list" id="balanceChanges"></div></section>
+      <section class="wallet-section analytics-card"><div class="section-heading compact-heading"><div><span>ALLOCATION</span><h2>资产配置</h2></div></div><div class="breakdown-list" id="assetAllocation"></div></section>
+      <section class="wallet-section analytics-card"><div class="section-heading compact-heading"><div><span>CASH FLOW</span><h2>月度现金流</h2></div></div><div class="cashflow-chart" id="cashflowChart"></div></section>
+    </section>
   </main>
 
-
-  <!-- =========================
-       记一笔弹窗
-       ========================= -->
-
-  <div
-    class="record-overlay"
-    id="recordOverlay"
-    hidden
-  >
-
-    <div class="record-sheet">
-
-      <div class="sheet-handle">
-      </div>
-
-
-      <div class="sheet-header">
-
-        <div>
-          <span class="eyebrow dark">
-            NEW TRANSACTION
-          </span>
-
-          <h2>记一笔</h2>
-        </div>
-
-        <button
-          class="sheet-close"
-          id="closeRecord"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <!-- 收入 / 支出 -->
-      <div class="type-switch">
-
-        <button
-          class="type-button active"
-          data-type="expense"
-        >
-          支出
-        </button>
-
-        <button
-          class="type-button"
-          data-type="income"
-        >
-          收入
-        </button>
-
-      </div>
-
-
-      <!-- 金额 -->
-      <label class="form-field">
-
-        <span>金额</span>
-
-        <div class="amount-input">
-
-          <b>¥</b>
-
-          <input
-            id="transactionAmount"
-            type="number"
-            inputmode="decimal"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-          >
-
-        </div>
-
-      </label>
-
-
-      <!-- 名称 -->
-      <label class="form-field">
-
-        <span>名称 / 来源</span>
-
-        <input
-          id="transactionTitle"
-          type="text"
-          placeholder="例如：晚饭、生活费、榛榛转账"
-        >
-
-      </label>
-
-
-      <!-- 分类 -->
-      <label class="form-field">
-
-  <span>分类</span>
-
-  <select id="transactionCategory">
-  </select>
-
-</label>
-
-
-      <!-- 账户 -->
-      <label class="form-field">
-
-        <span>计入账户</span>
-
-        <select id="transactionAccount">
-        </select>
-
-      </label>
-
-
-      <!-- 备注 -->
-      <label class="form-field">
-
-        <span>备注</span>
-
-        <textarea
-          id="transactionNote"
-          rows="3"
-          placeholder="可以留空"
-        ></textarea>
-
-      </label>
-
-
-      <!-- 同步副世界 -->
-      <label
-        class="sync-option"
-        id="syncOption"
-      >
-
-        <div>
-          <strong>同时记入副世界</strong>
-
-          <span>
-            生成一条独立的副世界 Keshi 流水
-          </span>
-        </div>
-
-        <input
-          id="syncToLiminal"
-          type="checkbox"
-        >
-
-      </label>
-
-
-      <button
-        class="save-transaction"
-        id="saveTransaction"
-      >
-        保存这笔账
-      </button>
-
-    </div>
-
+  <div class="sheet-backdrop" id="transactionEditorBackdrop" hidden>
+    <section class="wallet-sheet transaction-sheet" role="dialog" aria-modal="true" aria-labelledby="transactionEditorTitle">
+      <div class="sheet-handle"></div>
+      <header class="sheet-header"><div><span>TRANSACTION</span><h2 id="transactionEditorTitle">记一笔</h2></div><button id="transactionEditorClose" type="button" aria-label="关闭">×</button></header>
+      <div class="transaction-world-note" id="transactionWorldNote">主世界流水会自动在副世界显示。</div>
+      <div class="transaction-type-grid" id="transactionTypeOptions"></div>
+      <div class="form-two-columns"><label class="form-field"><span>日期</span><input id="transactionDate" type="date"></label><label class="form-field"><span>时间</span><input id="transactionTime" type="time"></label></div>
+      <label class="form-field"><span>标题</span><input id="transactionTitle" type="text" placeholder="例如：午餐、工资到账"></label>
+      <div class="form-two-columns amount-currency-grid"><label class="form-field"><span>金额</span><input id="transactionAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"></label><label class="form-field"><span>币种</span><select id="transactionCurrency"><option value="CNY">人民币 CNY</option><option value="EUR">欧元 EUR</option></select></label></div>
+      <label class="form-field" id="transactionFromAccountField"><span id="transactionFromAccountLabel">付款账户</span><select id="transactionFromAccount"></select></label>
+      <label class="form-field" id="transactionToAccountField" hidden><span>收款账户</span><select id="transactionToAccount"></select></label>
+      <label class="form-field" id="transactionOwnerField"><span>账本归属</span><select id="transactionOwner"></select></label>
+      <label class="form-field"><span>分类</span><select id="transactionCategory"></select></label>
+      <label class="form-field"><span>备注</span><textarea id="transactionNote" rows="3" placeholder="可以留空"></textarea></label>
+      <footer class="sheet-actions editing" id="transactionEditorActions"><button class="danger" id="transactionDelete" type="button" hidden>删除</button><button id="transactionCancel" type="button">取消</button><button class="primary" id="transactionSave" type="button">保存</button></footer>
+    </section>
   </div>
 
+  <div class="sheet-backdrop" id="accountDetailBackdrop" hidden>
+    <section class="wallet-sheet detail-sheet" role="dialog" aria-modal="true" aria-labelledby="accountDetailTitle"><div class="sheet-handle"></div><header class="sheet-header"><div><span>ACCOUNT</span><h2 id="accountDetailTitle">账户详情</h2></div><button id="accountDetailClose" type="button" aria-label="关闭">×</button></header><div id="accountDetailContent"></div></section>
+  </div>
 
+  <div class="sheet-backdrop" id="assetDetailBackdrop" hidden>
+    <section class="wallet-sheet detail-sheet" role="dialog" aria-modal="true" aria-labelledby="assetDetailTitle"><div class="sheet-handle"></div><header class="sheet-header"><div><span>ASSET</span><h2 id="assetDetailTitle">资产详情</h2></div><button id="assetDetailClose" type="button" aria-label="关闭">×</button></header><div id="assetDetailContent"></div></section>
+  </div>
+
+  <script src="finance-data.js"></script>
+  <script src="finance-store.js"></script>
   <script src="wallet.js"></script>
-
 </body>
-
 </html>

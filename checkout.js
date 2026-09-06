@@ -4,9 +4,6 @@ const CHECKOUT_DRAFT_KEY =
 const ORDERS_KEY =
   "liminal_mall_orders_v1";
 
-const WALLET_KEY =
-  "liminal_wallet_v1";
-
   const CHAT_STORAGE_KEY =
   "liminal_chat_luzhen";
 
@@ -21,7 +18,10 @@ let checkoutDraft =
 
 
 let selectedPaymentAccount =
-  "Keshi";
+  "cmb_daily";
+
+let selectedLedgerOwner =
+  "keshi";
 
 let selectedDelivery =
   "standard";
@@ -351,6 +351,39 @@ document
         document
           .querySelectorAll(
             ".payment-option"
+          )
+          .forEach((item) => {
+
+            item.classList.toggle(
+              "active",
+              item === button
+            );
+
+          });
+
+      }
+    );
+
+  });
+
+
+document
+  .querySelectorAll(
+    ".ledger-owner-option"
+  )
+  .forEach((button) => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        selectedLedgerOwner =
+          button.dataset.ledgerOwner;
+
+
+        document
+          .querySelectorAll(
+            ".ledger-owner-option"
           )
           .forEach((item) => {
 
@@ -753,6 +786,9 @@ function submitOrder() {
     paymentAccount:
       selectedPaymentAccount,
 
+    ledgerOwner:
+      selectedLedgerOwner,
+
 
     subtotal:
       getSubtotal(),
@@ -868,134 +904,92 @@ function saveOrder(order) {
 
 function saveOrderToWallet(order) {
 
-  let walletData = {
+  if (!window.LiminalFinance) {
 
-    main:
-      [],
-
-    liminal:
-      []
-
-  };
-
-
-  const saved =
-    localStorage.getItem(
-      WALLET_KEY
+    console.error(
+      "Wallet 数据层未加载，订单仍保留在 Mall，但没有写入 Wallet。"
     );
 
-
-  if (saved) {
-
-    try {
-
-      const parsed =
-        JSON.parse(saved);
-
-
-      walletData = {
-
-        main:
-          Array.isArray(
-            parsed.main
-          )
-            ? parsed.main
-            : [],
-
-
-        liminal:
-          Array.isArray(
-            parsed.liminal
-          )
-            ? parsed.liminal
-            : []
-
-      };
-
-    } catch {
-
-      walletData = {
-
-        main:
-          [],
-
-        liminal:
-          []
-
-      };
-
-    }
+    return;
 
   }
 
 
-  const walletTransaction = {
+  window.LiminalFinance
+    .upsertTransaction({
 
-    id:
-      createTransactionId(),
+      transactionId:
+        `mall_${order.id}`,
 
-    type:
-      "expense",
+      externalRef:
+        `mall:${order.id}`,
 
-    amount:
-      Number(
-        order.total
-      ),
+      originWorld:
+        "sub",
 
-    title:
-      `Liminal Mall · ${order.product.name}`,
+      type:
+        "expense",
 
-    category:
-      order.product.walletCategory ||
-      "购物",
+      amount:
+        Number(order.total),
 
-    subcategory:
-      order.product.productCategory ||
-      "其他",
+      currency:
+        "CNY",
 
-    note:
-      createWalletNote(
-        order
-      ),
+      title:
+        `Liminal Mall · ${order.product.name}`,
 
-    account:
-      order.paymentAccount,
+      category:
+        order.product.walletCategory ||
+        "购物",
 
-    time:
-      order.createdAt,
+      subcategory:
+        order.product.productCategory ||
+        "其他",
 
+      note:
+        createWalletNote(order),
 
-    /*
-      下面这些字段以后用于
-      Wallet 与 Mall 互相跳转。
-    */
+      fromAccountId:
+        order.paymentAccount ||
+        "cmb_daily",
 
-    source:
-      "mall",
+      toAccountId:
+        "",
 
-    orderId:
-      order.id,
+      ledgerOwner:
+        order.ledgerOwner ||
+        (
+          order.recipient === "Lennon"
+            ? "luzhen"
+            : "keshi"
+        ),
 
-    purchaseMode:
-      order.purchaseMode,
+      source:
+        "mall",
 
-    recipient:
-      order.recipient
+      orderId:
+        order.id,
 
-  };
+      purchaseMode:
+        order.purchaseMode,
 
+      recipient:
+        order.recipient,
 
-  walletData.liminal.unshift(
-    walletTransaction
-  );
+      date:
+        order.createdAt.slice(0, 10),
 
+      timeOfDay:
+        order.createdAt.slice(11, 16),
 
-  localStorage.setItem(
-    WALLET_KEY,
-    JSON.stringify(
-      walletData
-    )
-  );
+      occurredAt:
+        order.createdAt,
+
+      createdAt:
+        order.createdAt
+
+    });
 
 }
 
