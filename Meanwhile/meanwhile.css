@@ -1,0 +1,865 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #f1e4cf;
+  color: #40382f;
+}
+
+button {
+  font: inherit;
+}
+
+
+/* ========================================
+   APP
+======================================== */
+
+.meanwhile-app {
+  width: 100%;
+  min-height: 100%;
+}
+
+
+/* ========================================
+   竖屏入口
+======================================== */
+
+.portrait-gate {
+  display: none;
+
+  min-height: 100vh;
+
+  padding: 32px;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      #efe2cc 0%,
+      #dac3a4 100%
+    );
+}
+
+.gate-content {
+  max-width: 320px;
+}
+
+.gate-day {
+  margin-bottom: 18px;
+
+  font-size: 13px;
+  letter-spacing: 0.18em;
+
+  opacity: 0.65;
+}
+
+.gate-content h1 {
+  margin: 0;
+
+  font-size: 26px;
+  font-weight: 650;
+}
+
+.rotate-icon {
+  margin-top: 36px;
+
+  font-size: 42px;
+
+  animation: rotateHint 2.5s ease-in-out infinite;
+}
+
+.gate-content p {
+  margin-top: 12px;
+
+  font-size: 14px;
+
+  opacity: 0.68;
+}
+
+@keyframes rotateHint {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(35deg);
+  }
+}
+
+
+/* ========================================
+   游戏主体
+======================================== */
+
+.game-screen {
+  min-height: 100vh;
+
+  display: grid;
+
+  grid-template-rows:
+    46px
+    minmax(260px, 1fr)
+    54px;
+
+  background: #dbc4a5;
+}
+
+
+/* ========================================
+   顶栏
+======================================== */
+
+.top-bar {
+  display: grid;
+
+  grid-template-columns:
+    0.7fr
+    1fr
+    1fr
+    0.9fr;
+
+  align-items: center;
+
+  padding: 5px 16px;
+
+  background: #f6eddf;
+
+  border-bottom: 2px solid #a98464;
+}
+
+.top-item {
+  min-width: 0;
+}
+
+.top-item:not(:first-child) {
+  padding-left: 14px;
+
+  border-left: 1px solid #d3bda1;
+}
+
+.top-label {
+  display: block;
+
+  margin-bottom: 1px;
+
+  font-size: 9px;
+  letter-spacing: 0.12em;
+
+  opacity: 0.55;
+}
+
+.top-item strong {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.money {
+  text-align: right;
+}
+
+
+/* ========================================
+   店铺总场景
+======================================== */
+
+.shop {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    14%
+    53%
+    33%;
+
+  min-height: 0;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eadcc4 0%,
+      #e3d0b4 52%,
+      #caa47d 52%,
+      #ba906b 100%
+    );
+}
+
+
+/* ========================================
+   Keshi专属角落
+======================================== */
+
+.keshi-corner {
+  position: relative;
+
+  min-width: 0;
+
+  border-right: 2px solid rgba(92, 67, 47, 0.12);
+}
+
+.window {
+  position: absolute;
+
+  top: 18px;
+  left: 12%;
+
+  width: 70%;
+  height: 34%;
+
+  padding: 5px;
+
+  border: 4px solid #805f49;
+
+  background: #eee4d4;
+}
+
+.window-sky {
+  width: 100%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      180deg,
+      #9db3b7,
+      #d7c7aa
+    );
+}
+
+.study-desk {
+  position: absolute;
+
+  left: 10%;
+  bottom: 22%;
+
+  width: 78%;
+  height: 15%;
+
+  border-radius: 4px;
+
+  background: #8b6547;
+
+  box-shadow:
+    inset 0 -5px rgba(62, 41, 27, 0.12);
+}
+
+.book {
+  position: absolute;
+
+  top: -18px;
+  right: 14%;
+
+  font-size: 19px;
+}
+
+.keshi {
+  left: 28%;
+  bottom: 27%;
+}
+
+#keshiStatus {
+  position: absolute;
+
+  left: 50%;
+  bottom: 7%;
+
+  transform: translateX(-50%);
+
+  width: 95%;
+
+  text-align: center;
+}
+
+
+/* ========================================
+   顾客区
+======================================== */
+
+.customer-area {
+  position: relative;
+
+  min-width: 0;
+}
+
+.table {
+  position: absolute;
+
+  width: 86px;
+  height: 46px;
+
+  border-radius: 50%;
+
+  background: #936948;
+
+  box-shadow:
+    inset 0 -7px rgba(53, 35, 24, 0.12);
+}
+
+.table-one {
+  top: 28%;
+  left: 18%;
+}
+
+.table-two {
+  top: 58%;
+  left: 54%;
+}
+
+.chair {
+  position: absolute;
+
+  width: 22px;
+  height: 26px;
+
+  border-radius: 8px;
+
+  background: #6f5847;
+}
+
+.chair-a {
+  left: 32px;
+  top: -27px;
+}
+
+.chair-b {
+  left: 32px;
+  bottom: -27px;
+}
+
+.customer {
+  left: 8%;
+  bottom: 12%;
+}
+
+.staff {
+  left: 55%;
+  bottom: 12%;
+}
+
+
+/* ========================================
+   服务区
+======================================== */
+
+.service-area {
+  position: relative;
+
+  min-width: 0;
+
+  border-left: 2px solid rgba(92, 67, 47, 0.13);
+}
+
+.counter {
+  position: absolute;
+
+  left: 8%;
+  bottom: 16%;
+
+  width: 84%;
+  height: 20%;
+
+  background: #856047;
+
+  border-radius: 4px;
+}
+
+.counter-top {
+  position: absolute;
+
+  top: -7px;
+  left: -3%;
+
+  width: 106%;
+  height: 9px;
+
+  background: #634938;
+
+  border-radius: 4px;
+}
+
+.kitchen {
+  position: absolute;
+
+  top: 14%;
+  left: 12%;
+
+  width: 76%;
+  height: 30%;
+
+  border-radius: 6px;
+
+  background: rgba(117, 92, 72, 0.15);
+
+  border: 2px solid rgba(91, 68, 52, 0.22);
+}
+
+.stove {
+  position: absolute;
+
+  left: 14%;
+  bottom: 12%;
+
+  font-size: 28px;
+}
+
+.shelf {
+  position: absolute;
+
+  top: 18%;
+  right: 12%;
+
+  width: 45%;
+  height: 5px;
+
+  background: #85634a;
+
+  box-shadow:
+    0 17px #85634a;
+}
+
+.luzhen {
+  right: 21%;
+  bottom: 37%;
+}
+
+
+/* ========================================
+   极简人物
+======================================== */
+
+.character {
+  position: absolute;
+
+  width: 34px;
+  height: 58px;
+
+  transition:
+    left 0.8s ease,
+    right 0.8s ease,
+    bottom 0.8s ease,
+    transform 0.8s ease;
+
+  z-index: 4;
+}
+
+.character .head {
+  position: absolute;
+
+  top: 0;
+  left: 6px;
+
+  width: 23px;
+  height: 23px;
+
+  border-radius: 50%;
+
+  background: #e5c1a5;
+}
+
+.character .body {
+  position: absolute;
+
+  left: 5px;
+  bottom: 0;
+
+  width: 25px;
+  height: 36px;
+
+  border-radius: 10px 10px 5px 5px;
+
+  background: #65584d;
+}
+
+.keshi .body {
+  background: #4c4a48;
+}
+
+.luzhen .body {
+  background: #3d4545;
+}
+
+.customer .body {
+  background: #9b766a;
+}
+
+.staff .body {
+  background: #657266;
+}
+
+
+/* ========================================
+   Keshi眼镜
+======================================== */
+
+.glasses::before,
+.glasses::after {
+  content: "";
+
+  position: absolute;
+
+  top: 8px;
+
+  width: 7px;
+  height: 5px;
+
+  border: 2px solid #2d2927;
+
+  border-radius: 2px;
+}
+
+.glasses::before {
+  left: 2px;
+}
+
+.glasses::after {
+  right: 2px;
+}
+
+.glasses {
+  position: absolute;
+
+  inset: 0;
+}
+
+.glasses {
+  background:
+    linear-gradient(
+      #2d2927,
+      #2d2927
+    )
+    center 10px / 4px 2px
+    no-repeat;
+}
+
+
+/* ========================================
+   标签
+======================================== */
+
+.character-label {
+  position: absolute;
+
+  top: 62px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: max-content;
+  max-width: 120px;
+
+  padding: 3px 6px;
+
+  border-radius: 6px;
+
+  background: rgba(249, 240, 226, 0.88);
+
+  font-size: 9px;
+
+  white-space: nowrap;
+
+  color: #4f443a;
+}
+
+
+/* ========================================
+   动起来
+======================================== */
+
+.world-running .customer {
+  animation: customerIdle 2.4s ease-in-out infinite;
+}
+
+.world-running .staff {
+  animation: staffIdle 2.8s ease-in-out infinite;
+}
+
+.world-running .luzhen {
+  animation: luzhenIdle 3s ease-in-out infinite;
+}
+
+.world-running .keshi {
+  animation: keshiStudy 2.6s ease-in-out infinite;
+}
+
+@keyframes customerIdle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes staffIdle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes luzhenIdle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes keshiStudy {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+
+/* ========================================
+   暂停
+======================================== */
+
+.world-paused *,
+.world-paused *::before,
+.world-paused *::after {
+  animation-play-state: paused !important;
+
+  transition-duration: 0s !important;
+}
+
+
+/* ========================================
+   底栏
+======================================== */
+
+.bottom-bar {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 7px 14px;
+
+  background: #f6eddf;
+
+  border-top: 2px solid #a98464;
+}
+
+.session-info {
+  min-width: 0;
+
+  font-size: 11px;
+
+  opacity: 0.72;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.controls {
+  display: flex;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.controls button,
+.result-card button {
+  min-height: 36px;
+
+  padding: 6px 14px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: #5f5145;
+
+  color: #fffaf1;
+
+  cursor: pointer;
+}
+
+.controls button:disabled {
+  opacity: 0.35;
+
+  cursor: default;
+}
+
+
+/* ========================================
+   结算
+======================================== */
+
+.result-panel {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: rgba(57, 45, 36, 0.58);
+
+  z-index: 100;
+}
+
+.result-card {
+  width: min(360px, 90%);
+
+  padding: 22px;
+
+  border-radius: 14px;
+
+  background: #f7eee0;
+
+  box-shadow:
+    0 12px 30px rgba(48, 36, 27, 0.2);
+}
+
+.result-small {
+  font-size: 11px;
+
+  opacity: 0.55;
+}
+
+.result-card h2 {
+  margin: 7px 0 18px;
+
+  font-size: 20px;
+}
+
+.result-list {
+  margin-bottom: 18px;
+}
+
+.result-list div {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid #dfcdb6;
+
+  font-size: 13px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/* ========================================
+   横竖屏切换
+======================================== */
+
+@media (orientation: portrait) {
+  .portrait-gate {
+    display: flex;
+  }
+
+  .game-screen {
+    display: none;
+  }
+}
+
+@media (orientation: landscape) {
+  .portrait-gate {
+    display: none;
+  }
+
+  .game-screen {
+    display: grid;
+  }
+}
+
+
+/* ========================================
+   小尺寸横屏
+======================================== */
+
+@media (orientation: landscape) and (max-height: 430px) {
+  .game-screen {
+    grid-template-rows:
+      40px
+      minmax(220px, 1fr)
+      48px;
+  }
+
+  .top-bar {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+  .table {
+    transform: scale(0.86);
+  }
+
+  .character {
+    transform-origin: bottom center;
+  }
+
+  .bottom-bar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+
+/* ========================================
+   减少动态
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .rotate-icon {
+    animation: none;
+  }
+}

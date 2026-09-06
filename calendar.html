@@ -730,7 +730,18 @@
 
 
 
-                    <article class="record-card">
+                    <article
+                        class="record-card record-card-manageable"
+                        id="recordCycleCard"
+                    >
+
+                        <button
+                            class="record-card-action"
+                            id="manageCycleButton"
+                            type="button"
+                        >
+                            管理
+                        </button>
 
                         <div class="record-symbol">
                             ○
@@ -752,18 +763,29 @@
 
 
 
-                    <article class="record-card">
+                    <article
+                        class="record-card record-card-manageable"
+                        id="recordSexCard"
+                    >
+
+                        <button
+                            class="record-card-action"
+                            id="manageSexButton"
+                            type="button"
+                        >
+                            添加
+                        </button>
 
                         <div class="record-symbol">
                             ♡
                         </div>
 
                         <span>
-                            INTIMACY
+                            SEX
                         </span>
 
                         <strong>
-                            Sex 记录
+                            亲密记录
                         </strong>
 
                         <p id="recordSex">
@@ -782,12 +804,12 @@
                     </span>
 
                     <strong>
-                        先从 Body 开始做完整记录
+                        日常状态与周期记录
                     </strong>
 
                     <p>
-                        身体状态现在可以按日期、按人物新增、编辑和删除。
-                        Sleep、Cycle 与 Sex 后面继续沿用同一套交互。
+                        Body、Sleep、Cycle 与亲密记录都可以按日期查看和管理；
+                        周期和亲密记录会同步更新当天总览与月历标记。
                     </p>
 
                 </section>
@@ -918,19 +940,43 @@
             </label>
 
 
-            <label class="body-field">
+            <div class="body-field body-discomforts-field">
 
-                <span>
-                    疼痛 / 不适
-                </span>
+                <div class="body-discomforts-heading">
+
+                    <span>
+                        身体不适
+                    </span>
+
+                    <button
+                        id="addBodyDiscomfortButton"
+                        type="button"
+                    >
+                        ＋ 添加不适
+                    </button>
+
+                </div>
+
 
                 <input
                     id="bodyPainInput"
-                    type="text"
-                    placeholder="例如：无 / 腰痛 / 头痛"
+                    type="hidden"
                 >
 
-            </label>
+
+                <p
+                    class="body-legacy-pain"
+                    id="bodyLegacyPainNotice"
+                    hidden
+                ></p>
+
+
+                <div
+                    class="body-discomfort-list"
+                    id="bodyDiscomfortList"
+                ></div>
+
+            </div>
 
 
             <label class="body-field">
@@ -975,6 +1021,340 @@
                 </button>
 
             </footer>
+
+        </section>
+
+    </div>
+
+
+    <!-- =========================
+     Sex 管理 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="body-editor-backdrop"
+        id="sexManagerBackdrop"
+        hidden
+    >
+
+        <section class="body-editor-sheet sex-manager-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="body-editor-header">
+
+                <div>
+                    <span>SEX</span>
+                    <strong id="sexManagerTitle">亲密记录</strong>
+                </div>
+
+
+                <button
+                    id="sexManagerClose"
+                    type="button"
+                    aria-label="关闭亲密记录"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div id="sexManagerListView">
+
+                <section class="sex-day-summary">
+                    <span id="sexManagerDate">—</span>
+                    <strong id="sexManagerTotal">当天共 0 次</strong>
+                </section>
+
+
+                <div class="cycle-section-heading">
+                    <span>记录</span>
+                </div>
+
+
+                <div class="sex-record-list" id="sexRecordList"></div>
+
+
+                <button
+                    class="cycle-add-period"
+                    id="sexAddRecordButton"
+                    type="button"
+                >
+                    ＋ 添加记录
+                </button>
+
+            </div>
+
+
+            <div id="sexRecordEditorView" hidden>
+
+                <button
+                    class="cycle-editor-back"
+                    id="sexRecordBackButton"
+                    type="button"
+                >
+                    ‹ 返回当天记录
+                </button>
+
+
+                <div class="sex-date-time-grid">
+
+                    <label class="body-field">
+                        <span>日期</span>
+                        <input id="sexDateInput" type="date">
+                    </label>
+
+
+                    <label class="body-field">
+                        <span>时间</span>
+                        <input id="sexTimeInput" type="time">
+                    </label>
+
+                </div>
+
+
+                <div class="body-field">
+                    <span>形式</span>
+                    <div class="sex-option-grid" id="sexFormOptions"></div>
+                </div>
+
+
+                <label class="body-field">
+                    <span>次数</span>
+                    <input
+                        id="sexCountInput"
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputmode="numeric"
+                        value="1"
+                    >
+                </label>
+
+
+                <div class="body-field">
+                    <span>保护</span>
+                    <div class="sex-option-grid" id="sexProtectionOptions"></div>
+                </div>
+
+
+                <div class="body-field" id="sexProtectionMethodField">
+                    <span>保护方式</span>
+                    <div class="sex-option-grid" id="sexProtectionMethodOptions"></div>
+                </div>
+
+
+                <div class="body-field">
+                    <span>体位</span>
+                    <div class="cycle-pill-grid" id="sexPositionOptions"></div>
+
+
+                    <div class="sex-custom-box">
+                        <input
+                            id="sexCustomPositionInput"
+                            type="text"
+                            placeholder="自定义体位"
+                            aria-label="自定义体位"
+                        >
+
+                        <label class="cycle-save-preset">
+                            <input id="sexSavePositionPreset" type="checkbox">
+                            保存到我的预设
+                        </label>
+
+                        <button
+                            class="cycle-add-custom"
+                            id="sexAddCustomPositionButton"
+                            type="button"
+                        >
+                            ＋ 自定义体位
+                        </button>
+                    </div>
+
+                </div>
+
+
+                <label class="body-field">
+                    <span>备注</span>
+                    <textarea
+                        id="sexNoteInput"
+                        rows="4"
+                        placeholder="记录这一次的其他内容……"
+                    ></textarea>
+                </label>
+
+
+                <footer
+                    class="body-editor-actions"
+                    id="sexEditorActions"
+                >
+
+                    <button
+                        class="danger"
+                        id="sexDeleteRecordButton"
+                        type="button"
+                        hidden
+                    >
+                        删除
+                    </button>
+
+                    <button
+                        id="sexCancelEditButton"
+                        type="button"
+                    >
+                        取消
+                    </button>
+
+                    <button
+                        class="primary"
+                        id="sexSaveRecordButton"
+                        type="button"
+                    >
+                        保存
+                    </button>
+
+                </footer>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =========================
+     Cycle 管理 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="body-editor-backdrop"
+        id="cycleManagerBackdrop"
+        hidden
+    >
+
+        <section class="body-editor-sheet cycle-manager-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="body-editor-header">
+
+                <div>
+                    <span>CYCLE</span>
+                    <strong id="cycleManagerTitle">周期记录</strong>
+                </div>
+
+
+                <button
+                    id="cycleManagerClose"
+                    type="button"
+                    aria-label="关闭周期记录"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <div id="cycleManagerListView">
+
+                <section class="cycle-latest-card" id="cycleLatestSummary"></section>
+
+
+                <div class="cycle-section-heading">
+                    <span>历史记录</span>
+                </div>
+
+
+                <div class="cycle-period-list" id="cyclePeriodList"></div>
+
+
+                <button
+                    class="cycle-add-period"
+                    id="cycleAddPeriodButton"
+                    type="button"
+                >
+                    ＋ 添加经期
+                </button>
+
+
+                <p class="cycle-prediction-note">
+                    周期预测仅根据历史记录估算。
+                </p>
+
+            </div>
+
+
+            <div id="cyclePeriodEditorView" hidden>
+
+                <button
+                    class="cycle-editor-back"
+                    id="cyclePeriodBackButton"
+                    type="button"
+                >
+                    ‹ 返回历史记录
+                </button>
+
+
+                <div class="cycle-date-grid">
+
+                    <label class="body-field">
+                        <span>开始日期</span>
+                        <input id="cycleStartInput" type="date">
+                    </label>
+
+
+                    <label class="body-field">
+                        <span>结束日期</span>
+                        <input id="cycleEndInput" type="date">
+                    </label>
+
+                </div>
+
+
+                <div class="cycle-section-heading cycle-days-heading">
+                    <span>每日记录</span>
+                    <small>经量、症状与备注均可单独留空</small>
+                </div>
+
+
+                <div class="cycle-day-editor" id="cycleDayEditor"></div>
+
+
+                <footer
+                    class="body-editor-actions"
+                    id="cycleEditorActions"
+                >
+
+                    <button
+                        class="danger"
+                        id="cycleDeletePeriodButton"
+                        type="button"
+                        hidden
+                    >
+                        删除经期
+                    </button>
+
+                    <button
+                        id="cycleCancelEditButton"
+                        type="button"
+                    >
+                        取消
+                    </button>
+
+                    <button
+                        class="primary"
+                        id="cycleSavePeriodButton"
+                        type="button"
+                    >
+                        保存
+                    </button>
+
+                </footer>
+
+            </div>
 
         </section>
 
@@ -1400,6 +1780,7 @@
                         class="milestone-owner active"
                         type="button"
                         data-owner="keshi"
+                        aria-pressed="true"
                     >
                         Keshi
                     </button>
@@ -1408,6 +1789,7 @@
                         class="milestone-owner"
                         type="button"
                         data-owner="luzhen"
+                        aria-pressed="false"
                     >
                         榛榛
                     </button>
@@ -1617,6 +1999,10 @@
 
 
     <script src="luzhen-simulation-data.js"></script>
+
+    <script src="cycle-data.js"></script>
+
+    <script src="sex-data.js"></script>
 
 <script src="luzhen-simulation.js"></script>
 

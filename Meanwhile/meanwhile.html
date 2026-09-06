@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meanwhile</title>
+
+  <link rel="stylesheet" href="./meanwhile.css" />
+</head>
+
+<body>
+  <main class="meanwhile-app">
+
+    <!-- =========================
+         竖屏入口
+    ========================== -->
+    <section class="portrait-gate">
+      <div class="gate-content">
+        <div class="gate-day">Day 1</div>
+
+        <h1>今天也要开店吗？</h1>
+
+        <div class="rotate-icon">↻</div>
+
+        <p>请将手机横过来</p>
+      </div>
+    </section>
+
+
+    <!-- =========================
+         横屏游戏主体
+    ========================== -->
+    <section class="game-screen">
+
+      <!-- 顶部状态栏 -->
+      <header class="top-bar">
+        <div class="top-item">
+          <span class="top-label">DAY</span>
+          <strong>1</strong>
+        </div>
+
+        <div class="top-item">
+          <span class="top-label">FOCUS</span>
+          <strong id="focusTime">00:00:00</strong>
+        </div>
+
+        <div class="top-item">
+          <span class="top-label">TOTAL</span>
+          <strong id="totalTime">00:00:00</strong>
+        </div>
+
+        <div class="top-item money">
+          <span class="top-label">CASH</span>
+          <strong id="cashValue">₤ 100</strong>
+        </div>
+      </header>
+
+
+      <!-- 店铺 -->
+      <section class="shop">
+
+        <!-- Keshi固定桌 -->
+        <div class="keshi-corner">
+
+          <div class="window">
+            <div class="window-sky"></div>
+          </div>
+
+          <div
+            id="keshiCharacter"
+            class="character keshi"
+            aria-label="Keshi"
+          >
+            <div class="head">
+              <div class="glasses"></div>
+            </div>
+
+            <div class="body"></div>
+          </div>
+
+          <div class="study-desk">
+            <div class="book">📖</div>
+          </div>
+
+          <div id="keshiStatus" class="character-label">
+            Keshi · 等你开始
+          </div>
+
+        </div>
+
+
+        <!-- 顾客区 -->
+        <div class="customer-area">
+
+          <div class="table table-one">
+            <div class="chair chair-a"></div>
+            <div class="chair chair-b"></div>
+          </div>
+
+          <div class="table table-two">
+            <div class="chair chair-a"></div>
+            <div class="chair chair-b"></div>
+          </div>
+
+
+          <div
+            id="customer"
+            class="character customer"
+          >
+            <div class="head"></div>
+            <div class="body"></div>
+
+            <div id="customerStatus" class="character-label">
+              等待营业
+            </div>
+          </div>
+
+
+          <div
+            id="staffCharacter"
+            class="character staff"
+          >
+            <div class="head"></div>
+            <div class="body"></div>
+
+            <div class="character-label">
+              店员
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- 厨房 / 柜台 -->
+        <div class="service-area">
+
+          <div class="counter">
+            <div class="counter-top"></div>
+          </div>
+
+          <div class="kitchen">
+            <div class="stove">♨</div>
+            <div class="shelf"></div>
+          </div>
+
+
+          <div
+            id="luzhenCharacter"
+            class="character luzhen"
+          >
+            <div class="head"></div>
+            <div class="body"></div>
+
+            <div id="luzhenStatus" class="character-label">
+              陆榛 · 等待营业
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- 底部状态 -->
+      <footer class="bottom-bar">
+
+        <div class="session-info">
+          <span id="worldStatus">店铺还没有开始营业。</span>
+        </div>
+
+        <div class="controls">
+
+          <button id="startButton" type="button">
+            开始专注
+          </button>
+
+          <button
+            id="pauseButton"
+            type="button"
+            disabled
+          >
+            暂停
+          </button>
+
+          <button
+            id="finishButton"
+            type="button"
+            disabled
+          >
+            结束专注
+          </button>
+
+        </div>
+
+      </footer>
+
+    </section>
+
+
+    <!-- =========================
+         本轮结算
+    ========================== -->
+    <section
+      id="resultPanel"
+      class="result-panel hidden"
+    >
+      <div class="result-card">
+
+        <div class="result-small">
+          Day 1
+        </div>
+
+        <h2>今天先到这里。</h2>
+
+        <div class="result-list">
+
+          <div>
+            <span>本轮专注</span>
+            <strong id="resultFocus">00:00:00</strong>
+          </div>
+
+          <div>
+            <span>接待顾客</span>
+            <strong id="resultCustomers">0</strong>
+          </div>
+
+          <div>
+            <span>营业额</span>
+            <strong id="resultRevenue">₤ 0</strong>
+          </div>
+
+        </div>
+
+        <button id="closeResultButton" type="button">
+          回到店里
+        </button>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./meanwhile.js"></script>
+</body>
+</html>

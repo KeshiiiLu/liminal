@@ -115,6 +115,49 @@ let bodyEditorOwner =
 let bodyEditorEnergy =
   "";
 
+let bodyEditorDiscomforts =
+  [];
+
+
+let editingCyclePeriod =
+  null;
+
+
+let cycleEditorPresets =
+  [];
+
+
+let activeCycleDayKey =
+  "";
+
+
+let editingSexRecord =
+  null;
+
+
+let sexEditorForm =
+  "partner";
+
+
+let sexEditorProtection =
+  "yes";
+
+
+let sexEditorProtectionMethod =
+  "condom";
+
+
+let sexEditorPositions =
+  [];
+
+
+let sexEditorCustomPositions =
+  [];
+
+
+let sexEditorCustomPresets =
+  [];
+
   let sleepEditorOwner =
   "keshi";
 
@@ -160,6 +203,10 @@ const weekNames = [
   "周五",
   "周六"
 ];
+
+
+const DAY_MS =
+  24 * 60 * 60 * 1000;
 
 
 
@@ -403,6 +450,11 @@ function createPreviewData() {
 
     cycle: {
 
+      periods: [],
+
+
+      customSymptomPresets: [],
+
       actualPeriod: [
         "2026-08-14",
         "2026-08-15",
@@ -436,6 +488,9 @@ function createPreviewData() {
       ]
 
     },
+
+
+    sexCustomPositionPresets: [],
 
 
     sex: {
@@ -836,6 +891,12 @@ if (
 }
 
 
+initializeCycleData();
+
+
+initializeSexData();
+
+
 saveCalendarData();
 
 
@@ -996,8 +1057,130 @@ const recordCycle =
   $("recordCycle");
 
 
+const recordCycleCard =
+  $("recordCycleCard");
+
+
+const manageCycleButton =
+  $("manageCycleButton");
+
+
 const recordSex =
   $("recordSex");
+
+
+const recordSexCard =
+  $("recordSexCard");
+
+
+const manageSexButton =
+  $("manageSexButton");
+
+
+/* Sex 管理器 */
+
+const sexManagerBackdrop =
+  $("sexManagerBackdrop");
+
+
+const sexManagerTitle =
+  $("sexManagerTitle");
+
+
+const sexManagerClose =
+  $("sexManagerClose");
+
+
+const sexManagerListView =
+  $("sexManagerListView");
+
+
+const sexManagerDate =
+  $("sexManagerDate");
+
+
+const sexManagerTotal =
+  $("sexManagerTotal");
+
+
+const sexRecordList =
+  $("sexRecordList");
+
+
+const sexAddRecordButton =
+  $("sexAddRecordButton");
+
+
+const sexRecordEditorView =
+  $("sexRecordEditorView");
+
+
+const sexRecordBackButton =
+  $("sexRecordBackButton");
+
+
+const sexDateInput =
+  $("sexDateInput");
+
+
+const sexTimeInput =
+  $("sexTimeInput");
+
+
+const sexFormOptions =
+  $("sexFormOptions");
+
+
+const sexCountInput =
+  $("sexCountInput");
+
+
+const sexProtectionOptions =
+  $("sexProtectionOptions");
+
+
+const sexProtectionMethodField =
+  $("sexProtectionMethodField");
+
+
+const sexProtectionMethodOptions =
+  $("sexProtectionMethodOptions");
+
+
+const sexPositionOptions =
+  $("sexPositionOptions");
+
+
+const sexCustomPositionInput =
+  $("sexCustomPositionInput");
+
+
+const sexSavePositionPreset =
+  $("sexSavePositionPreset");
+
+
+const sexAddCustomPositionButton =
+  $("sexAddCustomPositionButton");
+
+
+const sexNoteInput =
+  $("sexNoteInput");
+
+
+const sexEditorActions =
+  $("sexEditorActions");
+
+
+const sexDeleteRecordButton =
+  $("sexDeleteRecordButton");
+
+
+const sexCancelEditButton =
+  $("sexCancelEditButton");
+
+
+const sexSaveRecordButton =
+  $("sexSaveRecordButton");
 
 
 const recordViewButtons =
@@ -1017,6 +1200,72 @@ const recordSleepCard =
 
 const editSleepButton =
   $("editSleepButton");
+
+
+/* Cycle 管理器 */
+
+const cycleManagerBackdrop =
+  $("cycleManagerBackdrop");
+
+
+const cycleManagerTitle =
+  $("cycleManagerTitle");
+
+
+const cycleManagerClose =
+  $("cycleManagerClose");
+
+
+const cycleManagerListView =
+  $("cycleManagerListView");
+
+
+const cycleLatestSummary =
+  $("cycleLatestSummary");
+
+
+const cyclePeriodList =
+  $("cyclePeriodList");
+
+
+const cycleAddPeriodButton =
+  $("cycleAddPeriodButton");
+
+
+const cyclePeriodEditorView =
+  $("cyclePeriodEditorView");
+
+
+const cyclePeriodBackButton =
+  $("cyclePeriodBackButton");
+
+
+const cycleStartInput =
+  $("cycleStartInput");
+
+
+const cycleEndInput =
+  $("cycleEndInput");
+
+
+const cycleDayEditor =
+  $("cycleDayEditor");
+
+
+const cycleEditorActions =
+  $("cycleEditorActions");
+
+
+const cycleDeletePeriodButton =
+  $("cycleDeletePeriodButton");
+
+
+const cycleCancelEditButton =
+  $("cycleCancelEditButton");
+
+
+const cycleSavePeriodButton =
+  $("cycleSavePeriodButton");
 
 /* Body 编辑器 */
 
@@ -1046,6 +1295,18 @@ const bodyAppetiteInput =
 
 const bodyPainInput =
   $("bodyPainInput");
+
+
+const addBodyDiscomfortButton =
+  $("addBodyDiscomfortButton");
+
+
+const bodyDiscomfortList =
+  $("bodyDiscomfortList");
+
+
+const bodyLegacyPainNotice =
+  $("bodyLegacyPainNotice");
 
 
 const bodyNoteInput =
@@ -1333,6 +1594,541 @@ calendarPages.addEventListener(
    Cycle
    ========================= */
 
+function isValidDateKey(
+  value
+) {
+
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(value)
+  ) {
+    return false;
+  }
+
+
+  const date =
+    dateFromKey(value);
+
+
+  return (
+    !Number.isNaN(date.getTime()) &&
+    toDateKey(date) === value
+  );
+
+}
+
+
+function addDaysToKey(
+  dateKey,
+  offset
+) {
+
+  const date =
+    dateFromKey(dateKey);
+
+
+  date.setDate(
+    date.getDate() + offset
+  );
+
+
+  return toDateKey(date);
+
+}
+
+
+function differenceInDays(
+  fromKey,
+  toKey
+) {
+
+  const from =
+    dateFromKey(fromKey);
+
+  const to =
+    dateFromKey(toKey);
+
+
+  return Math.round(
+    (
+      Date.UTC(
+        to.getFullYear(),
+        to.getMonth(),
+        to.getDate()
+      ) -
+      Date.UTC(
+        from.getFullYear(),
+        from.getMonth(),
+        from.getDate()
+      )
+    ) / DAY_MS
+  );
+
+}
+
+
+function enumerateDateKeys(
+  start,
+  end
+) {
+
+  if (
+    !isValidDateKey(start) ||
+    !isValidDateKey(end) ||
+    start > end
+  ) {
+    return [];
+  }
+
+
+  const result = [];
+  let cursor = start;
+
+
+  while (
+    cursor <= end &&
+    result.length < 400
+  ) {
+    result.push(cursor);
+    cursor = addDaysToKey(
+      cursor,
+      1
+    );
+  }
+
+
+  return result;
+
+}
+
+
+function createCyclePeriodId() {
+
+  if (
+    window.crypto &&
+    typeof window.crypto.randomUUID ===
+      "function"
+  ) {
+    return (
+      "period_" +
+      window.crypto.randomUUID()
+    );
+  }
+
+
+  return (
+    "period_" +
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2, 9)
+  );
+
+}
+
+
+function normalizeCycleDay(
+  value
+) {
+
+  const source =
+    value &&
+    typeof value === "object"
+      ? value
+      : {};
+
+
+  const flowIds = new Set(
+    (
+      window.LiminalCycleData
+        ?.flowOptions || []
+    ).map(
+      (option) => option.id
+    )
+  );
+
+
+  return {
+    ...source,
+    flow:
+      typeof source.flow === "string" &&
+      flowIds.has(source.flow)
+        ? source.flow
+        : "",
+    symptoms: Array.isArray(
+      source.symptoms
+    )
+      ? [
+          ...new Set(
+            source.symptoms.filter(
+              (item) =>
+                typeof item === "string" &&
+                item.trim()
+            )
+          )
+        ]
+      : [],
+    customSymptoms: Array.isArray(
+      source.customSymptoms
+    )
+      ? [
+          ...new Set(
+            source.customSymptoms
+              .filter(
+                (item) =>
+                  typeof item === "string" &&
+                  item.trim()
+              )
+              .map(
+                (item) => item.trim()
+              )
+          )
+        ]
+      : [],
+    note:
+      typeof source.note === "string"
+        ? source.note
+        : ""
+  };
+
+}
+
+
+function normalizeCyclePeriod(
+  value
+) {
+
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !isValidDateKey(value.start) ||
+    !isValidDateKey(value.end) ||
+    value.start > value.end
+  ) {
+    return null;
+  }
+
+
+  const sourceDays =
+    value.days &&
+    typeof value.days === "object"
+      ? value.days
+      : {};
+
+
+  const days = {};
+
+
+  Object.keys(sourceDays)
+    .filter(isValidDateKey)
+    .forEach(
+      function (dateKey) {
+        days[dateKey] =
+          normalizeCycleDay(
+            sourceDays[dateKey]
+          );
+      }
+    );
+
+
+  return {
+    ...value,
+    id:
+      typeof value.id === "string" &&
+      value.id
+        ? value.id
+        : createCyclePeriodId(),
+    start: value.start,
+    end: value.end,
+    days: days
+  };
+
+}
+
+
+function legacyDatesToPeriods(
+  actualPeriod
+) {
+
+  const dates = [
+    ...new Set(
+      (
+        Array.isArray(actualPeriod)
+          ? actualPeriod
+          : []
+      ).filter(isValidDateKey)
+    )
+  ].sort();
+
+
+  const groups = [];
+
+
+  dates.forEach(
+    function (dateKey) {
+
+      const current =
+        groups[groups.length - 1];
+
+
+      if (
+        !current ||
+        addDaysToKey(
+          current.end,
+          1
+        ) !== dateKey
+      ) {
+        groups.push({
+          id: createCyclePeriodId(),
+          start: dateKey,
+          end: dateKey,
+          days: {}
+        });
+        return;
+      }
+
+
+      current.end = dateKey;
+
+    }
+  );
+
+
+  return groups;
+
+}
+
+
+function averageRounded(
+  values,
+  fallback
+) {
+
+  const valid =
+    values.filter(
+      (value) =>
+        Number.isFinite(value) &&
+        value > 0
+    );
+
+
+  return valid.length
+    ? Math.round(
+        valid.reduce(
+          (sum, value) =>
+            sum + value,
+          0
+        ) / valid.length
+      )
+    : fallback;
+
+}
+
+
+function getCyclePrediction() {
+
+  const periods =
+    (
+      calendarData.cycle
+        ?.periods || []
+    )
+      .map(normalizeCyclePeriod)
+      .filter(Boolean)
+      .sort(
+        (a, b) =>
+          a.start.localeCompare(b.start)
+      );
+
+
+  if (!periods.length) {
+    return null;
+  }
+
+
+  let cycleLength = 28;
+  let periodLength = 5;
+
+
+  if (periods.length >= 2) {
+
+    const intervals = [];
+
+
+    for (
+      let index = 1;
+      index < periods.length;
+      index += 1
+    ) {
+      intervals.push(
+        differenceInDays(
+          periods[index - 1].start,
+          periods[index].start
+        )
+      );
+    }
+
+
+    cycleLength = averageRounded(
+      intervals.slice(-6),
+      28
+    );
+
+
+    periodLength = averageRounded(
+      periods
+        .slice(-6)
+        .map(
+          (period) =>
+            differenceInDays(
+              period.start,
+              period.end
+            ) + 1
+        ),
+      5
+    );
+
+  }
+
+
+  const latest =
+    periods[periods.length - 1];
+
+
+  const nextStart = addDaysToKey(
+    latest.start,
+    cycleLength
+  );
+
+
+  const nextEnd = addDaysToKey(
+    nextStart,
+    Math.max(1, periodLength) - 1
+  );
+
+
+  const ovulationDate = addDaysToKey(
+    nextStart,
+    -14
+  );
+
+
+  return {
+    cycleLength: cycleLength,
+    periodLength: periodLength,
+    nextStart: nextStart,
+    nextEnd: nextEnd,
+    ovulationDate: ovulationDate,
+    fertileStart: addDaysToKey(
+      ovulationDate,
+      -5
+    ),
+    fertileEnd: addDaysToKey(
+      ovulationDate,
+      1
+    )
+  };
+
+}
+
+
+function rebuildCycleDerivedFields() {
+
+  const cycle = calendarData.cycle;
+
+
+  cycle.actualPeriod = [
+    ...new Set(
+      cycle.periods.flatMap(
+        (period) =>
+          enumerateDateKeys(
+            period.start,
+            period.end
+          )
+      )
+    )
+  ].sort();
+
+
+  const prediction =
+    getCyclePrediction();
+
+
+  cycle.predictedPeriod = prediction
+    ? enumerateDateKeys(
+        prediction.nextStart,
+        prediction.nextEnd
+      )
+    : [];
+
+
+  cycle.ovulation = prediction
+    ? [prediction.ovulationDate]
+    : [];
+
+
+  cycle.fertile = prediction
+    ? enumerateDateKeys(
+        prediction.fertileStart,
+        prediction.fertileEnd
+      )
+    : [];
+
+}
+
+
+function initializeCycleData() {
+
+  if (
+    !calendarData.cycle ||
+    typeof calendarData.cycle !== "object"
+  ) {
+    calendarData.cycle = {};
+  }
+
+
+  const cycle = calendarData.cycle;
+
+
+  const existingPeriods =
+    Array.isArray(cycle.periods)
+      ? cycle.periods
+          .map(normalizeCyclePeriod)
+          .filter(Boolean)
+      : [];
+
+
+  cycle.periods = existingPeriods.length
+    ? existingPeriods
+    : legacyDatesToPeriods(
+        cycle.actualPeriod
+      );
+
+
+  cycle.customSymptomPresets =
+    Array.isArray(
+      cycle.customSymptomPresets
+    )
+      ? [
+          ...new Set(
+            cycle.customSymptomPresets
+              .filter(
+                (item) =>
+                  typeof item === "string" &&
+                  item.trim()
+              )
+              .map(
+                (item) => item.trim()
+              )
+          )
+        ]
+      : [];
+
+
+  rebuildCycleDerivedFields();
+
+}
+
 function dateHasFlag(
   list,
   dateKey
@@ -1351,66 +2147,630 @@ function dateHasFlag(
 
 
 
+function getCyclePeriodForDate(
+  dateKey
+) {
+
+  return (
+    calendarData.cycle
+      ?.periods || []
+  ).find(
+    (period) =>
+      period.start <= dateKey &&
+      period.end >= dateKey
+  ) || null;
+
+}
+
+
+function getCycleDayRecord(
+  dateKey
+) {
+
+  const period =
+    getCyclePeriodForDate(dateKey);
+
+
+  return period
+    ? normalizeCycleDay(
+        period.days?.[dateKey]
+      )
+    : null;
+
+}
+
+
+function getCycleFlowLabel(
+  flowId
+) {
+
+  return (
+    window.LiminalCycleData
+      ?.flowOptions || []
+  ).find(
+    (option) =>
+      option.id === flowId
+  )?.label || "";
+
+}
+
+
+function getCycleSymptomLabel(
+  symptomId
+) {
+
+  return (
+    window.LiminalCycleData
+      ?.symptomPresets || []
+  ).find(
+    (option) =>
+      option.id === symptomId
+  )?.label || symptomId;
+
+}
+
+
+function formatCycleShortDate(
+  dateKey,
+  includeYear = false
+) {
+
+  const date = dateFromKey(dateKey);
+
+
+  return (
+    (includeYear
+      ? `${date.getFullYear()}年`
+      : "") +
+    `${date.getMonth() + 1}月` +
+    `${date.getDate()}日`
+  );
+
+}
+
+
+function formatCycleDotDate(
+  dateKey,
+  includeYear = true
+) {
+
+  const parts = dateKey.split("-");
+
+
+  return includeYear
+    ? parts.join(".")
+    : `${parts[1]}.${parts[2]}`;
+
+}
+
+
+function getCycleDayLines(
+  dateKey,
+  label = "经期"
+) {
+
+  const period =
+    getCyclePeriodForDate(dateKey);
+
+
+  if (!period) {
+    return [];
+  }
+
+
+  const day = normalizeCycleDay(
+    period.days?.[dateKey]
+  );
+
+
+  const dayNumber =
+    differenceInDays(
+      period.start,
+      dateKey
+    ) + 1;
+
+
+  const lines = [
+    `${label} · 第${dayNumber}天`
+  ];
+
+
+  const flowLabel =
+    getCycleFlowLabel(day.flow);
+
+
+  if (flowLabel) {
+    lines.push(`经量 · ${flowLabel}`);
+  }
+
+
+  const symptoms = [
+    ...day.symptoms.map(
+      getCycleSymptomLabel
+    ),
+    ...day.customSymptoms
+  ];
+
+
+  if (symptoms.length) {
+    lines.push(symptoms.join(" / "));
+  }
+
+
+  return lines;
+
+}
+
+
 function getCycleText(
   dateKey
 ) {
 
-  if (
-    dateHasFlag(
-      calendarData.cycle
-        ?.actualPeriod,
-      dateKey
-    )
-  ) {
-
-    return "实际经期";
-
-  }
+  const period =
+    getCyclePeriodForDate(dateKey);
 
 
-  if (
-    dateHasFlag(
-      calendarData.cycle
-        ?.predictedPeriod,
-      dateKey
-    )
-  ) {
+  if (period) {
 
-    return "预计经期";
-
-  }
+    const lines = getCycleDayLines(
+      dateKey,
+      "实际经期"
+    );
 
 
-  if (
-    dateHasFlag(
-      calendarData.cycle
-        ?.ovulation,
-      dateKey
-    )
-  ) {
+    lines.splice(
+      1,
+      0,
+      `${formatCycleShortDate(period.start)} – ` +
+      `${formatCycleShortDate(period.end)}`
+    );
 
-    return "预计排卵日";
+
+    const note =
+      getCycleDayRecord(dateKey)
+        ?.note.trim();
+
+
+    if (note) {
+      lines.push("", "备注", note);
+    }
+
+
+    return lines.join("\n");
 
   }
 
 
-  if (
-    dateHasFlag(
-      calendarData.cycle
-        ?.fertile,
-      dateKey
-    )
-  ) {
+  const prediction =
+    getCyclePrediction();
 
-    return "预计易孕期";
 
+  if (!prediction) {
+    return (
+      "暂无经期记录\n" +
+      "添加历史记录后可生成预测"
+    );
   }
 
 
-  return "无特别周期标记";
+  const daysUntil = differenceInDays(
+    dateKey,
+    prediction.nextStart
+  );
+
+
+  return [
+    daysUntil >= 0
+      ? `距预计下次经期 ${daysUntil} 天`
+      : "当前预测日期已过，请补充最近经期",
+    "",
+    "预计经期",
+    `${formatCycleShortDate(prediction.nextStart)} – ` +
+      `${formatCycleShortDate(prediction.nextEnd)}`,
+    "",
+    "预计排卵",
+    formatCycleShortDate(
+      prediction.ovulationDate
+    )
+  ].join("\n");
 
 }
 
+
+
+/* =========================
+   Sex data helpers
+   ========================= */
+
+function initializeSexData() {
+
+  if (
+    !calendarData.sex ||
+    typeof calendarData.sex !== "object" ||
+    Array.isArray(calendarData.sex)
+  ) {
+    calendarData.sex = {};
+  }
+
+
+  calendarData.sexCustomPositionPresets =
+    Array.isArray(
+      calendarData.sexCustomPositionPresets
+    )
+      ? [
+          ...new Set(
+            calendarData
+              .sexCustomPositionPresets
+              .filter(
+                (item) =>
+                  typeof item === "string" &&
+                  item.trim()
+              )
+              .map(
+                (item) => item.trim()
+              )
+          )
+        ]
+      : [];
+
+}
+
+
+function createSexRecordId() {
+
+  if (
+    window.crypto &&
+    typeof window.crypto.randomUUID ===
+      "function"
+  ) {
+    return (
+      "sex_" +
+      window.crypto.randomUUID()
+    );
+  }
+
+
+  return (
+    "sex_" +
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2, 9)
+  );
+
+}
+
+
+function isValidSexTime(
+  value
+) {
+
+  return (
+    typeof value === "string" &&
+    /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(
+      value
+    )
+  );
+
+}
+
+
+function getSexCount(
+  record
+) {
+
+  const value =
+    Number(record?.count);
+
+
+  return (
+    Number.isInteger(value) &&
+    value > 0
+  )
+    ? value
+    : 1;
+
+}
+
+
+function resolveSexOptionId(
+  options,
+  value,
+  fallback
+) {
+
+  const match = options.find(
+    (option) =>
+      option.id === value ||
+      option.label === value
+  );
+
+
+  return match
+    ? match.id
+    : fallback;
+
+}
+
+
+function getSexOptionLabel(
+  options,
+  value,
+  fallback = "未记录"
+) {
+
+  const match = options.find(
+    (option) =>
+      option.id === value ||
+      option.label === value
+  );
+
+
+  if (match) {
+    return match.label;
+  }
+
+
+  return (
+    typeof value === "string" &&
+    value.trim()
+  )
+    ? value.trim()
+    : fallback;
+
+}
+
+
+function getSexFormLabel(
+  value
+) {
+
+  return getSexOptionLabel(
+    window.LiminalSexData
+      ?.formOptions || [],
+    value
+  );
+
+}
+
+
+function getSexProtectionLabel(
+  value
+) {
+
+  return getSexOptionLabel(
+    window.LiminalSexData
+      ?.protectionOptions || [],
+    value
+  );
+
+}
+
+
+function getSexProtectionMethodLabel(
+  value
+) {
+
+  return getSexOptionLabel(
+    window.LiminalSexData
+      ?.protectionMethods || [],
+    value,
+    ""
+  );
+
+}
+
+
+function getSexPositionLabel(
+  value
+) {
+
+  return getSexOptionLabel(
+    window.LiminalSexData
+      ?.positionPresets || [],
+    value,
+    value
+  );
+
+}
+
+
+function normalizeSexRecordForEditor(
+  value
+) {
+
+  const source =
+    value &&
+    typeof value === "object"
+      ? value
+      : {};
+
+
+  const formOptions =
+    window.LiminalSexData
+      ?.formOptions || [];
+
+
+  const protectionOptions =
+    window.LiminalSexData
+      ?.protectionOptions || [];
+
+
+  const methodOptions =
+    window.LiminalSexData
+      ?.protectionMethods || [];
+
+
+  const positionOptions =
+    window.LiminalSexData
+      ?.positionPresets || [];
+
+
+  const positions =
+    Array.isArray(source.positions)
+      ? source.positions
+      : [];
+
+
+  const recognizedPositions = [];
+  const legacyCustomPositions = [];
+
+
+  positions.forEach(
+    function (position) {
+
+      const match = positionOptions.find(
+        (option) =>
+          option.id === position ||
+          option.label === position
+      );
+
+
+      if (match) {
+        recognizedPositions.push(match.id);
+      } else if (
+        typeof position === "string" &&
+        position.trim()
+      ) {
+        legacyCustomPositions.push(
+          position.trim()
+        );
+      }
+
+    }
+  );
+
+
+  const protection =
+    resolveSexOptionId(
+      protectionOptions,
+      source.protection,
+      "na"
+    );
+
+
+  return {
+    ...source,
+    id:
+      typeof source.id === "string" &&
+      source.id
+        ? source.id
+        : createSexRecordId(),
+    time: isValidSexTime(source.time)
+      ? source.time
+      : "",
+    count: getSexCount(source),
+    form: resolveSexOptionId(
+      formOptions,
+      source.form,
+      "other"
+    ),
+    protection: protection,
+    protectionMethod:
+      protection === "yes"
+        ? resolveSexOptionId(
+            methodOptions,
+            source.protectionMethod,
+            "other"
+          )
+        : "",
+    positions: [
+      ...new Set(recognizedPositions)
+    ],
+    customPositions: [
+      ...new Set([
+        ...(
+          Array.isArray(
+            source.customPositions
+          )
+            ? source.customPositions
+            : []
+        )
+          .filter(
+            (item) =>
+              typeof item === "string" &&
+              item.trim()
+          )
+          .map(
+            (item) => item.trim()
+          ),
+        ...legacyCustomPositions
+      ])
+    ],
+    note:
+      typeof source.note === "string"
+        ? source.note
+        : ""
+  };
+
+}
+
+
+function getSexRecords(
+  dateKey
+) {
+
+  const records =
+    calendarData.sex?.[dateKey];
+
+
+  return Array.isArray(records)
+    ? records
+    : [];
+
+}
+
+
+function getSortedSexEntries(
+  dateKey
+) {
+
+  return getSexRecords(dateKey)
+    .map(
+      (record, index) => ({
+        record: record,
+        index: index
+      })
+    )
+    .sort(
+      function (a, b) {
+
+        const aTime =
+          isValidSexTime(a.record.time)
+            ? a.record.time
+            : "99:99";
+
+
+        const bTime =
+          isValidSexTime(b.record.time)
+            ? b.record.time
+            : "99:99";
+
+
+        return (
+          aTime.localeCompare(bTime) ||
+          a.index - b.index
+        );
+
+      }
+    );
+
+}
+
+
+function getSexTotalCount(
+  dateKey
+) {
+
+  return getSexRecords(dateKey)
+    .reduce(
+      (total, record) =>
+        total + getSexCount(record),
+      0
+    );
+
+}
 
 
 /* =========================
@@ -1666,22 +3026,9 @@ function renderMonth() {
               record
             ) {
 
-              const count =
-                Number(
-                  record.count
-                );
-
-
               return (
                 total +
-                (
-                  Number.isFinite(
-                    count
-                  ) &&
-                  count > 0
-                    ? count
-                    : 1
-                )
+                getSexCount(record)
               );
 
             },
@@ -2915,10 +4262,119 @@ scheduleEditorSave.addEventListener(
    大事总时间线
    ========================= */
 
+function normalizeMilestoneOwner(
+  owner
+) {
+
+  if (
+    owner === "luzhen" ||
+    owner === "both"
+  ) {
+
+    return owner;
+
+  }
+
+
+  return "keshi";
+
+}
+
+
+
+function milestoneOwnerIncludes(
+  owner,
+  person
+) {
+
+  const normalizedOwner =
+    normalizeMilestoneOwner(
+      owner
+    );
+
+
+  return (
+    normalizedOwner ===
+      "both" ||
+    normalizedOwner ===
+      person
+  );
+
+}
+
+
+
+function toggleMilestoneOwner(
+  owner,
+  person
+) {
+
+  const normalizedOwner =
+    normalizeMilestoneOwner(
+      owner
+    );
+
+
+  if (
+    person === "keshi"
+  ) {
+
+    if (
+      normalizedOwner ===
+        "keshi"
+    ) {
+
+      return normalizedOwner;
+
+    }
+
+
+    return (
+      normalizedOwner ===
+        "both"
+        ? "luzhen"
+        : "both"
+    );
+
+  }
+
+
+  if (
+    person === "luzhen"
+  ) {
+
+    if (
+      normalizedOwner ===
+        "luzhen"
+    ) {
+
+      return normalizedOwner;
+
+    }
+
+
+    return (
+      normalizedOwner ===
+        "both"
+        ? "keshi"
+        : "both"
+    );
+
+  }
+
+
+  return normalizedOwner;
+
+}
+
 function renderTimeline() {
 
   const events =
     [];
+
+
+  let sourceIndex =
+    0;
 
 
   Object.entries(
@@ -2946,10 +4402,18 @@ function renderTimeline() {
               item.title,
 
             owner:
-              item.owner ||
-              "keshi"
+              normalizeMilestoneOwner(
+                item.owner
+              ),
+
+            sourceIndex:
+              sourceIndex
 
           });
+
+
+          sourceIndex +=
+            1;
 
         }
       );
@@ -2967,41 +4431,13 @@ function renderTimeline() {
       return (
         a.dateKey.localeCompare(
           b.dateKey
-        )
+        ) ||
+        a.sourceIndex -
+          b.sourceIndex
       );
 
     }
   );
-
-
-  const keshiEvents =
-    events.filter(
-      function (
-        event
-      ) {
-
-        return (
-          event.owner ===
-          "keshi"
-        );
-
-      }
-    );
-
-
-  const luzhenEvents =
-    events.filter(
-      function (
-        event
-      ) {
-
-        return (
-          event.owner ===
-          "luzhen"
-        );
-
-      }
-    );
 
 
   timelineList.innerHTML =
@@ -3044,17 +4480,10 @@ function renderTimeline() {
     );
 
 
-  const leftLane =
+  const eventRows =
     make(
       "div",
-      "timeline-lane left"
-    );
-
-
-  const rightLane =
-    make(
-      "div",
-      "timeline-lane right"
+      "timeline-event-rows"
     );
 
 
@@ -3064,25 +4493,6 @@ function renderTimeline() {
     laneEvents,
     side
   ) {
-
-    if (
-      !laneEvents.length
-    ) {
-
-      lane.appendChild(
-
-        make(
-          "div",
-          "timeline-lane-empty",
-          "暂无大事"
-        )
-
-      );
-
-
-      return;
-
-    }
 
 
     laneEvents.forEach(
@@ -3230,8 +4640,20 @@ function renderTimeline() {
         }
 
 
-        lane.appendChild(
+        const row =
+          make(
+            "div",
+            `timeline-row ${side}`
+          );
+
+
+        row.appendChild(
           item
+        );
+
+
+        lane.appendChild(
+          row
         );
 
       }
@@ -3240,23 +4662,219 @@ function renderTimeline() {
   }
 
 
-  renderLane(
-    leftLane,
-    keshiEvents,
-    "left"
+  function renderSharedEvent(
+    container,
+    event
+  ) {
+
+    const date =
+      dateFromKey(
+        event.dateKey
+      );
+
+
+    const item =
+      make(
+        "article",
+        "shared-timeline-event"
+      );
+
+
+    const line =
+      make(
+        "div",
+        "shared-timeline-line"
+      );
+
+
+    line.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    line.append(
+
+      make(
+        "span",
+        "shared-timeline-dot left"
+      ),
+
+      make(
+        "span",
+        "shared-timeline-dot right"
+      )
+
+    );
+
+
+    const content =
+      make(
+        "div",
+        "shared-timeline-content"
+      );
+
+
+    const title =
+      make(
+        "strong",
+        "",
+        event.title
+      );
+
+
+    const dateText =
+      make(
+        "span",
+        "shared-timeline-date",
+
+        (
+          `${date.getFullYear()} · ` +
+          `${padNumber(
+            date.getMonth() + 1
+          )}.` +
+          `${padNumber(
+            date.getDate()
+          )}`
+        )
+      );
+
+
+    const actions =
+      make(
+        "div",
+        "lane-actions shared-timeline-actions"
+      );
+
+
+    const editButton =
+      make(
+        "button",
+        "edit-milestone",
+        "编辑"
+      );
+
+
+    editButton.type =
+      "button";
+
+
+    const deleteButton =
+      make(
+        "button",
+        "delete-milestone",
+        "删除"
+      );
+
+
+    deleteButton.type =
+      "button";
+
+
+    editButton.addEventListener(
+      "click",
+      function () {
+
+        editMilestone(
+          event
+        );
+
+      }
+    );
+
+
+    deleteButton.addEventListener(
+      "click",
+      function () {
+
+        deleteMilestone(
+          event
+        );
+
+      }
+    );
+
+
+    actions.append(
+      editButton,
+      deleteButton
+    );
+
+
+    content.append(
+      title,
+      line,
+      dateText,
+      actions
+    );
+
+
+    item.appendChild(
+      content
+    );
+
+
+    container.appendChild(
+      item
+    );
+
+  }
+
+
+  if (
+    !events.length
+  ) {
+
+    eventRows.appendChild(
+
+      make(
+        "div",
+        "timeline-empty",
+        "暂无大事"
+      )
+
+    );
+
+  }
+
+
+  events.forEach(
+    function (
+      event
+    ) {
+
+      if (
+        event.owner ===
+          "both"
+      ) {
+
+        renderSharedEvent(
+          eventRows,
+          event
+        );
+
+
+        return;
+
+      }
+
+
+      renderLane(
+        eventRows,
+        [event],
+
+        event.owner ===
+          "luzhen"
+          ? "right"
+          : "left"
+      );
+
+    }
   );
 
 
-  renderLane(
-    rightLane,
-    luzhenEvents,
-    "right"
-  );
-
-
-  grid.append(
-    leftLane,
-    rightLane
+  grid.appendChild(
+    eventRows
   );
 
 
@@ -3727,7 +5345,9 @@ function setMilestoneOwner(
 ) {
 
   milestoneEditorOwner =
-    owner;
+    normalizeMilestoneOwner(
+      owner
+    );
 
 
   milestoneOwnerButtons.forEach(
@@ -3735,11 +5355,24 @@ function setMilestoneOwner(
       button
     ) {
 
+      const isActive =
+        milestoneOwnerIncludes(
+          milestoneEditorOwner,
+          button.dataset.owner
+        );
+
+
       button.classList.toggle(
         "active",
+        isActive
+      );
 
-        button.dataset.owner ===
-          owner
+
+      button.setAttribute(
+        "aria-pressed",
+        String(
+          isActive
+        )
       );
 
     }
@@ -3774,8 +5407,7 @@ function openMilestoneEditor(
 
 
     setMilestoneOwner(
-      event.owner ||
-      "keshi"
+      event.owner
     );
 
   } else {
@@ -3878,11 +5510,12 @@ function deleteMilestone(
           item.title ===
             event.title &&
 
-          (
-            item.owner ||
-            "keshi"
+          normalizeMilestoneOwner(
+            item.owner
           ) ===
-            event.owner
+            normalizeMilestoneOwner(
+              event.owner
+            )
         );
 
       }
@@ -3946,7 +5579,12 @@ milestoneOwnerButtons.forEach(
       function () {
 
         setMilestoneOwner(
-          button.dataset.owner
+
+          toggleMilestoneOwner(
+            milestoneEditorOwner,
+            button.dataset.owner
+          )
+
         );
 
       }
@@ -4054,11 +5692,12 @@ milestoneEditorSave.addEventListener(
                 item.title ===
                   editingMilestone.title &&
 
-                (
-                  item.owner ||
-                  "keshi"
+                normalizeMilestoneOwner(
+                  item.owner
                 ) ===
-                  editingMilestone.owner
+                  normalizeMilestoneOwner(
+                    editingMilestone.owner
+                  )
               );
 
             }
@@ -4124,7 +5763,9 @@ milestoneEditorSave.addEventListener(
           title,
 
         owner:
-          milestoneEditorOwner
+          normalizeMilestoneOwner(
+            milestoneEditorOwner
+          )
 
       });
 
@@ -4776,6 +6417,539 @@ function setBodyEditorEnergy(
 }
 
 
+function createBodyDiscomfortId() {
+
+  if (
+    window.crypto &&
+    typeof crypto.randomUUID ===
+      "function"
+  ) {
+
+    return (
+      `discomfort_${crypto.randomUUID()}`
+    );
+
+  }
+
+
+  return (
+    `discomfort_${Date.now()}_` +
+    `${Math.random()
+      .toString(36)
+      .slice(2, 9)}`
+  );
+
+}
+
+
+function isValidBodyTime(
+  value
+) {
+
+  return (
+    typeof value ===
+      "string" &&
+    /^(?:[01]\d|2[0-3]):[0-5]\d$/
+      .test(value)
+  );
+
+}
+
+
+function normalizeBodyDiscomfort(
+  value
+) {
+
+  const source =
+    value &&
+    typeof value ===
+      "object"
+      ? value
+      : {};
+
+
+  const allDay =
+    source.allDay ===
+      true;
+
+
+  const startTime =
+    !allDay &&
+    isValidBodyTime(
+      source.startTime
+    )
+      ? source.startTime
+      : "";
+
+
+  const endTime =
+    startTime &&
+    isValidBodyTime(
+      source.endTime
+    )
+      ? source.endTime
+      : "";
+
+
+  return {
+    ...source,
+
+    id:
+      typeof source.id ===
+        "string" &&
+      source.id.trim()
+        ? source.id
+        : createBodyDiscomfortId(),
+
+    symptom:
+      typeof source.symptom ===
+        "string"
+        ? source.symptom
+        : "",
+
+    allDay:
+      allDay,
+
+    startTime:
+      startTime,
+
+    endTime:
+      endTime,
+
+    note:
+      typeof source.note ===
+        "string"
+        ? source.note
+        : ""
+  };
+
+}
+
+
+function setBodyEditorDiscomforts(
+  values
+) {
+
+  const usedIds =
+    new Set();
+
+
+  bodyEditorDiscomforts =
+    (
+      Array.isArray(values)
+        ? values
+        : []
+    ).map(
+      function (
+        value
+      ) {
+
+        const discomfort =
+          normalizeBodyDiscomfort(
+            value
+          );
+
+
+        if (
+          usedIds.has(
+            discomfort.id
+          )
+        ) {
+
+          discomfort.id =
+            createBodyDiscomfortId();
+
+        }
+
+
+        usedIds.add(
+          discomfort.id
+        );
+
+
+        return discomfort;
+
+      }
+    );
+
+
+  renderBodyDiscomfortEditor();
+
+}
+
+
+function renderBodyDiscomfortEditor() {
+
+  bodyDiscomfortList.innerHTML =
+    "";
+
+
+  if (
+    !bodyEditorDiscomforts.length
+  ) {
+
+    bodyDiscomfortList.appendChild(
+
+      make(
+        "div",
+        "body-discomfort-empty",
+        "暂时没有身体不适"
+      )
+
+    );
+
+
+    return;
+
+  }
+
+
+  function createField(
+    labelText,
+    input,
+    className =
+      ""
+  ) {
+
+    const field =
+      make(
+        "label",
+        `body-discomfort-field ${className}`
+          .trim()
+      );
+
+
+    field.append(
+
+      make(
+        "span",
+        "",
+        labelText
+      ),
+
+      input
+
+    );
+
+
+    return field;
+
+  }
+
+
+  bodyEditorDiscomforts.forEach(
+    function (
+      discomfort,
+      index
+    ) {
+
+      const item =
+        make(
+          "article",
+          "body-discomfort-item"
+        );
+
+
+      item.dataset.discomfortId =
+        discomfort.id;
+
+
+      const header =
+        make(
+          "div",
+          "body-discomfort-item-header"
+        );
+
+
+      const deleteButton =
+        make(
+          "button",
+          "body-discomfort-delete",
+          "删除这条"
+        );
+
+
+      deleteButton.type =
+        "button";
+
+
+      deleteButton.addEventListener(
+        "click",
+        function () {
+
+          bodyEditorDiscomforts
+            .splice(
+              index,
+              1
+            );
+
+
+          renderBodyDiscomfortEditor();
+
+        }
+      );
+
+
+      header.append(
+
+        make(
+          "strong",
+          "",
+          `不适 ${index + 1}`
+        ),
+
+        deleteButton
+
+      );
+
+
+      const symptomInput =
+        make(
+          "input",
+          "body-discomfort-symptom"
+        );
+
+
+      symptomInput.type =
+        "text";
+
+
+      symptomInput.value =
+        discomfort.symptom;
+
+
+      symptomInput.placeholder =
+        "例如：头痛 / 胃胀 / 腰酸";
+
+
+      symptomInput.required =
+        true;
+
+
+      symptomInput.addEventListener(
+        "input",
+        function () {
+
+          discomfort.symptom =
+            symptomInput.value;
+
+        }
+      );
+
+
+      const allDayLabel =
+        make(
+          "label",
+          "body-discomfort-all-day"
+        );
+
+
+      const allDayInput =
+        make(
+          "input"
+        );
+
+
+      allDayInput.type =
+        "checkbox";
+
+
+      allDayInput.checked =
+        discomfort.allDay;
+
+
+      allDayInput.addEventListener(
+        "change",
+        function () {
+
+          discomfort.allDay =
+            allDayInput.checked;
+
+
+          if (
+            discomfort.allDay
+          ) {
+
+            discomfort.startTime =
+              "";
+
+
+            discomfort.endTime =
+              "";
+
+          }
+
+
+          renderBodyDiscomfortEditor();
+
+        }
+      );
+
+
+      allDayLabel.append(
+        allDayInput,
+
+        make(
+          "span",
+          "",
+          "全天"
+        )
+      );
+
+
+      const startTimeInput =
+        make(
+          "input"
+        );
+
+
+      startTimeInput.type =
+        "time";
+
+
+      startTimeInput.value =
+        discomfort.startTime;
+
+
+      startTimeInput.disabled =
+        discomfort.allDay;
+
+
+      startTimeInput.addEventListener(
+        "change",
+        function () {
+
+          discomfort.startTime =
+            startTimeInput.value;
+
+
+          if (
+            !discomfort.startTime
+          ) {
+
+            discomfort.endTime =
+              "";
+
+          }
+
+
+          renderBodyDiscomfortEditor();
+
+        }
+      );
+
+
+      const endTimeInput =
+        make(
+          "input"
+        );
+
+
+      endTimeInput.type =
+        "time";
+
+
+      endTimeInput.value =
+        discomfort.endTime;
+
+
+      endTimeInput.disabled =
+        discomfort.allDay ||
+        !discomfort.startTime;
+
+
+      endTimeInput.addEventListener(
+        "change",
+        function () {
+
+          discomfort.endTime =
+            endTimeInput.value;
+
+        }
+      );
+
+
+      const timeGrid =
+        make(
+          "div",
+          "body-discomfort-time-grid"
+        );
+
+
+      timeGrid.append(
+
+        createField(
+          "开始时间（可选）",
+          startTimeInput
+        ),
+
+        createField(
+          "结束时间（可选）",
+          endTimeInput
+        )
+
+      );
+
+
+      const noteInput =
+        make(
+          "textarea"
+        );
+
+
+      noteInput.rows =
+        2;
+
+
+      noteInput.value =
+        discomfort.note;
+
+
+      noteInput.placeholder =
+        "针对这一条不适的补充……";
+
+
+      noteInput.addEventListener(
+        "input",
+        function () {
+
+          discomfort.note =
+            noteInput.value;
+
+        }
+      );
+
+
+      item.append(
+        header,
+
+        createField(
+          "不适",
+          symptomInput
+        ),
+
+        allDayLabel,
+        timeGrid,
+
+        createField(
+          "补充（可选）",
+          noteInput,
+          "body-discomfort-note-field"
+        )
+      );
+
+
+      bodyDiscomfortList
+        .appendChild(
+          item
+        );
+
+    }
+  );
+
+}
+
+
 function refreshBodyEditorFields() {
 
   const dateKey =
@@ -4816,6 +6990,21 @@ function refreshBodyEditorFields() {
       "";
 
 
+    bodyLegacyPainNotice.textContent =
+      bodyPainInput.value
+        ? `旧版不适记录：${bodyPainInput.value}`
+        : "";
+
+
+    bodyLegacyPainNotice.hidden =
+      !bodyPainInput.value;
+
+
+    setBodyEditorDiscomforts(
+      record.discomforts
+    );
+
+
     bodyNoteInput.value =
       record.note ||
       "";
@@ -4847,6 +7036,19 @@ function refreshBodyEditorFields() {
 
     bodyPainInput.value =
       "";
+
+
+    bodyLegacyPainNotice.textContent =
+      "";
+
+
+    bodyLegacyPainNotice.hidden =
+      true;
+
+
+    setBodyEditorDiscomforts(
+      []
+    );
 
 
     bodyNoteInput.value =
@@ -4963,6 +7165,54 @@ bodyOwnerButtons.forEach(
 
       }
     );
+
+  }
+);
+
+
+addBodyDiscomfortButton.addEventListener(
+  "click",
+  function () {
+
+    bodyEditorDiscomforts.push(
+
+      normalizeBodyDiscomfort({
+        id:
+          createBodyDiscomfortId(),
+
+        symptom:
+          "",
+
+        allDay:
+          false,
+
+        startTime:
+          "",
+
+        endTime:
+          "",
+
+        note:
+          ""
+      })
+
+    );
+
+
+    renderBodyDiscomfortEditor();
+
+
+    const symptomInputs =
+      bodyDiscomfortList
+        .querySelectorAll(
+          ".body-discomfort-symptom"
+        );
+
+
+    symptomInputs[
+      symptomInputs.length -
+        1
+    ]?.focus();
 
   }
 );
@@ -5126,9 +7376,74 @@ bodyEditorSave.addEventListener(
         .trim();
 
 
+    const discomforts =
+      bodyEditorDiscomforts.map(
+        function (
+          value
+        ) {
+
+          const discomfort =
+            normalizeBodyDiscomfort(
+              value
+            );
+
+
+          discomfort.symptom =
+            discomfort.symptom
+              .trim();
+
+
+          discomfort.note =
+            discomfort.note
+              .trim();
+
+
+          return discomfort;
+
+        }
+      );
+
+
     if (
       !dateKey
     ) {
+
+      return;
+
+    }
+
+
+    const incompleteIndex =
+      discomforts.findIndex(
+        function (
+          discomfort
+        ) {
+
+          return (
+            !discomfort.symptom
+          );
+
+        }
+      );
+
+
+    if (
+      incompleteIndex !==
+        -1
+    ) {
+
+      window.alert(
+        "请填写每条身体不适的名称，或删除空白条目。"
+      );
+
+
+      bodyDiscomfortList
+        .querySelectorAll(
+          ".body-discomfort-symptom"
+        )[
+          incompleteIndex
+        ]?.focus();
+
 
       return;
 
@@ -5139,6 +7454,7 @@ bodyEditorSave.addEventListener(
       !bodyEditorEnergy &&
       !appetite &&
       !pain &&
+      !discomforts.length &&
       !note
     ) {
 
@@ -5158,9 +7474,23 @@ bodyEditorSave.addEventListener(
       );
 
 
+    const existingRecord =
+      getBodyRecord(
+        dateKey,
+        bodyEditorOwner
+      );
+
+
     library[
       dateKey
     ] = {
+      ...(
+        existingRecord &&
+        typeof existingRecord ===
+          "object"
+          ? existingRecord
+          : {}
+      ),
 
       energy:
         bodyEditorEnergy
@@ -5172,6 +7502,9 @@ bodyEditorSave.addEventListener(
 
       pain:
         pain,
+
+      discomforts:
+        discomforts,
 
       note:
         note
@@ -5795,8 +8128,1769 @@ sleepEditorSave.addEventListener(
 );
 
 /* =========================
+   Cycle 管理 / 编辑
+   ========================= */
+
+function getSortedCyclePeriods() {
+
+  return [
+    ...(calendarData.cycle
+      ?.periods || [])
+  ].sort(
+    (a, b) =>
+      b.start.localeCompare(a.start)
+  );
+
+}
+
+
+function getCyclePeriodDuration(
+  period
+) {
+
+  return (
+    differenceInDays(
+      period.start,
+      period.end
+    ) + 1
+  );
+
+}
+
+
+function renderCycleManagerList() {
+
+  cycleManagerTitle.textContent =
+    "周期记录";
+
+
+  cycleManagerListView.hidden =
+    false;
+
+
+  cyclePeriodEditorView.hidden =
+    true;
+
+
+  const periods =
+    getSortedCyclePeriods();
+
+
+  cycleLatestSummary.innerHTML = "";
+
+
+  if (periods.length) {
+
+    const latest = periods[0];
+
+
+    cycleLatestSummary.append(
+      make(
+        "span",
+        "cycle-summary-label",
+        "最近一次经期"
+      ),
+      make(
+        "strong",
+        "",
+        `${formatCycleShortDate(latest.start)} – ` +
+          `${formatCycleShortDate(latest.end)}`
+      ),
+      make(
+        "small",
+        "",
+        `${getCyclePeriodDuration(latest)}天`
+      )
+    );
+
+  } else {
+
+    cycleLatestSummary.append(
+      make(
+        "span",
+        "cycle-summary-label",
+        "最近一次经期"
+      ),
+      make(
+        "strong",
+        "",
+        "暂无记录"
+      ),
+      make(
+        "small",
+        "",
+        "添加记录后会自动估算周期"
+      )
+    );
+
+  }
+
+
+  cyclePeriodList.innerHTML = "";
+
+
+  if (!periods.length) {
+
+    cyclePeriodList.appendChild(
+      make(
+        "p",
+        "cycle-period-empty",
+        "还没有经期历史"
+      )
+    );
+
+    return;
+
+  }
+
+
+  periods.forEach(
+    function (period) {
+
+      const button = make(
+        "button",
+        "cycle-period-row"
+      );
+
+
+      button.type = "button";
+
+
+      const dates = make(
+        "span",
+        "cycle-period-dates",
+        `${formatCycleDotDate(period.start)} – ` +
+          `${formatCycleDotDate(period.end, false)}`
+      );
+
+
+      const meta = make(
+        "span",
+        "cycle-period-meta",
+        `${getCyclePeriodDuration(period)}天  ›`
+      );
+
+
+      button.append(dates, meta);
+
+
+      button.addEventListener(
+        "click",
+        function () {
+          openCyclePeriodEditor(
+            period.id
+          );
+        }
+      );
+
+
+      cyclePeriodList.appendChild(button);
+
+    }
+  );
+
+}
+
+
+function openCycleManager() {
+
+  renderCycleManagerList();
+
+
+  cycleManagerBackdrop.hidden =
+    false;
+
+}
+
+
+function closeCycleManager() {
+
+  cycleManagerBackdrop.hidden =
+    true;
+
+
+  editingCyclePeriod = null;
+  activeCycleDayKey = "";
+
+}
+
+
+function openCyclePeriodEditor(
+  periodId = ""
+) {
+
+  const existing =
+    (calendarData.cycle
+      ?.periods || [])
+      .find(
+        (period) =>
+          period.id === periodId
+      );
+
+
+  const selectedKey =
+    toDateKey(selectedDate);
+
+
+  editingCyclePeriod = existing
+    ? normalizeCyclePeriod(
+        JSON.parse(
+          JSON.stringify(existing)
+        )
+      )
+    : {
+        id: createCyclePeriodId(),
+        start: selectedKey,
+        end: selectedKey,
+        days: {}
+      };
+
+
+  cycleEditorPresets = [
+    ...(calendarData.cycle
+      ?.customSymptomPresets || [])
+  ];
+
+
+  activeCycleDayKey =
+    editingCyclePeriod.start;
+
+
+  cycleStartInput.value =
+    editingCyclePeriod.start;
+
+
+  cycleEndInput.value =
+    editingCyclePeriod.end;
+
+
+  cycleDeletePeriodButton.hidden =
+    !existing;
+
+
+  cycleEditorActions.classList.toggle(
+    "editing",
+    Boolean(existing)
+  );
+
+
+  cycleManagerTitle.textContent =
+    existing
+      ? "编辑经期"
+      : "添加经期";
+
+
+  cycleManagerListView.hidden = true;
+  cyclePeriodEditorView.hidden = false;
+
+
+  renderCycleDayEditor();
+
+}
+
+
+function ensureCycleDraftDay(
+  dateKey
+) {
+
+  if (!editingCyclePeriod.days) {
+    editingCyclePeriod.days = {};
+  }
+
+
+  if (!editingCyclePeriod.days[dateKey]) {
+    editingCyclePeriod.days[dateKey] =
+      normalizeCycleDay({});
+  } else {
+    editingCyclePeriod.days[dateKey] =
+      normalizeCycleDay(
+        editingCyclePeriod.days[dateKey]
+      );
+  }
+
+
+  return editingCyclePeriod.days[dateKey];
+
+}
+
+
+function makeCyclePill(
+  text,
+  active,
+  onClick
+) {
+
+  const button = make(
+    "button",
+    "cycle-pill" +
+      (active ? " active" : ""),
+    text
+  );
+
+
+  button.type = "button";
+  button.setAttribute(
+    "aria-pressed",
+    String(active)
+  );
+
+
+  button.addEventListener(
+    "click",
+    onClick
+  );
+
+
+  return button;
+
+}
+
+
+function renderCycleDayEditor() {
+
+  cycleDayEditor.innerHTML = "";
+
+
+  if (
+    !editingCyclePeriod ||
+    !isValidDateKey(
+      editingCyclePeriod.start
+    ) ||
+    !isValidDateKey(
+      editingCyclePeriod.end
+    ) ||
+    editingCyclePeriod.start >
+      editingCyclePeriod.end
+  ) {
+
+    cycleDayEditor.appendChild(
+      make(
+        "p",
+        "cycle-period-empty",
+        "请先选择有效的开始和结束日期"
+      )
+    );
+
+    return;
+
+  }
+
+
+  const dates = enumerateDateKeys(
+    editingCyclePeriod.start,
+    editingCyclePeriod.end
+  );
+
+
+  if (!dates.includes(activeCycleDayKey)) {
+    activeCycleDayKey = dates[0];
+  }
+
+
+  const tabs = make(
+    "div",
+    "cycle-day-tabs"
+  );
+
+
+  dates.forEach(
+    function (dateKey, index) {
+
+      const button = make(
+        "button",
+        "cycle-day-tab" +
+          (
+            dateKey === activeCycleDayKey
+              ? " active"
+              : ""
+          ),
+        `${dateFromKey(dateKey).getMonth() + 1}.` +
+          `${dateFromKey(dateKey).getDate()}\n` +
+          `第${index + 1}天`
+      );
+
+
+      button.type = "button";
+
+
+      button.addEventListener(
+        "click",
+        function () {
+          activeCycleDayKey = dateKey;
+          renderCycleDayEditor();
+        }
+      );
+
+
+      tabs.appendChild(button);
+
+    }
+  );
+
+
+  cycleDayEditor.appendChild(tabs);
+
+
+  const day = ensureCycleDraftDay(
+    activeCycleDayKey
+  );
+
+
+  const panel = make(
+    "section",
+    "cycle-day-panel"
+  );
+
+
+  const dayIndex =
+    dates.indexOf(activeCycleDayKey) + 1;
+
+
+  panel.appendChild(
+    make(
+      "strong",
+      "cycle-day-title",
+      `${formatCycleShortDate(activeCycleDayKey)} · ` +
+        `第${dayIndex}天`
+    )
+  );
+
+
+  const flowGroup = make(
+    "div",
+    "cycle-option-group"
+  );
+
+
+  flowGroup.appendChild(
+    make("span", "", "经量")
+  );
+
+
+  const flowPills = make(
+    "div",
+    "cycle-pill-grid cycle-flow-grid"
+  );
+
+
+  (
+    window.LiminalCycleData
+      ?.flowOptions || []
+  ).forEach(
+    function (option) {
+      flowPills.appendChild(
+        makeCyclePill(
+          option.label,
+          day.flow === option.id,
+          function () {
+            day.flow =
+              day.flow === option.id
+                ? ""
+                : option.id;
+            renderCycleDayEditor();
+          }
+        )
+      );
+    }
+  );
+
+
+  flowGroup.appendChild(flowPills);
+  panel.appendChild(flowGroup);
+
+
+  const symptomGroup = make(
+    "div",
+    "cycle-option-group"
+  );
+
+
+  symptomGroup.appendChild(
+    make("span", "", "身体症状")
+  );
+
+
+  const symptomPills = make(
+    "div",
+    "cycle-pill-grid"
+  );
+
+
+  (
+    window.LiminalCycleData
+      ?.symptomPresets || []
+  ).forEach(
+    function (option) {
+
+      symptomPills.appendChild(
+        makeCyclePill(
+          option.label,
+          day.symptoms.includes(
+            option.id
+          ),
+          function () {
+            day.symptoms =
+              day.symptoms.includes(option.id)
+                ? day.symptoms.filter(
+                    (id) => id !== option.id
+                  )
+                : [
+                    ...day.symptoms,
+                    option.id
+                  ];
+            renderCycleDayEditor();
+          }
+        )
+      );
+
+    }
+  );
+
+
+  symptomGroup.appendChild(symptomPills);
+
+
+  const customNames = [
+    ...new Set([
+      ...cycleEditorPresets,
+      ...day.customSymptoms
+    ])
+  ];
+
+
+  if (customNames.length) {
+
+    symptomGroup.appendChild(
+      make(
+        "span",
+        "cycle-custom-label",
+        "我的自定义症状"
+      )
+    );
+
+
+    const customPills = make(
+      "div",
+      "cycle-pill-grid"
+    );
+
+
+    customNames.forEach(
+      function (name) {
+        customPills.appendChild(
+          makeCyclePill(
+            name,
+            day.customSymptoms.includes(name),
+            function () {
+              day.customSymptoms =
+                day.customSymptoms.includes(name)
+                  ? day.customSymptoms.filter(
+                      (item) => item !== name
+                    )
+                  : [
+                      ...day.customSymptoms,
+                      name
+                    ];
+              renderCycleDayEditor();
+            }
+          )
+        );
+      }
+    );
+
+
+    symptomGroup.appendChild(customPills);
+
+  }
+
+
+  const customBox = make(
+    "div",
+    "cycle-custom-box"
+  );
+
+
+  const customInput = document.createElement(
+    "input"
+  );
+
+
+  customInput.type = "text";
+  customInput.placeholder =
+    "例如：腿酸";
+  customInput.setAttribute(
+    "aria-label",
+    "自定义症状"
+  );
+
+
+  const presetLabel = make(
+    "label",
+    "cycle-save-preset"
+  );
+
+
+  const presetCheckbox =
+    document.createElement("input");
+
+
+  presetCheckbox.type = "checkbox";
+
+
+  presetLabel.append(
+    presetCheckbox,
+    document.createTextNode(
+      "保存到我的预设"
+    )
+  );
+
+
+  const addCustomButton = make(
+    "button",
+    "cycle-add-custom",
+    "＋ 自定义症状"
+  );
+
+
+  addCustomButton.type = "button";
+
+
+  addCustomButton.addEventListener(
+    "click",
+    function () {
+
+      const name =
+        customInput.value.trim();
+
+
+      if (!name) {
+        customInput.focus();
+        return;
+      }
+
+
+      if (!day.customSymptoms.includes(name)) {
+        day.customSymptoms.push(name);
+      }
+
+
+      if (
+        presetCheckbox.checked &&
+        !cycleEditorPresets.includes(name)
+      ) {
+        cycleEditorPresets.push(name);
+      }
+
+
+      renderCycleDayEditor();
+
+    }
+  );
+
+
+  customBox.append(
+    customInput,
+    presetLabel,
+    addCustomButton
+  );
+
+
+  symptomGroup.appendChild(customBox);
+  panel.appendChild(symptomGroup);
+
+
+  const noteField = make(
+    "label",
+    "cycle-note-field"
+  );
+
+
+  noteField.appendChild(
+    make("span", "", "备注")
+  );
+
+
+  const noteInput =
+    document.createElement("textarea");
+
+
+  noteInput.rows = 3;
+  noteInput.placeholder =
+    "记录这一天的其他感受……";
+  noteInput.value = day.note;
+
+
+  noteInput.addEventListener(
+    "input",
+    function () {
+      day.note = noteInput.value;
+    }
+  );
+
+
+  noteField.appendChild(noteInput);
+  panel.appendChild(noteField);
+
+
+  const clearButton = make(
+    "button",
+    "cycle-clear-day",
+    "清空这一天的详细记录"
+  );
+
+
+  clearButton.type = "button";
+
+
+  clearButton.addEventListener(
+    "click",
+    function () {
+      editingCyclePeriod.days[
+        activeCycleDayKey
+      ] = normalizeCycleDay({});
+      renderCycleDayEditor();
+    }
+  );
+
+
+  panel.appendChild(clearButton);
+  cycleDayEditor.appendChild(panel);
+
+}
+
+
+function syncCycleDraftRange() {
+
+  if (!editingCyclePeriod) {
+    return;
+  }
+
+
+  editingCyclePeriod.start =
+    cycleStartInput.value;
+
+
+  editingCyclePeriod.end =
+    cycleEndInput.value;
+
+
+  renderCycleDayEditor();
+
+}
+
+
+recordCycleCard.addEventListener(
+  "click",
+  openCycleManager
+);
+
+
+manageCycleButton.addEventListener(
+  "click",
+  function (event) {
+    event.stopPropagation();
+    openCycleManager();
+  }
+);
+
+
+cycleManagerClose.addEventListener(
+  "click",
+  closeCycleManager
+);
+
+
+cycleManagerBackdrop.addEventListener(
+  "click",
+  function (event) {
+    if (event.target === cycleManagerBackdrop) {
+      closeCycleManager();
+    }
+  }
+);
+
+
+cycleAddPeriodButton.addEventListener(
+  "click",
+  function () {
+    openCyclePeriodEditor();
+  }
+);
+
+
+cyclePeriodBackButton.addEventListener(
+  "click",
+  renderCycleManagerList
+);
+
+
+cycleCancelEditButton.addEventListener(
+  "click",
+  renderCycleManagerList
+);
+
+
+cycleStartInput.addEventListener(
+  "change",
+  syncCycleDraftRange
+);
+
+
+cycleEndInput.addEventListener(
+  "change",
+  syncCycleDraftRange
+);
+
+
+cycleSavePeriodButton.addEventListener(
+  "click",
+  function () {
+
+    syncCycleDraftRange();
+
+
+    if (
+      !editingCyclePeriod ||
+      !isValidDateKey(
+        editingCyclePeriod.start
+      ) ||
+      !isValidDateKey(
+        editingCyclePeriod.end
+      )
+    ) {
+      window.alert("请选择完整的经期日期。");
+      return;
+    }
+
+
+    if (
+      editingCyclePeriod.start >
+      editingCyclePeriod.end
+    ) {
+      window.alert("结束日期不能早于开始日期。");
+      return;
+    }
+
+
+    const allowedDates = new Set(
+      enumerateDateKeys(
+        editingCyclePeriod.start,
+        editingCyclePeriod.end
+      )
+    );
+
+
+    /*
+      经期范围缩短后，旧范围之外的每日详情已不再属于本次经期，
+      因此只在明确保存范围修改时移除这些越界日期。
+    */
+    Object.keys(
+      editingCyclePeriod.days || {}
+    ).forEach(
+      function (dateKey) {
+        if (!allowedDates.has(dateKey)) {
+          delete editingCyclePeriod.days[dateKey];
+        }
+      }
+    );
+
+
+    const normalized =
+      normalizeCyclePeriod(
+        editingCyclePeriod
+      );
+
+
+    const index =
+      calendarData.cycle.periods
+        .findIndex(
+          (period) =>
+            period.id === normalized.id
+        );
+
+
+    if (index >= 0) {
+      calendarData.cycle.periods[index] =
+        normalized;
+    } else {
+      calendarData.cycle.periods.push(
+        normalized
+      );
+    }
+
+
+    calendarData.cycle
+      .customSymptomPresets = [
+        ...new Set(cycleEditorPresets)
+      ];
+
+
+    rebuildCycleDerivedFields();
+    saveCalendarData();
+
+
+    selectedDate = dateFromKey(
+      normalized.start
+    );
+    viewYear = selectedDate.getFullYear();
+    viewMonth = selectedDate.getMonth();
+
+
+    renderCycleManagerList();
+    renderAll();
+
+  }
+);
+
+
+cycleDeletePeriodButton.addEventListener(
+  "click",
+  function () {
+
+    if (!editingCyclePeriod) {
+      return;
+    }
+
+
+    if (
+      !window.confirm(
+        "确定删除这次经期记录吗？"
+      )
+    ) {
+      return;
+    }
+
+
+    calendarData.cycle.periods =
+      calendarData.cycle.periods.filter(
+        (period) =>
+          period.id !==
+            editingCyclePeriod.id
+      );
+
+
+    rebuildCycleDerivedFields();
+    saveCalendarData();
+    renderCycleManagerList();
+    renderAll();
+
+  }
+);
+
+
+/* =========================
+   Sex 管理 / 编辑
+   ========================= */
+
+function formatSexManagerDate(
+  dateKey
+) {
+
+  const date = dateFromKey(dateKey);
+
+
+  return (
+    `${date.getFullYear()}年` +
+    `${date.getMonth() + 1}月` +
+    `${date.getDate()}日`
+  );
+
+}
+
+
+function getSexDisplayPositions(
+  record
+) {
+
+  return [
+    ...(
+      Array.isArray(record.positions)
+        ? record.positions
+            .map(getSexPositionLabel)
+            .filter(Boolean)
+        : []
+    ),
+    ...(
+      Array.isArray(record.customPositions)
+        ? record.customPositions
+            .filter(
+              (item) =>
+                typeof item === "string" &&
+                item.trim()
+            )
+        : []
+    )
+  ];
+
+}
+
+
+function renderSexManagerList() {
+
+  const dateKey =
+    toDateKey(selectedDate);
+
+
+  sexManagerTitle.textContent =
+    "亲密记录";
+
+
+  sexManagerListView.hidden = false;
+  sexRecordEditorView.hidden = true;
+
+
+  sexManagerDate.textContent =
+    formatSexManagerDate(dateKey);
+
+
+  sexManagerTotal.textContent =
+    `当天共 ${getSexTotalCount(dateKey)} 次`;
+
+
+  sexRecordList.innerHTML = "";
+
+
+  const entries =
+    getSortedSexEntries(dateKey);
+
+
+  if (!entries.length) {
+
+    sexRecordList.appendChild(
+      make(
+        "p",
+        "cycle-period-empty",
+        "当天还没有亲密记录"
+      )
+    );
+
+    return;
+
+  }
+
+
+  entries.forEach(
+    function (entry) {
+
+      const record = entry.record;
+      const button = make(
+        "button",
+        "sex-record-row"
+      );
+
+
+      button.type = "button";
+
+
+      button.appendChild(
+        make(
+          "strong",
+          "sex-record-time",
+          isValidSexTime(record.time)
+            ? record.time
+            : "未记录时间"
+        )
+      );
+
+
+      button.appendChild(
+        make(
+          "span",
+          "sex-record-primary",
+          `${getSexFormLabel(record.form)} · ` +
+            `${getSexCount(record)}次`
+        )
+      );
+
+
+      const protection =
+        getSexProtectionLabel(
+          record.protection
+        );
+
+
+      const protectionMethod =
+        resolveSexOptionId(
+          window.LiminalSexData
+            ?.protectionOptions || [],
+          record.protection,
+          "na"
+        ) === "yes"
+          ? getSexProtectionMethodLabel(
+              record.protectionMethod
+            )
+          : "";
+
+
+      button.appendChild(
+        make(
+          "span",
+          "sex-record-detail",
+          protectionMethod
+            ? `${protection} · ${protectionMethod}`
+            : protection
+        )
+      );
+
+
+      const positions =
+        getSexDisplayPositions(record);
+
+
+      if (positions.length) {
+        button.appendChild(
+          make(
+            "span",
+            "sex-record-detail",
+            positions.join(" / ")
+          )
+        );
+      }
+
+
+      if (
+        typeof record.note === "string" &&
+        record.note.trim()
+      ) {
+        button.appendChild(
+          make(
+            "span",
+            "sex-record-note",
+            record.note.trim()
+          )
+        );
+      }
+
+
+      button.addEventListener(
+        "click",
+        function () {
+          openSexRecordEditor(
+            dateKey,
+            entry.index
+          );
+        }
+      );
+
+
+      sexRecordList.appendChild(button);
+
+    }
+  );
+
+}
+
+
+function openSexManager() {
+
+  renderSexManagerList();
+  sexManagerBackdrop.hidden = false;
+
+}
+
+
+function closeSexManager() {
+
+  sexManagerBackdrop.hidden = true;
+  editingSexRecord = null;
+
+}
+
+
+function renderSexSingleOptions(
+  container,
+  options,
+  selectedValue,
+  onSelect
+) {
+
+  container.innerHTML = "";
+
+
+  options.forEach(
+    function (option) {
+
+      const button = makeCyclePill(
+        option.label,
+        option.id === selectedValue,
+        function () {
+          onSelect(option.id);
+        }
+      );
+
+
+      container.appendChild(button);
+
+    }
+  );
+
+}
+
+
+function renderSexPositionEditor() {
+
+  sexPositionOptions.innerHTML = "";
+
+
+  (
+    window.LiminalSexData
+      ?.positionPresets || []
+  ).forEach(
+    function (option) {
+
+      sexPositionOptions.appendChild(
+        makeCyclePill(
+          option.label,
+          sexEditorPositions.includes(
+            option.id
+          ),
+          function () {
+            sexEditorPositions =
+              sexEditorPositions.includes(
+                option.id
+              )
+                ? sexEditorPositions.filter(
+                    (id) => id !== option.id
+                  )
+                : [
+                    ...sexEditorPositions,
+                    option.id
+                  ];
+            renderSexPositionEditor();
+          }
+        )
+      );
+
+    }
+  );
+
+
+  const customNames = [
+    ...new Set([
+      ...sexEditorCustomPresets,
+      ...sexEditorCustomPositions
+    ])
+  ];
+
+
+  customNames.forEach(
+    function (name) {
+
+      sexPositionOptions.appendChild(
+        makeCyclePill(
+          name,
+          sexEditorCustomPositions.includes(
+            name
+          ),
+          function () {
+            sexEditorCustomPositions =
+              sexEditorCustomPositions.includes(
+                name
+              )
+                ? sexEditorCustomPositions.filter(
+                    (item) => item !== name
+                  )
+                : [
+                    ...sexEditorCustomPositions,
+                    name
+                  ];
+            renderSexPositionEditor();
+          }
+        )
+      );
+
+    }
+  );
+
+}
+
+
+function renderSexEditorControls() {
+
+  renderSexSingleOptions(
+    sexFormOptions,
+    window.LiminalSexData
+      ?.formOptions || [],
+    sexEditorForm,
+    function (value) {
+      sexEditorForm = value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  renderSexSingleOptions(
+    sexProtectionOptions,
+    window.LiminalSexData
+      ?.protectionOptions || [],
+    sexEditorProtection,
+    function (value) {
+      sexEditorProtection = value;
+
+      if (value !== "yes") {
+        sexEditorProtectionMethod = "";
+      } else if (!sexEditorProtectionMethod) {
+        sexEditorProtectionMethod = "condom";
+      }
+
+      renderSexEditorControls();
+    }
+  );
+
+
+  sexProtectionMethodField.hidden =
+    sexEditorProtection !== "yes";
+
+
+  renderSexSingleOptions(
+    sexProtectionMethodOptions,
+    window.LiminalSexData
+      ?.protectionMethods || [],
+    sexEditorProtectionMethod,
+    function (value) {
+      sexEditorProtectionMethod = value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  renderSexPositionEditor();
+
+}
+
+
+function openSexRecordEditor(
+  dateKey = toDateKey(selectedDate),
+  recordIndex = -1
+) {
+
+  const existing =
+    recordIndex >= 0
+      ? getSexRecords(dateKey)[recordIndex]
+      : null;
+
+
+  const draft = existing
+    ? normalizeSexRecordForEditor(
+        JSON.parse(
+          JSON.stringify(existing)
+        )
+      )
+    : {
+        id: createSexRecordId(),
+        time: "",
+        count: 1,
+        form: "partner",
+        protection: "yes",
+        protectionMethod: "condom",
+        positions: [],
+        customPositions: [],
+        note: ""
+      };
+
+
+  editingSexRecord = {
+    isExisting: Boolean(existing),
+    originalDate: dateKey,
+    originalIndex: recordIndex,
+    originalId:
+      typeof existing?.id === "string"
+        ? existing.id
+        : "",
+    draft: draft
+  };
+
+
+  sexEditorForm = draft.form;
+  sexEditorProtection =
+    draft.protection;
+  sexEditorProtectionMethod =
+    draft.protectionMethod;
+  sexEditorPositions = [
+    ...draft.positions
+  ];
+  sexEditorCustomPositions = [
+    ...draft.customPositions
+  ];
+  sexEditorCustomPresets = [
+    ...(calendarData
+      .sexCustomPositionPresets || [])
+  ];
+
+
+  sexDateInput.value = dateKey;
+  sexTimeInput.value = draft.time;
+  sexCountInput.value =
+    String(draft.count);
+  sexNoteInput.value = draft.note;
+  sexCustomPositionInput.value = "";
+  sexSavePositionPreset.checked = false;
+
+
+  sexDeleteRecordButton.hidden =
+    !existing;
+
+
+  sexEditorActions.classList.toggle(
+    "editing",
+    Boolean(existing)
+  );
+
+
+  sexManagerTitle.textContent =
+    existing
+      ? "编辑亲密记录"
+      : "添加亲密记录";
+
+
+  sexManagerListView.hidden = true;
+  sexRecordEditorView.hidden = false;
+
+
+  renderSexEditorControls();
+
+}
+
+
+function removeEditingSexRecord() {
+
+  if (
+    !editingSexRecord?.isExisting
+  ) {
+    return false;
+  }
+
+
+  const records = getSexRecords(
+    editingSexRecord.originalDate
+  );
+
+
+  let index = -1;
+
+
+  if (editingSexRecord.originalId) {
+    index = records.findIndex(
+      (record) =>
+        record.id ===
+          editingSexRecord.originalId
+    );
+  }
+
+
+  if (index < 0) {
+    index =
+      editingSexRecord.originalIndex;
+  }
+
+
+  if (
+    index < 0 ||
+    index >= records.length
+  ) {
+    return false;
+  }
+
+
+  records.splice(index, 1);
+
+
+  if (!records.length) {
+    delete calendarData.sex[
+      editingSexRecord.originalDate
+    ];
+  }
+
+
+  return true;
+
+}
+
+
+recordSexCard.addEventListener(
+  "click",
+  openSexManager
+);
+
+
+manageSexButton.addEventListener(
+  "click",
+  function (event) {
+    event.stopPropagation();
+    openSexManager();
+  }
+);
+
+
+sexManagerClose.addEventListener(
+  "click",
+  closeSexManager
+);
+
+
+sexManagerBackdrop.addEventListener(
+  "click",
+  function (event) {
+    if (event.target === sexManagerBackdrop) {
+      closeSexManager();
+    }
+  }
+);
+
+
+sexAddRecordButton.addEventListener(
+  "click",
+  function () {
+    openSexRecordEditor();
+  }
+);
+
+
+sexRecordBackButton.addEventListener(
+  "click",
+  renderSexManagerList
+);
+
+
+sexCancelEditButton.addEventListener(
+  "click",
+  renderSexManagerList
+);
+
+
+sexAddCustomPositionButton.addEventListener(
+  "click",
+  function () {
+
+    const name =
+      sexCustomPositionInput.value.trim();
+
+
+    if (!name) {
+      sexCustomPositionInput.focus();
+      return;
+    }
+
+
+    if (
+      !sexEditorCustomPositions.includes(name)
+    ) {
+      sexEditorCustomPositions.push(name);
+    }
+
+
+    if (
+      sexSavePositionPreset.checked &&
+      !sexEditorCustomPresets.includes(name)
+    ) {
+      sexEditorCustomPresets.push(name);
+    }
+
+
+    sexCustomPositionInput.value = "";
+    sexSavePositionPreset.checked = false;
+    renderSexPositionEditor();
+
+  }
+);
+
+
+sexSaveRecordButton.addEventListener(
+  "click",
+  function () {
+
+    const dateKey =
+      sexDateInput.value;
+
+
+    const time =
+      sexTimeInput.value;
+
+
+    const count = Number(
+      sexCountInput.value
+    );
+
+
+    if (!isValidDateKey(dateKey)) {
+      window.alert("请选择记录日期。");
+      return;
+    }
+
+
+    if (
+      time &&
+      !isValidSexTime(time)
+    ) {
+      window.alert("请输入有效的时间。");
+      return;
+    }
+
+
+    if (
+      !Number.isInteger(count) ||
+      count < 1
+    ) {
+      window.alert("次数必须是大于 0 的整数。");
+      return;
+    }
+
+
+    const record = {
+      ...editingSexRecord.draft,
+      id: editingSexRecord.draft.id,
+      time: time,
+      count: count,
+      form: sexEditorForm,
+      protection: sexEditorProtection,
+      protectionMethod:
+        sexEditorProtection === "yes"
+          ? sexEditorProtectionMethod
+          : "",
+      positions: [
+        ...new Set(sexEditorPositions)
+      ],
+      customPositions: [
+        ...new Set(
+          sexEditorCustomPositions
+        )
+      ],
+      note: sexNoteInput.value
+    };
+
+
+    if (editingSexRecord.isExisting) {
+      removeEditingSexRecord();
+    }
+
+
+    if (
+      !Array.isArray(
+        calendarData.sex[dateKey]
+      )
+    ) {
+      calendarData.sex[dateKey] = [];
+    }
+
+
+    calendarData.sex[dateKey].push(
+      record
+    );
+
+
+    calendarData
+      .sexCustomPositionPresets = [
+        ...new Set(
+          sexEditorCustomPresets
+        )
+      ];
+
+
+    selectedDate = dateFromKey(dateKey);
+    viewYear = selectedDate.getFullYear();
+    viewMonth = selectedDate.getMonth();
+
+
+    saveCalendarData();
+    renderSexManagerList();
+    renderAll();
+
+  }
+);
+
+
+sexDeleteRecordButton.addEventListener(
+  "click",
+  function () {
+
+    if (
+      !editingSexRecord?.isExisting ||
+      !window.confirm(
+        "确定删除这条亲密记录吗？"
+      )
+    ) {
+      return;
+    }
+
+
+    removeEditingSexRecord();
+    saveCalendarData();
+    renderSexManagerList();
+    renderAll();
+
+  }
+);
+
+
+/* =========================
    Body / Sleep / Sex
    ========================= */
+
+function formatBodyDiscomfort(
+  value
+) {
+
+  const discomfort =
+    normalizeBodyDiscomfort(
+      value
+    );
+
+
+  const symptom =
+    discomfort.symptom
+      .trim();
+
+
+  if (
+    !symptom
+  ) {
+
+    return "";
+
+  }
+
+
+  if (
+    discomfort.allDay
+  ) {
+
+    return (
+      `全天 · ${symptom}`
+    );
+
+  }
+
+
+  if (
+    discomfort.startTime &&
+    discomfort.endTime
+  ) {
+
+    return (
+      `${discomfort.startTime}–` +
+      `${discomfort.endTime} · ` +
+      symptom
+    );
+
+  }
+
+
+  if (
+    discomfort.startTime
+  ) {
+
+    return (
+      `${discomfort.startTime} · ` +
+      symptom
+    );
+
+  }
+
+
+  return symptom;
+
+}
+
 
 function formatBodyRecord(
   dateKey,
@@ -5818,17 +9912,46 @@ function formatBodyRecord(
       ?.[dateKey];
 
 
+  const cycleLines =
+    personId === "keshi"
+      ? getCycleDayLines(dateKey)
+      : [];
+
+
   if (
     !record
   ) {
 
-    return "暂无记录";
+    return cycleLines.length
+      ? cycleLines.join("\n")
+      : "暂无记录";
 
   }
 
 
   const lines =
     [];
+
+
+  const discomfortLines =
+    (
+      Array.isArray(
+        record.discomforts
+      )
+        ? record.discomforts
+        : []
+    )
+      .map(
+        formatBodyDiscomfort
+      )
+      .filter(Boolean);
+
+
+  const legacyPain =
+    typeof record.pain ===
+      "string"
+      ? record.pain.trim()
+      : "";
 
 
   if (
@@ -5853,13 +9976,64 @@ function formatBodyRecord(
   }
 
 
+  const visibleLegacyPain =
+    legacyPain &&
+    !(
+      discomfortLines.length &&
+      legacyPain ===
+        "无"
+    )
+      ? legacyPain
+      : "";
+
+
   if (
-    record.pain
+    visibleLegacyPain ||
+    discomfortLines.length
   ) {
 
+    if (
+      lines.length
+    ) {
+
+      lines.push(
+        ""
+      );
+
+    }
+
+
     lines.push(
-      `疼痛 ${record.pain}`
+      "身体不适"
     );
+
+
+    if (
+      visibleLegacyPain
+    ) {
+
+      lines.push(
+        visibleLegacyPain
+      );
+
+    }
+
+
+    lines.push(
+      ...discomfortLines
+    );
+
+  }
+
+
+  if (cycleLines.length) {
+
+    if (lines.length) {
+      lines.push("");
+    }
+
+
+    lines.push(...cycleLines);
 
   }
 
@@ -5868,7 +10042,19 @@ function formatBodyRecord(
     record.note
   ) {
 
+    if (
+      lines.length
+    ) {
+
+      lines.push(
+        ""
+      );
+
+    }
+
+
     lines.push(
+      "备注",
       record.note
     );
 
@@ -5986,14 +10172,12 @@ function formatSexRecord(
   dateKey
 ) {
 
-  const records =
-    calendarData.sex
-      ?.[dateKey] ||
-    [];
+  const entries =
+    getSortedSexEntries(dateKey);
 
 
   if (
-    !records.length
+    !entries.length
   ) {
 
     return "暂无记录";
@@ -6001,12 +10185,59 @@ function formatSexRecord(
   }
 
 
-  return records
+  return entries
     .map(
       function (
-        record,
+        entry,
         index
       ) {
+
+        const record =
+          entry.record;
+
+
+        const protection =
+          getSexProtectionLabel(
+            record.protection
+          );
+
+
+        const protectionMethod =
+          (
+            resolveSexOptionId(
+              window.LiminalSexData
+                ?.protectionOptions || [],
+              record.protection,
+              "na"
+            ) === "yes"
+          )
+            ? getSexProtectionMethodLabel(
+                record.protectionMethod
+              )
+            : "";
+
+
+        const positions = [
+          ...(
+            Array.isArray(record.positions)
+              ? record.positions
+                  .map(getSexPositionLabel)
+                  .filter(Boolean)
+              : []
+          ),
+          ...(
+            Array.isArray(
+              record.customPositions
+            )
+              ? record.customPositions
+                  .filter(
+                    (item) =>
+                      typeof item === "string" &&
+                      item.trim()
+                  )
+              : []
+          )
+        ];
 
         return [
 
@@ -6016,35 +10247,29 @@ function formatSexRecord(
           }`,
 
           `形式：${
-            record.form ||
-            "未记录"
+            getSexFormLabel(
+              record.form
+            )
           }`,
 
           `次数：${
-            record.count ||
-            1
+            getSexCount(record)
           }`,
 
           (
             `保护：${
-              record.protection ||
-              "未记录"
+              protection
             }${
-              record.protectionMethod
-                ? ` · ${record.protectionMethod}`
+              protectionMethod
+                ? ` · ${protectionMethod}`
                 : ""
             }`
           ),
 
           (
-            `姿势：${
-              Array.isArray(
-                record.positions
-              ) &&
-              record.positions.length
-                ? record.positions.join(
-                    " / "
-                  )
+            `体位：${
+              positions.length
+                ? positions.join(" / ")
                 : "未记录"
             }`
           )
@@ -6058,6 +10283,38 @@ function formatSexRecord(
     .join(
       "\n\n"
     );
+
+}
+
+
+function formatSexCard(
+  dateKey
+) {
+
+  const entries =
+    getSortedSexEntries(dateKey);
+
+
+  if (!entries.length) {
+    return "暂无记录";
+  }
+
+
+  return [
+    `共 ${getSexTotalCount(dateKey)} 次`,
+    "",
+    ...entries.map(
+      function (entry) {
+        const record = entry.record;
+        return (
+          `${isValidSexTime(record.time)
+            ? record.time
+            : "未记录时间"} · ` +
+          getSexFormLabel(record.form)
+        );
+      }
+    )
+  ].join("\n");
 
 }
 
@@ -6414,10 +10671,10 @@ function renderDayOverview() {
     大事：
 
     我的：
-    只看 Keshi
+    看 Keshi 与共同大事
 
     我们：
-    两个人都看
+    看两个人的全部大事
   */
 
   const allMilestones =
@@ -6437,12 +10694,9 @@ function renderDayOverview() {
             item
           ) {
 
-            return (
-              (
-                item.owner ||
-                "keshi"
-              ) ===
-                "keshi"
+            return milestoneOwnerIncludes(
+              item.owner,
+              "keshi"
             );
 
           }
@@ -6719,9 +10973,15 @@ function renderRecords() {
 
 
   recordSex.textContent =
-    formatSexRecord(
+    formatSexCard(
       dateKey
     );
+
+
+  manageSexButton.textContent =
+    getSexRecords(dateKey).length
+      ? "管理"
+      : "添加";
 
 }
 
