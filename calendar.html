@@ -1108,7 +1108,7 @@
 
 
                     <label class="body-field">
-                        <span>时间</span>
+                        <span>开始时间</span>
                         <input id="sexTimeInput" type="time">
                     </label>
 
@@ -1148,7 +1148,23 @@
 
                 <div class="body-field">
                     <span>体位</span>
+
+                    <div
+                        class="sex-position-categories"
+                        id="sexPositionCategories"
+                        aria-label="体位分类"
+                    ></div>
+
+                    <div class="sex-position-current">
+                        当前分类 · <strong id="sexPositionCategoryLabel">—</strong>
+                    </div>
+
                     <div class="cycle-pill-grid" id="sexPositionOptions"></div>
+
+                    <div class="sex-selected-block" id="sexSelectedPositionsBlock" hidden>
+                        <span>已选择</span>
+                        <div class="sex-selected-tags" id="sexSelectedPositions"></div>
+                    </div>
 
 
                     <div class="sex-custom-box">
@@ -1176,14 +1192,142 @@
                 </div>
 
 
-                <label class="body-field">
-                    <span>备注</span>
-                    <textarea
-                        id="sexNoteInput"
-                        rows="4"
-                        placeholder="记录这一次的其他内容……"
-                    ></textarea>
-                </label>
+                <button
+                    class="sex-details-toggle"
+                    id="sexDetailsToggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="sexDetailsPanel"
+                >
+                    <span>更多细节</span>
+                    <span class="sex-details-chevron" aria-hidden="true">⌄</span>
+                </button>
+
+
+                <div class="sex-details-panel" id="sexDetailsPanel" hidden>
+
+                    <div class="sex-date-time-grid">
+                        <label class="body-field">
+                            <span>结束时间</span>
+                            <input id="sexEndTimeInput" type="time">
+                        </label>
+
+                        <div class="body-field sex-duration-field">
+                            <span>自动时长</span>
+                            <output id="sexDurationOutput">未计算</output>
+                        </div>
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>地点</span>
+                        <div class="sex-option-grid" id="sexLocationOptions"></div>
+
+                        <input
+                            class="sex-inline-custom-input"
+                            id="sexCustomLocationInput"
+                            type="text"
+                            placeholder="其他地点，例如：旅行住处"
+                            aria-label="自定义地点"
+                            hidden
+                        >
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>发起</span>
+                        <div class="sex-option-grid" id="sexInitiatorOptions"></div>
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>高潮次数</span>
+
+                        <div class="sex-orgasm-grid">
+                            <div class="sex-stepper-row">
+                                <span>Keshi</span>
+                                <div class="sex-stepper" data-sex-orgasm-owner="keshi">
+                                    <button type="button" data-sex-step="-1" aria-label="减少 Keshi 高潮次数">−</button>
+                                    <output id="sexKeshiOrgasmCount">0</output>
+                                    <button type="button" data-sex-step="1" aria-label="增加 Keshi 高潮次数">＋</button>
+                                </div>
+                            </div>
+
+                            <div class="sex-stepper-row">
+                                <span>榛榛</span>
+                                <div class="sex-stepper" data-sex-orgasm-owner="luzhen">
+                                    <button type="button" data-sex-step="-1" aria-label="减少榛榛高潮次数">−</button>
+                                    <output id="sexLuzhenOrgasmCount">0</output>
+                                    <button type="button" data-sex-step="1" aria-label="增加榛榛高潮次数">＋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>玩具 / 辅助</span>
+                        <div class="cycle-pill-grid" id="sexAidOptions"></div>
+
+                        <div class="sex-custom-box sex-aid-custom-box">
+                            <input
+                                id="sexCustomAidInput"
+                                type="text"
+                                placeholder="自定义辅助"
+                                aria-label="自定义辅助"
+                            >
+
+                            <button
+                                class="cycle-add-custom"
+                                id="sexAddCustomAidButton"
+                                type="button"
+                            >
+                                ＋ 自定义
+                            </button>
+                        </div>
+
+                        <div class="sex-selected-block" id="sexSelectedAidsBlock" hidden>
+                            <span>已选择</span>
+                            <div class="sex-selected-tags" id="sexSelectedAids"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="sex-rating-grid">
+                        <div class="body-field">
+                            <span>舒适度</span>
+                            <div class="sex-scale-options" id="sexComfortOptions"></div>
+                        </div>
+
+                        <div class="body-field">
+                            <span>满意度</span>
+                            <div class="sex-scale-options" id="sexSatisfactionOptions"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>事前状态</span>
+                        <div class="cycle-pill-grid" id="sexMoodBeforeOptions"></div>
+                    </div>
+
+
+                    <div class="body-field">
+                        <span>事后状态</span>
+                        <div class="cycle-pill-grid" id="sexMoodAfterOptions"></div>
+                    </div>
+
+
+                    <label class="body-field">
+                        <span>备注</span>
+                        <textarea
+                            id="sexNoteInput"
+                            rows="4"
+                            placeholder="记录这一次的其他内容……"
+                        ></textarea>
+                    </label>
+
+                </div>
 
 
                 <footer

@@ -56,10 +56,12 @@
       </header>
 
 
-      <!-- 店铺 -->
+      <!-- =========================
+           店铺
+      ========================== -->
       <section class="shop">
 
-        <!-- Keshi固定桌 -->
+        <!-- Keshi 固定桌 -->
         <div class="keshi-corner">
 
           <div class="window">
@@ -82,7 +84,10 @@
             <div class="book">📖</div>
           </div>
 
-          <div id="keshiStatus" class="character-label">
+          <div
+            id="keshiStatus"
+            class="character-label"
+          >
             Keshi · 等你开始
           </div>
 
@@ -101,20 +106,6 @@
             <div class="chair chair-a"></div>
             <div class="chair chair-b"></div>
           </div>
-
-
-          <div
-            id="customer"
-            class="character customer"
-          >
-            <div class="head"></div>
-            <div class="body"></div>
-
-            <div id="customerStatus" class="character-label">
-              等待营业
-            </div>
-          </div>
-
 
           <div
             id="staffCharacter"
@@ -143,7 +134,6 @@
             <div class="shelf"></div>
           </div>
 
-
           <div
             id="luzhenCharacter"
             class="character luzhen"
@@ -151,26 +141,60 @@
             <div class="head"></div>
             <div class="body"></div>
 
-            <div id="luzhenStatus" class="character-label">
+            <div
+              id="luzhenStatus"
+              class="character-label"
+            >
               陆榛 · 等待营业
             </div>
           </div>
 
         </div>
 
+
+        <!--
+          顾客故意放在 customer-area 外面，
+          直接作为整个 shop 的子元素。
+
+          这样顾客才能跨越：
+          门口 → 顾客区 → 柜台 → 顾客区 → 柜台 → 门口
+        -->
+        <div
+          id="customer"
+          class="character customer customer-at-entry"
+          aria-label="顾客"
+        >
+          <div class="head"></div>
+          <div class="body"></div>
+
+          <div
+            id="customerStatus"
+            class="character-label"
+          >
+            等待营业
+          </div>
+        </div>
+
       </section>
 
 
-      <!-- 底部状态 -->
+      <!-- =========================
+           底部状态
+      ========================== -->
       <footer class="bottom-bar">
 
         <div class="session-info">
-          <span id="worldStatus">店铺还没有开始营业。</span>
+          <span id="worldStatus">
+            店铺还没有开始营业。
+          </span>
         </div>
 
         <div class="controls">
 
-          <button id="startButton" type="button">
+          <button
+            id="startButton"
+            type="button"
+          >
             开始专注
           </button>
 
@@ -216,22 +240,31 @@
 
           <div>
             <span>本轮专注</span>
-            <strong id="resultFocus">00:00:00</strong>
+            <strong id="resultFocus">
+              00:00:00
+            </strong>
           </div>
 
           <div>
             <span>接待顾客</span>
-            <strong id="resultCustomers">0</strong>
+            <strong id="resultCustomers">
+              0
+            </strong>
           </div>
 
           <div>
             <span>营业额</span>
-            <strong id="resultRevenue">₤ 0</strong>
+            <strong id="resultRevenue">
+              ₤ 0
+            </strong>
           </div>
 
         </div>
 
-        <button id="closeResultButton" type="button">
+        <button
+          id="closeResultButton"
+          type="button"
+        >
           回到店里
         </button>
 

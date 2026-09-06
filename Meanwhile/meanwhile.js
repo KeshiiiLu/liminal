@@ -21,6 +21,7 @@
   const keshiStatusEl = document.getElementById("keshiStatus");
   const luzhenStatusEl = document.getElementById("luzhenStatus");
   const customerStatusEl = document.getElementById("customerStatus");
+  const customerEl = document.getElementById("customer");
 
   const resultPanel = document.getElementById("resultPanel");
   const resultFocusEl = document.getElementById("resultFocus");
@@ -67,27 +68,37 @@
   // ========================================
 
   const CUSTOMER_PHASES = [
-    {
-      name: "进店",
-      duration: 4,
-    },
-    {
-      name: "正在看菜单",
-      duration: 6,
-    },
-    {
-      name: "等待出餐",
-      duration: 8,
-    },
-    {
-      name: "正在用餐",
-      duration: 10,
-    },
-    {
-      name: "付款",
-      duration: 3,
-    },
-  ];
+  {
+    name: "进店",
+    duration: 4,
+    position: "customer-at-entry",
+  },
+  {
+    name: "正在看菜单",
+    duration: 6,
+    position: "customer-at-menu",
+  },
+  {
+    name: "等待出餐",
+    duration: 8,
+    position: "customer-at-counter",
+  },
+  {
+    name: "正在用餐",
+    duration: 10,
+    position: "customer-at-eating",
+  },
+  {
+    name: "付款",
+    duration: 3,
+    position: "customer-at-paying",
+  },
+  {
+    name: "离店",
+    duration: 3,
+    position: "customer-at-exit",
+  },
+];
 
   let customerPhaseIndex = 0;
   let customerPhaseSeconds = 0;
@@ -212,6 +223,26 @@
   // UI
   // ========================================
 
+  function updateCustomerPosition() {
+  const positionClasses = [
+    "customer-at-entry",
+    "customer-at-menu",
+    "customer-at-counter",
+    "customer-at-eating",
+    "customer-at-paying",
+    "customer-at-exit",
+  ];
+
+  customerEl.classList.remove(...positionClasses);
+
+  const currentPhase =
+    CUSTOMER_PHASES[customerPhaseIndex];
+
+  customerEl.classList.add(
+    currentPhase.position
+  );
+}
+
   function updateUI() {
     focusTimeEl.textContent =
       formatTime(focusSeconds);
@@ -224,14 +255,16 @@
 
 
     const currentPhase =
-      CUSTOMER_PHASES[customerPhaseIndex];
+  CUSTOMER_PHASES[customerPhaseIndex];
 
-    customerStatusEl.textContent =
-      state === STATE.FOCUSED
-        ? currentPhase.name
-        : state === STATE.PAUSED
-          ? "暂停中"
-          : "等待营业";
+customerStatusEl.textContent =
+  state === STATE.FOCUSED
+    ? currentPhase.name
+    : state === STATE.PAUSED
+      ? "暂停中"
+      : "等待营业";
+
+updateCustomerPosition();
   }
 
 
@@ -350,6 +383,7 @@
 
     customerPhaseIndex = 0;
     customerPhaseSeconds = 0;
+    updateCustomerPosition();
 
     accumulatedMilliseconds = 0;
 

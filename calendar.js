@@ -158,6 +158,48 @@ let sexEditorCustomPositions =
 let sexEditorCustomPresets =
   [];
 
+
+let sexEditorPositionCategory =
+  "supine";
+
+
+let sexEditorLocation =
+  "";
+
+
+let sexEditorInitiator =
+  "";
+
+
+let sexEditorOrgasms = {
+  keshi: 0,
+  luzhen: 0
+};
+
+
+let sexEditorAids =
+  [];
+
+
+let sexEditorCustomAids =
+  [];
+
+
+let sexEditorComfort =
+  "";
+
+
+let sexEditorSatisfaction =
+  "";
+
+
+let sexEditorMoodBefore =
+  [];
+
+
+let sexEditorMoodAfter =
+  [];
+
   let sleepEditorOwner =
   "keshi";
 
@@ -1151,6 +1193,22 @@ const sexPositionOptions =
   $("sexPositionOptions");
 
 
+const sexPositionCategories =
+  $("sexPositionCategories");
+
+
+const sexPositionCategoryLabel =
+  $("sexPositionCategoryLabel");
+
+
+const sexSelectedPositionsBlock =
+  $("sexSelectedPositionsBlock");
+
+
+const sexSelectedPositions =
+  $("sexSelectedPositions");
+
+
 const sexCustomPositionInput =
   $("sexCustomPositionInput");
 
@@ -1161,6 +1219,78 @@ const sexSavePositionPreset =
 
 const sexAddCustomPositionButton =
   $("sexAddCustomPositionButton");
+
+
+const sexDetailsToggle =
+  $("sexDetailsToggle");
+
+
+const sexDetailsPanel =
+  $("sexDetailsPanel");
+
+
+const sexEndTimeInput =
+  $("sexEndTimeInput");
+
+
+const sexDurationOutput =
+  $("sexDurationOutput");
+
+
+const sexLocationOptions =
+  $("sexLocationOptions");
+
+
+const sexCustomLocationInput =
+  $("sexCustomLocationInput");
+
+
+const sexInitiatorOptions =
+  $("sexInitiatorOptions");
+
+
+const sexKeshiOrgasmCount =
+  $("sexKeshiOrgasmCount");
+
+
+const sexLuzhenOrgasmCount =
+  $("sexLuzhenOrgasmCount");
+
+
+const sexAidOptions =
+  $("sexAidOptions");
+
+
+const sexCustomAidInput =
+  $("sexCustomAidInput");
+
+
+const sexAddCustomAidButton =
+  $("sexAddCustomAidButton");
+
+
+const sexSelectedAidsBlock =
+  $("sexSelectedAidsBlock");
+
+
+const sexSelectedAids =
+  $("sexSelectedAids");
+
+
+const sexComfortOptions =
+  $("sexComfortOptions");
+
+
+const sexSatisfactionOptions =
+  $("sexSatisfactionOptions");
+
+
+const sexMoodBeforeOptions =
+  $("sexMoodBeforeOptions");
+
+
+const sexMoodAfterOptions =
+  $("sexMoodAfterOptions");
 
 
 const sexNoteInput =
@@ -2456,6 +2586,122 @@ function isValidSexTime(
 }
 
 
+function calculateSexDurationMinutes(
+  startTime,
+  endTime
+) {
+
+  if (
+    !isValidSexTime(startTime) ||
+    !isValidSexTime(endTime)
+  ) {
+    return null;
+  }
+
+
+  const [startHour, startMinute] =
+    startTime.split(":").map(Number);
+
+
+  const [endHour, endMinute] =
+    endTime.split(":").map(Number);
+
+
+  const startTotal =
+    startHour * 60 + startMinute;
+
+
+  const endTotal =
+    endHour * 60 + endMinute;
+
+
+  return (
+    endTotal >= startTotal
+      ? endTotal - startTotal
+      : endTotal + 24 * 60 - startTotal
+  );
+
+}
+
+
+function formatSexDuration(
+  record
+) {
+
+  const calculated =
+    calculateSexDurationMinutes(
+      record?.time,
+      record?.endTime
+    );
+
+
+  const stored =
+    Number(record?.durationMinutes);
+
+
+  const minutes =
+    calculated !== null
+      ? calculated
+      : (
+          Number.isInteger(stored) &&
+          stored >= 0
+            ? stored
+            : null
+        );
+
+
+  if (minutes === null) {
+    return "";
+  }
+
+
+  if (minutes < 60) {
+    return `${minutes}分钟`;
+  }
+
+
+  const hours = Math.floor(
+    minutes / 60
+  );
+
+
+  const remainder = minutes % 60;
+
+
+  return (
+    `${hours}h` +
+    (remainder ? `${remainder}m` : "")
+  );
+
+}
+
+
+function formatSexTimeRange(
+  record
+) {
+
+  const startTime =
+    isValidSexTime(record?.time)
+      ? record.time
+      : "";
+
+
+  const endTime =
+    isValidSexTime(record?.endTime)
+      ? record.endTime
+      : "";
+
+
+  if (startTime && endTime) {
+    return `${startTime}–${endTime}`;
+  }
+
+
+  return startTime || "未记录时间";
+
+}
+
+
 function getSexCount(
   record
 ) {
@@ -2576,6 +2822,157 @@ function getSexPositionLabel(
 }
 
 
+function getSexLocationLabel(
+  record
+) {
+
+  if (
+    record?.location === "other" &&
+    typeof record.customLocation === "string" &&
+    record.customLocation.trim()
+  ) {
+    return record.customLocation.trim();
+  }
+
+
+  return getSexOptionLabel(
+    window.LiminalSexData
+      ?.locationOptions || [],
+    record?.location,
+    ""
+  );
+
+}
+
+
+function normalizeSexStringList(
+  value
+) {
+
+  return [
+    ...new Set(
+      (Array.isArray(value) ? value : [])
+        .filter(
+          (item) =>
+            typeof item === "string" &&
+            item.trim()
+        )
+        .map((item) => item.trim())
+    )
+  ];
+
+}
+
+
+function normalizeSexPresetList(
+  value,
+  options
+) {
+
+  const recognized = [];
+  const custom = [];
+
+
+  normalizeSexStringList(value).forEach(
+    function (item) {
+
+      const match = options.find(
+        (option) =>
+          option.id === item ||
+          option.label === item
+      );
+
+
+      if (match) {
+        recognized.push(match.id);
+      } else {
+        custom.push(item);
+      }
+
+    }
+  );
+
+
+  return {
+    recognized: [
+      ...new Set(recognized)
+    ],
+    custom: [
+      ...new Set(custom)
+    ]
+  };
+
+}
+
+
+function normalizeSexRating(
+  value
+) {
+
+  const number = Number(value);
+
+
+  return (
+    Number.isInteger(number) &&
+    number >= 1 &&
+    number <= 5
+  )
+    ? number
+    : "";
+
+}
+
+
+function normalizeSexOrgasmCount(
+  value
+) {
+
+  const number = Number(value);
+
+
+  return (
+    Number.isInteger(number) &&
+    number >= 0
+  )
+    ? number
+    : 0;
+
+}
+
+
+function sexRecordHasDetails(
+  record
+) {
+
+  if (!record || typeof record !== "object") {
+    return false;
+  }
+
+
+  return [
+    "endTime",
+    "durationMinutes",
+    "location",
+    "customLocation",
+    "initiator",
+    "orgasms",
+    "aids",
+    "customAids",
+    "comfort",
+    "satisfaction",
+    "moodBefore",
+    "moodAfter"
+  ].some(
+    (key) =>
+      Object.prototype.hasOwnProperty.call(
+        record,
+        key
+      )
+  );
+
+}
+
+
 function normalizeSexRecordForEditor(
   value
 ) {
@@ -2607,39 +3004,47 @@ function normalizeSexRecordForEditor(
       ?.positionPresets || [];
 
 
-  const positions =
-    Array.isArray(source.positions)
-      ? source.positions
-      : [];
+  const normalizedPositions =
+    normalizeSexPresetList(
+      source.positions,
+      positionOptions
+    );
 
 
-  const recognizedPositions = [];
-  const legacyCustomPositions = [];
+  const aidOptions =
+    window.LiminalSexData
+      ?.aidPresets || [];
 
 
-  positions.forEach(
-    function (position) {
-
-      const match = positionOptions.find(
-        (option) =>
-          option.id === position ||
-          option.label === position
-      );
+  const normalizedAids =
+    normalizeSexPresetList(
+      source.aids,
+      aidOptions
+    );
 
 
-      if (match) {
-        recognizedPositions.push(match.id);
-      } else if (
-        typeof position === "string" &&
-        position.trim()
-      ) {
-        legacyCustomPositions.push(
-          position.trim()
-        );
-      }
+  const beforeOptions =
+    window.LiminalSexData
+      ?.moodBeforePresets || [];
 
-    }
-  );
+
+  const normalizedMoodBefore =
+    normalizeSexPresetList(
+      source.moodBefore,
+      beforeOptions
+    );
+
+
+  const afterOptions =
+    window.LiminalSexData
+      ?.moodAfterPresets || [];
+
+
+  const normalizedMoodAfter =
+    normalizeSexPresetList(
+      source.moodAfter,
+      afterOptions
+    );
 
 
   const protection =
@@ -2647,6 +3052,41 @@ function normalizeSexRecordForEditor(
       protectionOptions,
       source.protection,
       "na"
+    );
+
+
+  const endTime =
+    isValidSexTime(source.endTime)
+      ? source.endTime
+      : "";
+
+
+  const calculatedDuration =
+    calculateSexDurationMinutes(
+      source.time,
+      endTime
+    );
+
+
+  const storedDuration =
+    Number(source.durationMinutes);
+
+
+  const location =
+    resolveSexOptionId(
+      window.LiminalSexData
+        ?.locationOptions || [],
+      source.location,
+      ""
+    );
+
+
+  const initiator =
+    resolveSexOptionId(
+      window.LiminalSexData
+        ?.initiatorOptions || [],
+      source.initiator,
+      ""
     );
 
 
@@ -2660,6 +3100,16 @@ function normalizeSexRecordForEditor(
     time: isValidSexTime(source.time)
       ? source.time
       : "",
+    endTime: endTime,
+    durationMinutes:
+      calculatedDuration !== null
+        ? calculatedDuration
+        : (
+            Number.isInteger(storedDuration) &&
+            storedDuration >= 0
+              ? storedDuration
+              : null
+          ),
     count: getSexCount(source),
     form: resolveSexOptionId(
       formOptions,
@@ -2676,27 +3126,52 @@ function normalizeSexRecordForEditor(
           )
         : "",
     positions: [
-      ...new Set(recognizedPositions)
+      ...normalizedPositions.recognized
     ],
     customPositions: [
       ...new Set([
-        ...(
-          Array.isArray(
-            source.customPositions
-          )
-            ? source.customPositions
-            : []
-        )
-          .filter(
-            (item) =>
-              typeof item === "string" &&
-              item.trim()
-          )
-          .map(
-            (item) => item.trim()
-          ),
-        ...legacyCustomPositions
+        ...normalizeSexStringList(
+          source.customPositions
+        ),
+        ...normalizedPositions.custom
       ])
+    ],
+    location: location,
+    customLocation:
+      typeof source.customLocation === "string"
+        ? source.customLocation
+        : "",
+    initiator: initiator,
+    orgasms: {
+      keshi: normalizeSexOrgasmCount(
+        source.orgasms?.keshi
+      ),
+      luzhen: normalizeSexOrgasmCount(
+        source.orgasms?.luzhen
+      )
+    },
+    aids: normalizedAids.recognized,
+    customAids: [
+      ...new Set([
+        ...normalizeSexStringList(
+          source.customAids
+        ),
+        ...normalizedAids.custom
+      ])
+    ],
+    comfort: normalizeSexRating(
+      source.comfort
+    ),
+    satisfaction: normalizeSexRating(
+      source.satisfaction
+    ),
+    moodBefore: [
+      ...normalizedMoodBefore.recognized,
+      ...normalizedMoodBefore.custom
+    ],
+    moodAfter: [
+      ...normalizedMoodAfter.recognized,
+      ...normalizedMoodAfter.custom
     ],
     note:
       typeof source.note === "string"
@@ -9186,9 +9661,7 @@ function renderSexManagerList() {
         make(
           "strong",
           "sex-record-time",
-          isValidSexTime(record.time)
-            ? record.time
-            : "未记录时间"
+          formatSexTimeRange(record)
         )
       );
 
@@ -9201,6 +9674,21 @@ function renderSexManagerList() {
             `${getSexCount(record)}次`
         )
       );
+
+
+      const location =
+        getSexLocationLabel(record);
+
+
+      if (location) {
+        button.appendChild(
+          make(
+            "span",
+            "sex-record-detail",
+            location
+          )
+        );
+      }
 
 
       const protection =
@@ -9243,20 +9731,6 @@ function renderSexManagerList() {
             "span",
             "sex-record-detail",
             positions.join(" / ")
-          )
-        );
-      }
-
-
-      if (
-        typeof record.note === "string" &&
-        record.note.trim()
-      ) {
-        button.appendChild(
-          make(
-            "span",
-            "sex-record-note",
-            record.note.trim()
           )
         );
       }
@@ -9329,13 +9803,69 @@ function renderSexSingleOptions(
 
 function renderSexPositionEditor() {
 
+  sexPositionCategories.innerHTML = "";
   sexPositionOptions.innerHTML = "";
+  sexSelectedPositions.innerHTML = "";
 
 
-  (
+  const categories =
     window.LiminalSexData
-      ?.positionPresets || []
-  ).forEach(
+      ?.positionCategories || [];
+
+
+  const presets =
+    window.LiminalSexData
+      ?.positionPresets || [];
+
+
+  if (
+    !categories.some(
+      (category) =>
+        category.id ===
+          sexEditorPositionCategory
+    )
+  ) {
+    sexEditorPositionCategory =
+      categories[0]?.id || "other";
+  }
+
+
+  categories.forEach(
+    function (category) {
+
+      sexPositionCategories.appendChild(
+        makeCyclePill(
+          category.shortLabel ||
+            category.label,
+          category.id ===
+            sexEditorPositionCategory,
+          function () {
+            sexEditorPositionCategory =
+              category.id;
+            renderSexPositionEditor();
+          }
+        )
+      );
+
+    }
+  );
+
+
+  sexPositionCategoryLabel.textContent =
+    categories.find(
+      (category) =>
+        category.id ===
+          sexEditorPositionCategory
+    )?.label || "其他";
+
+
+  presets
+    .filter(
+      (option) =>
+        option.category ===
+          sexEditorPositionCategory
+    )
+    .forEach(
     function (option) {
 
       sexPositionOptions.appendChild(
@@ -9373,34 +9903,320 @@ function renderSexPositionEditor() {
   ];
 
 
-  customNames.forEach(
-    function (name) {
+  if (
+    sexEditorPositionCategory === "other"
+  ) {
 
-      sexPositionOptions.appendChild(
+    customNames.forEach(
+      function (name) {
+
+        sexPositionOptions.appendChild(
+          makeCyclePill(
+            name,
+            sexEditorCustomPositions.includes(
+              name
+            ),
+            function () {
+              sexEditorCustomPositions =
+                sexEditorCustomPositions.includes(
+                  name
+                )
+                  ? sexEditorCustomPositions.filter(
+                      (item) => item !== name
+                    )
+                  : [
+                      ...sexEditorCustomPositions,
+                      name
+                    ];
+              renderSexPositionEditor();
+            }
+          )
+        );
+
+      }
+    );
+
+  }
+
+
+  if (!sexPositionOptions.children.length) {
+    sexPositionOptions.appendChild(
+      make(
+        "span",
+        "sex-option-empty",
+        "可在下方添加自定义体位"
+      )
+    );
+  }
+
+
+  sexEditorPositions.forEach(
+    function (id) {
+      appendSexSelectedTag(
+        sexSelectedPositions,
+        getSexPositionLabel(id),
+        function () {
+          sexEditorPositions =
+            sexEditorPositions.filter(
+              (item) => item !== id
+            );
+          renderSexPositionEditor();
+        }
+      );
+    }
+  );
+
+
+  sexEditorCustomPositions.forEach(
+    function (name) {
+      appendSexSelectedTag(
+        sexSelectedPositions,
+        name,
+        function () {
+          sexEditorCustomPositions =
+            sexEditorCustomPositions.filter(
+              (item) => item !== name
+            );
+          renderSexPositionEditor();
+        }
+      );
+    }
+  );
+
+
+  sexSelectedPositionsBlock.hidden =
+    !sexSelectedPositions.children.length;
+
+}
+
+
+function appendSexSelectedTag(
+  container,
+  label,
+  onRemove
+) {
+
+  const button = make(
+    "button",
+    "sex-selected-tag",
+    `${label} ×`
+  );
+
+
+  button.type = "button";
+  button.setAttribute(
+    "aria-label",
+    `取消选择 ${label}`
+  );
+  button.addEventListener(
+    "click",
+    onRemove
+  );
+  container.appendChild(button);
+
+}
+
+
+function renderSexMultiOptions(
+  container,
+  options,
+  selectedValues,
+  onToggle
+) {
+
+  container.innerHTML = "";
+
+
+  options.forEach(
+    function (option) {
+      container.appendChild(
         makeCyclePill(
-          name,
-          sexEditorCustomPositions.includes(
-            name
-          ),
+          option.label,
+          selectedValues.includes(option.id),
           function () {
-            sexEditorCustomPositions =
-              sexEditorCustomPositions.includes(
-                name
-              )
-                ? sexEditorCustomPositions.filter(
-                    (item) => item !== name
-                  )
-                : [
-                    ...sexEditorCustomPositions,
-                    name
-                  ];
-            renderSexPositionEditor();
+            onToggle(option.id);
           }
         )
       );
+    }
+  );
+
+
+  selectedValues
+    .filter(
+      (value) =>
+        !options.some(
+          (option) =>
+            option.id === value ||
+            option.label === value
+        )
+    )
+    .forEach(
+      function (value) {
+        container.appendChild(
+          makeCyclePill(
+            value,
+            true,
+            function () {
+              onToggle(value);
+            }
+          )
+        );
+      }
+    );
+
+}
+
+
+function renderSexAidEditor() {
+
+  const options =
+    window.LiminalSexData
+      ?.aidPresets || [];
+
+
+  renderSexMultiOptions(
+    sexAidOptions,
+    options,
+    sexEditorAids,
+    function (value) {
+
+      if (value === "none") {
+        sexEditorAids =
+          sexEditorAids.includes("none")
+            ? []
+            : ["none"];
+        sexEditorCustomAids = [];
+      } else {
+        sexEditorAids =
+          sexEditorAids.includes(value)
+            ? sexEditorAids.filter(
+                (item) => item !== value
+              )
+            : [
+                ...sexEditorAids.filter(
+                  (item) => item !== "none"
+                ),
+                value
+              ];
+      }
+
+
+      renderSexAidEditor();
 
     }
   );
+
+
+  sexSelectedAids.innerHTML = "";
+
+
+  sexEditorAids.forEach(
+    function (id) {
+      appendSexSelectedTag(
+        sexSelectedAids,
+        getSexOptionLabel(
+          options,
+          id,
+          id
+        ),
+        function () {
+          sexEditorAids =
+            sexEditorAids.filter(
+              (item) => item !== id
+            );
+          renderSexAidEditor();
+        }
+      );
+    }
+  );
+
+
+  sexEditorCustomAids.forEach(
+    function (name) {
+      appendSexSelectedTag(
+        sexSelectedAids,
+        name,
+        function () {
+          sexEditorCustomAids =
+            sexEditorCustomAids.filter(
+              (item) => item !== name
+            );
+          renderSexAidEditor();
+        }
+      );
+    }
+  );
+
+
+  sexSelectedAidsBlock.hidden =
+    !sexSelectedAids.children.length;
+
+}
+
+
+function renderSexScaleOptions(
+  container,
+  selectedValue,
+  onSelect
+) {
+
+  container.innerHTML = "";
+
+
+  for (let value = 1; value <= 5; value += 1) {
+    const button = makeCyclePill(
+      String(value),
+      value === selectedValue,
+      function () {
+        onSelect(
+          value === selectedValue
+            ? ""
+            : value
+        );
+      }
+    );
+
+
+    button.setAttribute(
+      "aria-label",
+      `${value} / 5`
+    );
+    container.appendChild(button);
+  }
+
+}
+
+
+function setSexDetailsExpanded(
+  expanded
+) {
+
+  sexDetailsPanel.hidden = !expanded;
+  sexDetailsToggle.setAttribute(
+    "aria-expanded",
+    String(expanded)
+  );
+  sexDetailsToggle.classList.toggle(
+    "expanded",
+    expanded
+  );
+
+}
+
+
+function updateSexDurationPreview() {
+
+  const duration = formatSexDuration({
+    time: sexTimeInput.value,
+    endTime: sexEndTimeInput.value
+  });
+
+
+  sexDurationOutput.textContent =
+    duration
+      ? `时长 · ${duration}`
+      : "未计算";
 
 }
 
@@ -9456,6 +10272,108 @@ function renderSexEditorControls() {
 
   renderSexPositionEditor();
 
+
+  renderSexSingleOptions(
+    sexLocationOptions,
+    window.LiminalSexData
+      ?.locationOptions || [],
+    sexEditorLocation,
+    function (value) {
+      sexEditorLocation =
+        value === sexEditorLocation
+          ? ""
+          : value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  sexCustomLocationInput.hidden =
+    sexEditorLocation !== "other";
+
+
+  renderSexSingleOptions(
+    sexInitiatorOptions,
+    window.LiminalSexData
+      ?.initiatorOptions || [],
+    sexEditorInitiator,
+    function (value) {
+      sexEditorInitiator =
+        value === sexEditorInitiator
+          ? ""
+          : value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  sexKeshiOrgasmCount.textContent =
+    String(sexEditorOrgasms.keshi);
+
+
+  sexLuzhenOrgasmCount.textContent =
+    String(sexEditorOrgasms.luzhen);
+
+
+  renderSexAidEditor();
+
+
+  renderSexScaleOptions(
+    sexComfortOptions,
+    sexEditorComfort,
+    function (value) {
+      sexEditorComfort = value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  renderSexScaleOptions(
+    sexSatisfactionOptions,
+    sexEditorSatisfaction,
+    function (value) {
+      sexEditorSatisfaction = value;
+      renderSexEditorControls();
+    }
+  );
+
+
+  renderSexMultiOptions(
+    sexMoodBeforeOptions,
+    window.LiminalSexData
+      ?.moodBeforePresets || [],
+    sexEditorMoodBefore,
+    function (value) {
+      sexEditorMoodBefore =
+        sexEditorMoodBefore.includes(value)
+          ? sexEditorMoodBefore.filter(
+              (item) => item !== value
+            )
+          : [...sexEditorMoodBefore, value];
+      renderSexEditorControls();
+    }
+  );
+
+
+  renderSexMultiOptions(
+    sexMoodAfterOptions,
+    window.LiminalSexData
+      ?.moodAfterPresets || [],
+    sexEditorMoodAfter,
+    function (value) {
+      sexEditorMoodAfter =
+        sexEditorMoodAfter.includes(value)
+          ? sexEditorMoodAfter.filter(
+              (item) => item !== value
+            )
+          : [...sexEditorMoodAfter, value];
+      renderSexEditorControls();
+    }
+  );
+
+
+  updateSexDurationPreview();
+
 }
 
 
@@ -9479,18 +10397,35 @@ function openSexRecordEditor(
     : {
         id: createSexRecordId(),
         time: "",
+        endTime: "",
+        durationMinutes: null,
         count: 1,
         form: "partner",
         protection: "yes",
         protectionMethod: "condom",
         positions: [],
         customPositions: [],
+        location: "",
+        customLocation: "",
+        initiator: "",
+        orgasms: {
+          keshi: 0,
+          luzhen: 0
+        },
+        aids: [],
+        customAids: [],
+        comfort: "",
+        satisfaction: "",
+        moodBefore: [],
+        moodAfter: [],
         note: ""
       };
 
 
   editingSexRecord = {
     isExisting: Boolean(existing),
+    hadDetails:
+      sexRecordHasDetails(existing),
     originalDate: dateKey,
     originalIndex: recordIndex,
     originalId:
@@ -9518,13 +10453,64 @@ function openSexRecordEditor(
   ];
 
 
+  const firstSelectedPosition =
+    window.LiminalSexData
+      ?.positionPresets
+      ?.find(
+        (option) =>
+          draft.positions.includes(
+            option.id
+          )
+      );
+
+
+  sexEditorPositionCategory =
+    firstSelectedPosition?.category ||
+    (
+      draft.customPositions.length
+        ? "other"
+        : "supine"
+    );
+
+
+  sexEditorLocation = draft.location;
+  sexEditorInitiator = draft.initiator;
+  sexEditorOrgasms = {
+    keshi: draft.orgasms.keshi,
+    luzhen: draft.orgasms.luzhen
+  };
+  sexEditorAids = [...draft.aids];
+  sexEditorCustomAids = [
+    ...draft.customAids
+  ];
+  sexEditorComfort = draft.comfort;
+  sexEditorSatisfaction =
+    draft.satisfaction;
+  sexEditorMoodBefore = [
+    ...draft.moodBefore
+  ];
+  sexEditorMoodAfter = [
+    ...draft.moodAfter
+  ];
+
+
   sexDateInput.value = dateKey;
   sexTimeInput.value = draft.time;
+  sexEndTimeInput.value = draft.endTime;
   sexCountInput.value =
     String(draft.count);
   sexNoteInput.value = draft.note;
+  sexCustomLocationInput.value =
+    draft.customLocation;
   sexCustomPositionInput.value = "";
   sexSavePositionPreset.checked = false;
+  sexCustomAidInput.value = "";
+
+
+  setSexDetailsExpanded(
+    Boolean(existing) &&
+      sexRecordHasDetails(existing)
+  );
 
 
   sexDeleteRecordButton.hidden =
@@ -9695,6 +10681,112 @@ sexAddCustomPositionButton.addEventListener(
 );
 
 
+sexDetailsToggle.addEventListener(
+  "click",
+  function () {
+    setSexDetailsExpanded(
+      sexDetailsPanel.hidden
+    );
+  }
+);
+
+
+sexTimeInput.addEventListener(
+  "input",
+  updateSexDurationPreview
+);
+
+
+sexEndTimeInput.addEventListener(
+  "input",
+  updateSexDurationPreview
+);
+
+
+sexDetailsPanel.addEventListener(
+  "click",
+  function (event) {
+
+    const stepButton =
+      event.target.closest(
+        "[data-sex-step]"
+      );
+
+
+    if (!stepButton) {
+      return;
+    }
+
+
+    const stepper =
+      stepButton.closest(
+        "[data-sex-orgasm-owner]"
+      );
+
+
+    const owner =
+      stepper?.dataset
+        .sexOrgasmOwner;
+
+
+    if (
+      owner !== "keshi" &&
+      owner !== "luzhen"
+    ) {
+      return;
+    }
+
+
+    const delta = Number(
+      stepButton.dataset.sexStep
+    );
+
+
+    sexEditorOrgasms[owner] =
+      Math.max(
+        0,
+        sexEditorOrgasms[owner] + delta
+      );
+
+
+    renderSexEditorControls();
+
+  }
+);
+
+
+sexAddCustomAidButton.addEventListener(
+  "click",
+  function () {
+
+    const name =
+      sexCustomAidInput.value.trim();
+
+
+    if (!name) {
+      sexCustomAidInput.focus();
+      return;
+    }
+
+
+    if (
+      !sexEditorCustomAids.includes(name)
+    ) {
+      sexEditorCustomAids.push(name);
+    }
+
+
+    sexEditorAids =
+      sexEditorAids.filter(
+        (item) => item !== "none"
+      );
+    sexCustomAidInput.value = "";
+    renderSexAidEditor();
+
+  }
+);
+
+
 sexSaveRecordButton.addEventListener(
   "click",
   function () {
@@ -9723,6 +10815,19 @@ sexSaveRecordButton.addEventListener(
       !isValidSexTime(time)
     ) {
       window.alert("请输入有效的时间。");
+      return;
+    }
+
+
+    const endTime =
+      sexEndTimeInput.value;
+
+
+    if (
+      endTime &&
+      !isValidSexTime(endTime)
+    ) {
+      window.alert("请输入有效的结束时间。");
       return;
     }
 
@@ -9757,6 +10862,90 @@ sexSaveRecordButton.addEventListener(
       ],
       note: sexNoteInput.value
     };
+
+
+    const shouldSaveDetails =
+      !sexDetailsPanel.hidden ||
+      editingSexRecord.hadDetails;
+
+
+    const detailKeys = [
+      "endTime",
+      "durationMinutes",
+      "location",
+      "customLocation",
+      "initiator",
+      "orgasms",
+      "aids",
+      "customAids",
+      "comfort",
+      "satisfaction",
+      "moodBefore",
+      "moodAfter"
+    ];
+
+
+    detailKeys.forEach(
+      (key) => delete record[key]
+    );
+
+
+    if (shouldSaveDetails) {
+
+      const durationMinutes =
+        calculateSexDurationMinutes(
+          time,
+          endTime
+        );
+
+
+      record.endTime = endTime;
+
+
+      if (durationMinutes !== null) {
+        record.durationMinutes =
+          durationMinutes;
+      }
+
+
+      record.location =
+        sexEditorLocation;
+      record.customLocation =
+        sexEditorLocation === "other"
+          ? sexCustomLocationInput.value
+          : "";
+      record.initiator =
+        sexEditorInitiator;
+      record.orgasms = {
+        keshi:
+          sexEditorOrgasms.keshi,
+        luzhen:
+          sexEditorOrgasms.luzhen
+      };
+      record.aids = [
+        ...new Set(sexEditorAids)
+      ];
+      record.customAids = [
+        ...new Set(
+          sexEditorCustomAids
+        )
+      ];
+      record.comfort =
+        sexEditorComfort;
+      record.satisfaction =
+        sexEditorSatisfaction;
+      record.moodBefore = [
+        ...new Set(
+          sexEditorMoodBefore
+        )
+      ];
+      record.moodAfter = [
+        ...new Set(
+          sexEditorMoodAfter
+        )
+      ];
+
+    }
 
 
     if (editingSexRecord.isExisting) {
@@ -10242,8 +11431,7 @@ function formatSexRecord(
         return [
 
           `${index + 1}. ${
-            record.time ||
-            "未记录时间"
+            formatSexTimeRange(record)
           }`,
 
           `形式：${
@@ -10272,6 +11460,16 @@ function formatSexRecord(
                 ? positions.join(" / ")
                 : "未记录"
             }`
+          ),
+
+          ...(
+            getSexLocationLabel(record)
+              ? [
+                  `地点：${
+                    getSexLocationLabel(record)
+                  }`
+                ]
+              : []
           )
 
         ].join(
@@ -10306,12 +11504,33 @@ function formatSexCard(
     ...entries.map(
       function (entry) {
         const record = entry.record;
-        return (
-          `${isValidSexTime(record.time)
-            ? record.time
-            : "未记录时间"} · ` +
-          getSexFormLabel(record.form)
-        );
+        const lines = [
+          `${formatSexTimeRange(record)} · ` +
+            getSexFormLabel(record.form)
+        ];
+
+
+        const positions =
+          getSexDisplayPositions(record);
+
+
+        if (positions.length) {
+          lines.push(
+            positions.join(" / ")
+          );
+        }
+
+
+        const location =
+          getSexLocationLabel(record);
+
+
+        if (location) {
+          lines.push(location);
+        }
+
+
+        return lines.join("\n");
       }
     )
   ].join("\n");

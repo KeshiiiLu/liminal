@@ -346,8 +346,56 @@ button {
 }
 
 .customer {
-  left: 8%;
-  bottom: 12%;
+  z-index: 8;
+
+  transition:
+    left 1.2s ease,
+    bottom 1.2s ease,
+    opacity 0.4s ease;
+}
+
+
+/* 门口 */
+.customer-at-entry {
+  left: 16%;
+  bottom: 7%;
+}
+
+
+/* 第一张桌附近：看菜单 */
+.customer-at-menu {
+  left: 32%;
+  bottom: 32%;
+}
+
+
+/* 柜台：等待出餐 */
+.customer-at-counter {
+  left: 70%;
+  bottom: 23%;
+}
+
+
+/* 回桌吃饭 */
+.customer-at-eating {
+  left: 50%;
+  bottom: 37%;
+}
+
+
+/* 付款 */
+.customer-at-paying {
+  left: 77%;
+  bottom: 18%;
+}
+
+
+/* 离店 */
+.customer-at-exit {
+  left: 14%;
+  bottom: 6%;
+
+  opacity: 0;
 }
 
 .staff {
@@ -583,10 +631,6 @@ button {
 /* ========================================
    动起来
 ======================================== */
-
-.world-running .customer {
-  animation: customerIdle 2.4s ease-in-out infinite;
-}
 
 .world-running .staff {
   animation: staffIdle 2.8s ease-in-out infinite;
