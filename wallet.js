@@ -70,7 +70,10 @@ function getOwnerLabel(owner) {
 }
 
 function getTypeLabel(type) {
-  return financeData.transactionTypes.find((item) => item.id === type)?.label || "流水";
+  return [
+    ...financeData.transactionTypes,
+    ...(Array.isArray(financeData.systemTransactionTypes) ? financeData.systemTransactionTypes : [])
+  ].find((item) => item.id === type)?.label || "流水";
 }
 
 function getSourceLabel(transaction) {
@@ -99,8 +102,8 @@ function totalsForTransactions(transactions) {
   return transactions.reduce((totals, transaction) => {
     const currency = transaction.currency || "CNY";
     if (!totals[currency]) totals[currency] = { income: 0, expense: 0 };
-    if (transaction.type === "income") totals[currency].income += Number(transaction.amount) || 0;
-    if (["expense", "repayment"].includes(transaction.type)) totals[currency].expense += Number(transaction.amount) || 0;
+    totals[currency].income += finance.getStatisticalAmount(transaction, "income");
+    totals[currency].expense += finance.getStatisticalAmount(transaction, "expense");
     return totals;
   }, {});
 }
@@ -235,9 +238,9 @@ function renderStructure() {
 
 function transactionAmountText(transaction) {
   const money = formatMoney(transaction.amount, transaction.currency);
-  if (transaction.type === "income") return `+ ${money}`;
-  if (["expense", "repayment"].includes(transaction.type)) return `− ${money}`;
-  if (["transfer", "asset_transfer", "investment"].includes(transaction.type)) return `↔ ${money}`;
+  if (["income", "opening_balance", "loan_drawdown", "family_loan_drawdown"].includes(transaction.type)) return `+ ${money}`;
+  if (["expense", "repayment", "asset_acquisition"].includes(transaction.type)) return `− ${money}`;
+  if (["transfer", "asset_transfer", "investment", "capital_transfer"].includes(transaction.type)) return `↔ ${money}`;
   return money;
 }
 
@@ -253,9 +256,11 @@ function renderTransactions(container, transactions) {
     const icon = make("span", `transaction-icon ${transaction.type}`, getTypeLabel(transaction.type).slice(0, 1));
     const text = make("span", "transaction-text");
     text.appendChild(make("strong", "", transaction.title));
-    const accountText = ["transfer", "asset_transfer", "investment"].includes(transaction.type) && transaction.toAccountId
+    const accountText = ["transfer", "asset_transfer", "investment", "capital_transfer"].includes(transaction.type) && transaction.toAccountId
       ? `${getAccountLabel(transaction.fromAccountId)} → ${getAccountLabel(transaction.toAccountId)}`
-      : getAccountLabel(transaction.fromAccountId);
+      : (["income", "opening_balance", "loan_drawdown", "family_loan_drawdown"].includes(transaction.type)
+        ? getAccountLabel(transaction.toAccountId)
+        : getAccountLabel(transaction.fromAccountId));
     text.appendChild(make("span", "", `${transaction.date} ${transaction.timeOfDay} · ${accountText} · ${transaction.category}`));
     const tags = make("span", "transaction-tags");
     tags.append(make("i", "", getOwnerLabel(transaction.ledgerOwner)), make("i", "", getSourceLabel(transaction)));
@@ -400,11 +405,13 @@ function renderAssets() {
   }
 }
 
-function aggregateBreakdown(transactions, type) {
+function aggregateBreakdown(transactions, direction) {
   const result = new Map();
-  transactions.filter((transaction) => transaction.type === type).forEach((transaction) => {
+  transactions.forEach((transaction) => {
+    const statisticalAmount = finance.getStatisticalAmount(transaction, direction);
+    if (statisticalAmount <= 0) return;
     const key = `${transaction.currency}|${transaction.category || "其他"}`;
-    result.set(key, (result.get(key) || 0) + Number(transaction.amount || 0));
+    result.set(key, (result.get(key) || 0) + statisticalAmount);
   });
   return [...result.entries()].map(([key, amount]) => {
     const [currency, label] = key.split("|");
@@ -451,8 +458,8 @@ function renderAnalytics() {
   const expenseCard = make("div");
   expenseCard.append(make("span", "", "支出"), make("strong", "", formatTotals(expense)));
   summary.append(incomeCard, expenseCard);
-  renderBreakdown($("expenseBreakdown"), aggregateBreakdown(transactions, "expense"), "当前范围内还没有消费。账户内部划转不会出现在这里。");
-  renderBreakdown($("incomeBreakdown"), aggregateBreakdown(transactions, "income"), "当前范围内还没有收入。账户内部划转不会出现在这里。");
+  renderBreakdown($("expenseBreakdown"), aggregateBreakdown(transactions, "expense"), "当前范围内还没有消费。账户内部划转与资本支出不会出现在这里。");
+  renderBreakdown($("incomeBreakdown"), aggregateBreakdown(transactions, "income"), "当前范围内还没有收入。资产承接与借款放款不会出现在这里。");
   renderBalanceChanges(transactions);
   renderAssetAllocation();
   renderCashflow();
@@ -529,7 +536,7 @@ function openAccountDetail(accountId) {
   const details = make("div", "detail-list");
   const owner = make("div", "detail-row"); owner.append(make("span", "", "归属"), make("strong", "", getOwnerLabel(account.owner)));
   const purpose = make("div", "detail-row"); purpose.append(make("span", "", "用途"), make("strong", "", account.tags.join(" / ")));
-  const baseline = make("div", "detail-row"); baseline.append(make("span", "", `初始余额 · ${financeData.baselineDate}`), make("strong", "", formatMoney(finance.getState().accounts[account.id].openingBalance, account.currency)));
+  const baseline = make("div", "detail-row"); baseline.append(make("span", "", `余额锚点 · ${financeData.baselineDate}`), make("strong", "", formatMoney(account.openingBalance, account.currency)));
   details.append(owner, purpose, baseline);
   const button = make("button", "primary-small-button", "查看该账户流水");
   button.type = "button";
@@ -630,6 +637,10 @@ function renderEditorControls() {
 
 function openTransactionEditor(transactionId = "") {
   let transaction = transactionId ? finance.getTransaction(transactionId) : null;
+  if (transaction?.historical) {
+    window.alert("历史重建流水属于固定财务基准，不能在普通流水编辑器中修改。");
+    return;
+  }
   if (transaction && currentWorld === "sub" && transaction.originWorld === "main") {
     setWorld("main");
     transaction = finance.getTransaction(transactionId);

@@ -22,6 +22,16 @@ window.LiminalFinanceData = {
     { id: "repayment", label: "还款" }
   ],
 
+  // System-only historical transaction types. They can be rendered by Wallet,
+  // but are intentionally not offered in the ordinary manual-entry sheet.
+  systemTransactionTypes: [
+    { id: "opening_balance", label: "历史资产承接" },
+    { id: "loan_drawdown", label: "贷款放款" },
+    { id: "family_loan_drawdown", label: "家庭借款" },
+    { id: "asset_acquisition", label: "资产取得" },
+    { id: "capital_transfer", label: "资金调度" }
+  ],
+
   ledgerOwners: [
     { id: "keshi", label: "Keshi" },
     { id: "luzhen", label: "陆榛" },
@@ -199,7 +209,7 @@ window.LiminalFinanceData = {
       use: "家庭用车",
       currency: "CNY",
       purchaseCostRange: [640000, 650000],
-      purchasedAt: "未记录",
+      purchasedAt: "2024.06",
       vehicleLoan: 0
     }
   ],

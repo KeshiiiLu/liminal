@@ -13,7 +13,12 @@
   }
 
   const allowedTypes = new Set(
-    definitions.transactionTypes.map((item) => item.id)
+    [
+      ...definitions.transactionTypes,
+      ...(Array.isArray(definitions.systemTransactionTypes)
+        ? definitions.systemTransactionTypes
+        : [])
+    ].map((item) => item.id)
   );
 
   function createId(prefix = "wallet") {
@@ -101,11 +106,15 @@
       usedIds
     );
     const legacyDateTime = splitDateTime(source.occurredAt || source.createdAt || source.time);
-    const fromAccountId = mapLegacyAccount(
-      source.fromAccountId || source.account,
-      originWorld
-    );
     const type = allowedTypes.has(source.type) ? source.type : "expense";
+    const rawFromAccount = source.fromAccountId || source.account;
+    const fromAccountId = rawFromAccount
+      ? mapLegacyAccount(rawFromAccount, originWorld)
+      : (
+        source.toAccountId && ["income", "opening_balance", "loan_drawdown", "family_loan_drawdown"].includes(type)
+          ? ""
+          : mapLegacyAccount("", originWorld)
+      );
     const defaultOwner = originWorld === "main"
       ? "keshi"
       : mapLegacyOwner(source.account, "luzhen");
@@ -160,6 +169,7 @@
       baselineDate: definitions.baselineDate,
       accounts: createAccountState(),
       transactions: [],
+      historySeeds: {},
       migration: null
     };
   }
@@ -232,6 +242,9 @@
       baselineDate: parsed.baselineDate || definitions.baselineDate,
       initializedAt: parsed.initializedAt || new Date().toISOString(),
       accounts: ensureAccountState(parsed.accounts),
+      historySeeds: parsed.historySeeds && typeof parsed.historySeeds === "object"
+        ? { ...parsed.historySeeds }
+        : {},
       transactions: (Array.isArray(parsed.transactions) ? parsed.transactions : [])
         .map((item) => normalizeTransaction(item, item?.originWorld || "sub", usedIds))
     };
@@ -277,25 +290,118 @@
   }
 
   function transactionDeltaForAccount(transaction, accountId) {
+    if (
+      transaction?.accountDeltas &&
+      typeof transaction.accountDeltas === "object" &&
+      hasOwn(transaction.accountDeltas, accountId) &&
+      Number.isFinite(Number(transaction.accountDeltas[accountId]))
+    ) {
+      return Number(transaction.accountDeltas[accountId]);
+    }
+
     const amount = Number(transaction.amount) || 0;
-    if (transaction.type === "income") {
+    if (["income", "opening_balance", "loan_drawdown", "family_loan_drawdown"].includes(transaction.type)) {
       return (transaction.toAccountId || transaction.fromAccountId) === accountId ? amount : 0;
     }
-    if (["transfer", "asset_transfer", "investment"].includes(transaction.type)) {
+    if (["transfer", "asset_transfer", "investment", "capital_transfer"].includes(transaction.type)) {
       let delta = 0;
       if (transaction.fromAccountId === accountId) delta -= amount;
-      if (transaction.toAccountId === accountId) delta += amount;
+      if (transaction.toAccountId === accountId) {
+        delta += Number.isFinite(Number(transaction.toAmount))
+          ? Number(transaction.toAmount)
+          : amount;
+      }
       return delta;
     }
     return transaction.fromAccountId === accountId ? -amount : 0;
+  }
+
+  function getHistoryAdjustment(accountId) {
+    const adjustments = state.accounts?.[accountId]?.historyAdjustments;
+    if (!adjustments || typeof adjustments !== "object") return 0;
+    return Object.values(adjustments).reduce((sum, value) => (
+      Number.isFinite(Number(value)) ? sum + Number(value) : sum
+    ), 0);
   }
 
   function getAccountBalance(accountId, world = "sub") {
     const opening = Number(state.accounts?.[accountId]?.openingBalance) || 0;
     return getTransactionsForWorld(world).reduce(
       (total, transaction) => total + transactionDeltaForAccount(transaction, accountId),
-      opening
+      opening + getHistoryAdjustment(accountId)
     );
+  }
+
+  function getStatisticalAmount(transaction, direction) {
+    const amount = Number(transaction?.amount) || 0;
+    if (direction === "income") {
+      if (transaction?.excludeFromIncome || transaction?.type !== "income") return 0;
+      return Number.isFinite(Number(transaction.statisticalIncome))
+        ? Math.max(0, Number(transaction.statisticalIncome))
+        : amount;
+    }
+    if (direction === "expense") {
+      if (transaction?.excludeFromExpense) return 0;
+      if (Number.isFinite(Number(transaction?.expenseAmount))) {
+        return Math.max(0, Number(transaction.expenseAmount));
+      }
+      return ["expense", "repayment"].includes(transaction?.type) ? amount : 0;
+    }
+    return 0;
+  }
+
+  function seedHistoricalTransactions(seedVersion, inputs) {
+    const version = String(seedVersion || "").trim();
+    if (!version) throw new Error("Historical seed version is required.");
+    if (state.historySeeds?.[version]?.completed) {
+      return { ...state.historySeeds[version], inserted: 0, alreadySeeded: true };
+    }
+
+    const rows = Array.isArray(inputs) ? inputs : [];
+    const existingIds = new Set(state.transactions.map((item) => item.transactionId));
+    const usedIds = new Set(existingIds);
+    const inserted = rows
+      .filter((item) => item && item.transactionId && !existingIds.has(item.transactionId))
+      .map((item) => normalizeTransaction({
+        ...item,
+        originWorld: "sub",
+        owner: "luzhen",
+        historical: true,
+        seedVersion: version,
+        provenance: "reconstructed"
+      }, "sub", usedIds));
+
+    state.transactions.push(...inserted);
+
+    const seededRows = state.transactions.filter((item) => (
+      item.historical === true && item.seedVersion === version
+    ));
+    definitions.accounts.forEach((account) => {
+      const delta = seededRows.reduce(
+        (sum, transaction) => sum + transactionDeltaForAccount(transaction, account.id),
+        0
+      );
+      const accountState = state.accounts[account.id];
+      accountState.historyAdjustments = {
+        ...(accountState.historyAdjustments && typeof accountState.historyAdjustments === "object"
+          ? accountState.historyAdjustments
+          : {}),
+        [version]: -delta
+      };
+    });
+
+    const result = {
+      completed: true,
+      seededAt: new Date().toISOString(),
+      generated: rows.length,
+      inserted: inserted.length,
+      historicalCount: seededRows.length,
+      rangeStart: seededRows.reduce((value, item) => !value || item.date < value ? item.date : value, ""),
+      rangeEnd: seededRows.reduce((value, item) => !value || item.date > value ? item.date : value, "")
+    };
+    state.historySeeds = { ...(state.historySeeds || {}), [version]: result };
+    save();
+    return { ...result, alreadySeeded: false };
   }
 
   function accountVisibleInWorld(account, world) {
@@ -372,6 +478,8 @@
     getAccountBalance,
     getCurrencyTotals,
     transactionDeltaForAccount,
+    getStatisticalAmount,
+    seedHistoricalTransactions,
     upsertTransaction,
     deleteTransaction,
     mapLegacyAccount,

@@ -993,17 +993,17 @@ button {
 /* ===== 明档厨房上排 ===== */
 
 .kitchen-sink {
-  left: 32%;
+  left: 46.5%;
   top: 8%;
-  width: 8%;
+  width: 9%;
   height: 12%;
   background: #8d9694;
 }
 
 .stove-two {
-  left: 43%;
+  left: 32%;
   top: 7%;
-  width: 14%;
+  width: 13%;
   height: 14%;
   background: #8e6a4e;
 }
