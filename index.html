@@ -16,6 +16,8 @@
 
     <link rel="stylesheet" href="home.css">
   <script src="storage-migrations.js"></script>
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
 </head>
 
 <body>
@@ -352,10 +354,14 @@
                             <span>信箱</span>
                         </div>
 
-                        <div class="app-item">
-                            <div class="app-icon timeline-icon">轴</div>
-                            <span>时间轴</span>
-                        </div>
+                        <a
+                            class="app-item app-link"
+                            href="water.html"
+                            aria-label="打开喝水"
+                        >
+                            <div class="app-icon water-icon">水</div>
+                            <span>喝水</span>
+                        </a>
 
                         <div class="app-item">
                             <div class="app-icon capsule-icon">⌛</div>
@@ -550,10 +556,10 @@
         </div>
 
 
-        <div class="desktop-dots">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+        <div class="desktop-dots" aria-label="主屏幕分页">
+            <span class="dot active" role="button" tabindex="0" aria-label="第 1 页"></span>
+            <span class="dot" role="button" tabindex="0" aria-label="第 2 页"></span>
+            <span class="dot" role="button" tabindex="0" aria-label="第 3 页"></span>
         </div>
 
     </main>

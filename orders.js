@@ -355,6 +355,7 @@ function createOrderCard(order) {
         <button
           class="order-action-button"
           data-action="wallet"
+          data-liminal-nav
         >
           付款记录
         </button>
@@ -362,6 +363,7 @@ function createOrderCard(order) {
         <button
           class="order-action-button primary"
           data-action="detail"
+          data-liminal-nav
         >
           查看详情
         </button>

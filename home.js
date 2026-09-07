@@ -445,6 +445,11 @@ function updateDesktopDots() {
         index === currentPage
       );
 
+      dot.setAttribute(
+        "aria-current",
+        index === currentPage ? "page" : "false"
+      );
+
     }
   );
 

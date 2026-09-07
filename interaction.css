@@ -1,0 +1,213 @@
+/*
+ * Liminal global interaction feedback.
+ *
+ * State classes are applied by interaction.js. Individual transform
+ * properties are used so existing component transforms are not replaced.
+ */
+
+:where(
+  button,
+  a[href],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  summary,
+  label[for],
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [data-liminal-interactive],
+  [data-liminal-nav],
+  [data-liminal-action-lock],
+  [data-liminal-isolate],
+  [onclick]
+) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+:where(
+  button:not(:disabled),
+  a[href],
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  select:not(:disabled),
+  summary,
+  label[for],
+  [role="button"]:not([aria-disabled="true"]),
+  [role="link"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]),
+  [role="menuitem"]:not([aria-disabled="true"]),
+  [data-liminal-interactive]:not([aria-disabled="true"]),
+  [data-liminal-nav]:not([aria-disabled="true"]),
+  [data-liminal-action-lock]:not([aria-disabled="true"]),
+  [data-liminal-isolate]:not([aria-disabled="true"]),
+  [onclick]:not([aria-disabled="true"])
+) {
+  cursor: pointer;
+}
+
+:where(.liminal-interactive) {
+  transform-origin: center;
+  transition:
+    scale 110ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    translate 110ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    opacity 110ms ease,
+    filter 110ms ease;
+  will-change: auto;
+}
+
+.liminal-interactive.is-pressed:not(.app-item):not(.home-widget-card) {
+  translate: 0 0.5px;
+  scale: 0.97;
+  opacity: 0.9;
+  filter: brightness(0.985);
+}
+
+.liminal-interactive.home-widget-card.is-pressed {
+  translate: 0 0.5px;
+  scale: 0.988;
+  opacity: 0.94;
+  filter: brightness(0.985);
+}
+
+.liminal-interactive.app-item.is-pressed {
+  opacity: 0.94;
+}
+
+.liminal-interactive.app-item .app-icon {
+  transition:
+    scale 110ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    translate 110ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    filter 110ms ease,
+    box-shadow 110ms ease;
+}
+
+.liminal-interactive.app-item.is-pressed .app-icon {
+  translate: 0 1px;
+  scale: 0.965;
+  filter: brightness(0.985);
+  box-shadow: 0 5px 13px rgba(65, 64, 60, 0.08);
+}
+
+.liminal-interactive.is-navigating {
+  opacity: 0.94;
+  filter: brightness(1.035);
+}
+
+.liminal-interactive.app-item.is-navigating .app-icon {
+  filter: brightness(1.045);
+}
+
+.liminal-interactive.is-action-pending {
+  filter: brightness(1.02);
+}
+
+.liminal-interactive:focus-visible {
+  outline: 2px solid rgba(103, 101, 94, 0.42);
+  outline-offset: 3px;
+}
+
+.liminal-navigation-feedback {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px));
+  z-index: 2147483647;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+
+  min-height: 28px;
+  padding: 6px 11px 7px;
+  border: 1px solid rgba(75, 74, 69, 0.1);
+  border-radius: 999px;
+
+  background: rgba(244, 243, 240, 0.88);
+  color: rgba(48, 48, 45, 0.72);
+  box-shadow: 0 5px 18px rgba(43, 42, 39, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  font: 500 11px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.04em;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 100ms ease, transform 100ms ease;
+}
+
+.liminal-navigation-feedback.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.liminal-navigation-feedback__dots {
+  display: inline-flex;
+  width: 12px;
+  justify-content: space-between;
+}
+
+.liminal-navigation-feedback__dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.3;
+  animation: liminal-opening-dot 900ms ease-in-out infinite;
+}
+
+.liminal-navigation-feedback__dot:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.liminal-navigation-feedback__dot:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+@keyframes liminal-opening-dot {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+    scale: 0.82;
+  }
+
+  35% {
+    opacity: 0.8;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.liminal-interactive) {
+    transition-duration: 1ms;
+  }
+
+  .liminal-interactive.is-pressed:not(.app-item):not(.home-widget-card) {
+    translate: 0 0.25px;
+    scale: 0.985;
+  }
+
+  .liminal-interactive.app-item.is-pressed .app-icon {
+    translate: 0 0.5px;
+    scale: 0.982;
+  }
+
+  .liminal-navigation-feedback {
+    transition-duration: 1ms;
+  }
+
+  .liminal-navigation-feedback__dot {
+    animation: none;
+    opacity: 0.55;
+  }
+}

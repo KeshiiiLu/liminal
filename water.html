@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f3f0">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Liminal">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>喝水 · Liminal</title>
+
+  <link rel="stylesheet" href="water.css">
+  <script src="storage-migrations.js"></script>
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
+</head>
+
+<body>
+  <main class="water-shell">
+
+    <header class="water-header">
+      <a class="water-back" href="index.html?page=2" aria-label="返回首页">
+        ‹
+      </a>
+
+      <div class="water-title">
+        <span>WATER</span>
+        <h1>喝水</h1>
+      </div>
+
+      <button class="water-view-toggle" id="waterViewToggle" type="button">
+        历史
+      </button>
+    </header>
+
+
+    <section class="water-view" id="waterTodayView" aria-labelledby="waterTodayHeading">
+
+      <div class="water-date-heading">
+        <div>
+          <span>TODAY</span>
+          <h2 id="waterTodayHeading">今天</h2>
+        </div>
+
+        <time id="waterTodayDate"></time>
+      </div>
+
+
+      <section class="water-summary" aria-label="今日饮水进度">
+        <div class="water-total-line">
+          <strong id="waterTodayTotal">0</strong>
+          <span>ml</span>
+        </div>
+
+        <button class="water-goal-button" id="waterGoalButton" type="button" aria-label="修改每日饮水目标">
+          <span>目标</span>
+          <strong id="waterGoalLabel">2000 ml</strong>
+          <em>调整</em>
+        </button>
+
+        <div
+          class="water-progress-track"
+          role="progressbar"
+          aria-label="今日饮水进度"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="waterProgressTrack"
+        >
+          <span id="waterProgressFill"></span>
+        </div>
+
+        <div class="water-progress-meta">
+          <span id="waterProgressLabel">0%</span>
+          <span class="water-complete-mark" id="waterCompleteMark" hidden>✓ 今日已达标</span>
+        </div>
+      </section>
+
+
+      <section class="water-add-section" aria-labelledby="waterAddHeading">
+        <div class="water-section-heading">
+          <span>QUICK ADD</span>
+          <h2 id="waterAddHeading">记一杯</h2>
+        </div>
+
+        <div class="water-quick-grid">
+          <button class="water-quick-button" type="button" data-water-amount="100">+100 <small>ml</small></button>
+          <button class="water-quick-button" type="button" data-water-amount="200">+200 <small>ml</small></button>
+          <button class="water-quick-button" type="button" data-water-amount="300">+300 <small>ml</small></button>
+          <button class="water-quick-button" type="button" data-water-amount="500">+500 <small>ml</small></button>
+        </div>
+
+        <button class="water-custom-toggle" id="waterCustomToggle" type="button" aria-expanded="false">
+          自定义
+          <span>›</span>
+        </button>
+
+        <form class="water-custom-form" id="waterCustomForm" hidden>
+          <label for="waterCustomAmount">这次喝了多少</label>
+          <div>
+            <input
+              id="waterCustomAmount"
+              type="number"
+              min="1"
+              max="5000"
+              step="1"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="例如 250"
+            >
+            <span>ml</span>
+            <button type="submit">记下</button>
+          </div>
+          <p id="waterCustomError" role="alert" hidden></p>
+        </form>
+      </section>
+
+
+      <section class="water-records-section" aria-labelledby="waterRecordsHeading">
+        <div class="water-section-heading water-records-heading">
+          <div>
+            <span>TODAY'S LOG</span>
+            <h2 id="waterRecordsHeading">今日记录</h2>
+          </div>
+          <strong id="waterRecordCount">0 杯</strong>
+        </div>
+
+        <div class="water-record-list" id="waterRecordList"></div>
+      </section>
+
+    </section>
+
+
+    <section class="water-view water-history-view" id="waterHistoryView" aria-labelledby="waterHistoryHeading" hidden>
+      <div class="water-date-heading">
+        <div>
+          <span>HISTORY</span>
+          <h2 id="waterHistoryHeading">历史</h2>
+        </div>
+        <span class="water-history-note">每日总量</span>
+      </div>
+
+      <div class="water-history-list" id="waterHistoryList"></div>
+    </section>
+
+  </main>
+
+
+  <div class="water-sheet-backdrop" id="waterGoalBackdrop" hidden>
+    <section class="water-sheet" role="dialog" aria-modal="true" aria-labelledby="waterGoalTitle">
+      <div class="water-sheet-handle"></div>
+
+      <header>
+        <div>
+          <span>DAILY GOAL</span>
+          <h2 id="waterGoalTitle">每日目标</h2>
+        </div>
+        <button id="waterGoalClose" type="button" aria-label="关闭">×</button>
+      </header>
+
+      <form id="waterGoalForm">
+        <label for="waterGoalInput">每日饮水目标</label>
+        <div class="water-goal-control">
+          <input
+            id="waterGoalInput"
+            type="number"
+            min="100"
+            max="10000"
+            step="50"
+            inputmode="numeric"
+            autocomplete="off"
+          >
+          <span>ml</span>
+        </div>
+        <p id="waterGoalError" role="alert" hidden></p>
+
+        <div class="water-sheet-actions">
+          <button id="waterGoalCancel" type="button">取消</button>
+          <button class="primary" type="submit">保存</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+
+  <div class="water-toast" id="waterToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="liminal-time.js"></script>
+  <script src="water.js"></script>
+</body>
+
+</html>

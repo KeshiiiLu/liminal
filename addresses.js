@@ -735,6 +735,7 @@ function renderAddresses() {
                 <button
                   class="address-action primary"
                   data-action="select"
+                  data-liminal-nav
                 >
                   选择
                 </button>

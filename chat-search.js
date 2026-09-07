@@ -340,6 +340,11 @@ if (message.id) {
     "0"
   );
 
+  item.setAttribute(
+    "data-liminal-nav",
+    ""
+  );
+
 
   function openOriginalMessage() {
 

@@ -490,6 +490,7 @@ favoriteEntryMask.innerHTML = `
       class="favorite-entry-button"
       type="button"
       data-favorite-action="view"
+      data-liminal-nav
     >
 
       <span class="favorite-entry-text">
