@@ -13,6 +13,12 @@
   const RANGE_START = "2022-07-01";
   const RANGE_END = "2026-09-05";
   const MARKER_KEY = "liminal_wallet_luzhen_history_seed_v1";
+  const payrollConfig = window.LiminalWalletRuntimeData?.payroll;
+
+  if (!payrollConfig) {
+    console.error("Wallet history：未找到 wallet-runtime-data.js");
+    return;
+  }
 
   function hashSeed(text) {
     let hash = 2166136261;
@@ -142,22 +148,14 @@
       historicalRole: "opening_balance"
     });
 
-    const salaryGrossByWorkYear = {
-      2022: [52000, 58000, 55000, 62000, 60000, 73000],
-      2023: [62000, 64000, 67000, 65000, 70000, 76000, 62000, 69000, 78000, 66000, 72000, 99000],
-      2024: [80000, 82000, 90000, 86000, 98000, 110000, 84000, 92000, 108000, 88000, 105000, 177000],
-      2025: [100000, 105000, 118000, 110000, 160000, 160000, 140000, 130000, 100000, 80000, 101000, 216000],
-      2026: [110000, 104000, 118000, 96000, 132000, 150000, 105000, 112000, 120000, 98000, 130000, 145000]
-    };
-    const salaryNetRates = { 2022: 0.79, 2023: 0.76, 2024: 0.73, 2025: 0.71, 2026: 0.72 };
     monthRange(2022, 7, 2026, 7).forEach(({ year, month }) => {
       const salaryIndex = year === 2022 ? month - 7 : month - 1;
-      const gross = salaryGrossByWorkYear[year][salaryIndex] || 0;
+      const gross = payrollConfig.salaryGrossByWorkYear[year][salaryIndex] || 0;
       const payMonth = nextMonth(year, month);
       const payDay = 9 + Math.floor(random() * 3);
       const payDate = dateText(payMonth.year, payMonth.month, payDay);
       const centVariation = roundMoney((random() - 0.5) * 160);
-      const net = roundMoney(gross * salaryNetRates[year] + centVariation);
+      const net = roundMoney(gross * payrollConfig.salaryNetRates[year] + centVariation);
       add("salary", {
         date: payDate,
         timeOfDay: "09:18",

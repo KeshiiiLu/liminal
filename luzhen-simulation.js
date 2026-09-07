@@ -13,6 +13,9 @@
   const config =
     window.LIMINAL_LUZHEN_SIMULATION_DATA;
 
+  const time =
+    window.LiminalTime || null;
+
 
   if (
     !config
@@ -331,6 +334,59 @@
   }
 
 
+  function chooseWeighted(
+    random,
+    weightMap
+  ) {
+
+    const entries =
+      Object.entries(
+        weightMap || {}
+      ).filter(
+        function (entry) {
+
+          return Number(
+            entry[1]
+          ) > 0;
+
+        }
+      );
+
+
+    const total =
+      entries.reduce(
+        function (sum, entry) {
+
+          return sum +
+            Number(entry[1]);
+
+        },
+        0
+      );
+
+
+    if (!entries.length || total <= 0) {
+      return "";
+    }
+
+
+    let cursor =
+      random() * total;
+
+
+    for (const [key, weight] of entries) {
+      cursor -= Number(weight);
+      if (cursor <= 0) return key;
+    }
+
+
+    return entries[
+      entries.length - 1
+    ][0];
+
+  }
+
+
   function randomTime(
     random,
     range
@@ -441,6 +497,18 @@
 
     }
 
+
+    if (
+      !calendarData.simulation.luzhen.generatedWeeks ||
+      typeof calendarData.simulation.luzhen.generatedWeeks !==
+        "object" ||
+      Array.isArray(calendarData.simulation.luzhen.generatedWeeks)
+    ) {
+
+      calendarData.simulation.luzhen.generatedWeeks = {};
+
+    }
+
   }
 
 
@@ -462,6 +530,8 @@
       calendarData.simulation
         .luzhen[dateKey] = {
           scheduleResolved: false,
+          mealResolved: false,
+          shoppingResolved: false,
           sleepResolved: false,
           bodyResolved: false
         };
@@ -469,10 +539,22 @@
     }
 
 
-    return (
+    const meta =
       calendarData.simulation
-        .luzhen[dateKey]
-    );
+        .luzhen[dateKey];
+
+
+    if (typeof meta.mealResolved !== "boolean") {
+      meta.mealResolved = false;
+    }
+
+
+    if (typeof meta.shoppingResolved !== "boolean") {
+      meta.shoppingResolved = false;
+    }
+
+
+    return meta;
 
   }
 
@@ -613,7 +695,30 @@
               ? [
                   ...template.tags
                 ]
-              : []
+              : [],
+
+          eventType:
+            template.eventType ||
+            "schedule",
+
+          mealType:
+            template.mealType ||
+            "",
+
+          mealSource:
+            template.mealSource ||
+            "",
+
+          owner:
+            template.owner ||
+            "luzhen",
+
+          location:
+            template.location ||
+            "shanghai",
+
+          status:
+            "planned"
 
         });
 
@@ -650,6 +755,60 @@
     generated.forEach(
       function (event) {
 
+        if (event.eventType === "meal") {
+
+          const shared =
+            event.owner === "both";
+
+
+          calendarData.schedule[
+            dateKey
+          ].push({
+
+            eventType: "meal",
+            mealType: event.mealType,
+            mealSource: event.mealSource,
+            owner: event.owner,
+            title: event.title,
+            startTime: event.start,
+            endTime: event.end,
+            location: event.location,
+            source: "generated",
+            world: "secondary",
+            originWorld: "sub",
+            simulationId: event.id,
+            tags: event.tags,
+            status: "planned",
+            expenseContext:
+              createMealExpenseContext(
+                event.mealSource,
+                event.location,
+                event.title
+              ),
+
+            keshiTime: shared ? event.start : "",
+            keshiEndTime: shared ? event.end : "",
+            keshi: shared ? event.title : "",
+
+            luzhenTime: event.start,
+            luzhenEndTime: event.end,
+            luzhen: event.title,
+            luzhenSource: "generated",
+            luzhenSimulationId: event.id,
+            luzhenWorkload: event.workload,
+            luzhenTags: event.tags,
+            luzhenEventType: "meal",
+            luzhenMealType: event.mealType,
+            luzhenMealSource: event.mealSource,
+            luzhenLocation: event.location
+
+          });
+
+
+          return;
+
+        }
+
         calendarData.schedule[
           dateKey
         ].push({
@@ -677,7 +836,16 @@
             event.workload,
 
           luzhenTags:
-            event.tags
+            event.tags,
+
+          luzhenEventType:
+            event.eventType,
+
+          luzhenLocation:
+            event.location,
+
+          status:
+            "planned"
 
         });
 
@@ -686,6 +854,915 @@
 
 
     return generated;
+
+  }
+
+
+  function inferMealType(
+    title,
+    start
+  ) {
+
+    if (/早餐/.test(title)) return "breakfast";
+    if (/午饭|午餐/.test(title)) return "lunch";
+    if (/晚饭|晚餐|聚餐|一起做饭/.test(title)) return "dinner";
+    if (/咖啡|饮品/.test(title)) return "coffee";
+    if (/加餐|甜点/.test(title)) return "snack";
+
+
+    const minutes =
+      timeToMinutes(start);
+
+
+    if (minutes < 10 * 60 + 30) return "breakfast";
+    if (minutes < 15 * 60) return "lunch";
+    if (minutes >= 17 * 60) return "dinner";
+    return "snack";
+
+  }
+
+
+  function createMealExpenseContext(
+    mealSource,
+    location,
+    title
+  ) {
+
+    const immediateExpense =
+      [
+        "delivery",
+        "restaurant",
+        "work_meal",
+        "travel_meal"
+      ].includes(mealSource);
+
+
+    return {
+      source: mealSource,
+      immediateExpense,
+      category:
+        mealSource === "delivery"
+          ? "外卖"
+          : "餐饮",
+      title,
+      location,
+      payer: "luzhen",
+      accountHint: "cmb_daily",
+      scope: "household",
+      world: "secondary",
+      originWorld: "sub",
+      status: "context_only"
+    };
+
+  }
+
+
+  function eventOverlaps(
+    events,
+    start,
+    end
+  ) {
+
+    const startMinutes =
+      timeToMinutes(start);
+
+
+    const endMinutes =
+      timeToMinutes(end);
+
+
+    return events.some(
+      function (event) {
+
+        const eventStart =
+          timeToMinutes(event.start);
+
+
+        let eventEnd =
+          event.end
+            ? timeToMinutes(event.end)
+            : eventStart + 40;
+
+
+        if (eventEnd < eventStart) {
+          eventEnd += 1440;
+        }
+
+
+        return (
+          startMinutes < eventEnd &&
+          endMinutes > eventStart
+        );
+
+      }
+    );
+
+  }
+
+
+  function resolveMealLocation(
+    calendarData,
+    dateKey,
+    events
+  ) {
+
+    if (
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .getCalendarContext === "function"
+    ) {
+
+      return window
+        .LiminalHouseholdShopping
+        .getCalendarContext(
+          calendarData,
+          dateKey
+        ).location;
+
+    }
+
+
+    const explicit =
+      calendarData.locationState
+        ?.[dateKey];
+
+
+    if (typeof explicit === "string" && explicit) {
+      return explicit;
+    }
+
+
+    const travel =
+      events.find(
+        event =>
+          Array.isArray(event.tags) &&
+          event.tags.includes("travel")
+      );
+
+
+    return travel?.location || "shanghai";
+
+  }
+
+
+  function applyMealContextWeights(
+    weights,
+    contextKey,
+    mealType
+  ) {
+
+    const multipliers =
+      config.mealRules
+        ?.contextMultipliers
+        ?.[contextKey]
+        ?.[mealType] ||
+      {};
+
+
+    Object.entries(
+      multipliers
+    ).forEach(
+      function ([source, multiplier]) {
+
+        weights[source] =
+          Number(weights[source] || 0) *
+          Number(multiplier);
+
+      }
+    );
+
+  }
+
+
+  function uniqueMealItems(
+    values
+  ) {
+
+    return [
+      ...new Set(
+        (Array.isArray(values) ? values : [])
+          .map(value => String(value || "").trim())
+          .filter(Boolean)
+      )
+    ];
+
+  }
+
+
+  function buildMealItems(
+    calendarData,
+    dateKey,
+    mealType,
+    owner,
+    random
+  ) {
+
+    const pools =
+      config.mealRules
+        ?.itemPools
+        ?.[mealType] ||
+      {};
+
+
+    const hints =
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .getMealItemHints === "function"
+        ? window
+            .LiminalHouseholdShopping
+            .getMealItemHints(
+              calendarData,
+              dateKey,
+              mealType
+            )
+        : [];
+
+
+    const sharedPool =
+      uniqueMealItems([
+        ...hints,
+        ...(pools.shared || [])
+      ]);
+
+
+    const chooseDistinct =
+      function (pool, count) {
+
+        const remaining =
+          uniqueMealItems(pool);
+
+
+        const selected = [];
+
+
+        while (
+          remaining.length &&
+          selected.length < count
+        ) {
+
+          const index =
+            randomInt(
+              random,
+              0,
+              remaining.length - 1
+            );
+
+
+          selected.push(
+            remaining.splice(index, 1)[0]
+          );
+
+        }
+
+
+        return selected;
+
+      };
+
+
+    if (owner !== "both") {
+
+      return {
+        shared: [],
+        keshi: owner === "keshi"
+          ? chooseDistinct(
+              [
+                ...(pools.keshi || []),
+                ...sharedPool
+              ],
+              mealType === "dinner" ? 2 : 1
+            )
+          : [],
+        luzhen: owner === "luzhen"
+          ? chooseDistinct(
+              [
+                ...(pools.luzhen || []),
+                ...sharedPool
+              ],
+              mealType === "dinner" ? 2 : 1
+            )
+          : []
+      };
+
+    }
+
+
+    return {
+      shared:
+        chooseDistinct(
+          sharedPool,
+          mealType === "dinner" ? 2 : 1
+        ),
+      keshi:
+        chooseDistinct(
+          pools.keshi || [],
+          1
+        ),
+      luzhen:
+        chooseDistinct(
+          pools.luzhen || [],
+          1
+        )
+    };
+
+  }
+
+
+  function getMealLocationAtTime(
+    calendarData,
+    dateKey,
+    time,
+    fallbackLocation
+  ) {
+
+    if (
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .getLocationAtTime === "function"
+    ) {
+
+      const location =
+        window
+          .LiminalHouseholdShopping
+          .getLocationAtTime(
+            calendarData,
+            dateKey,
+            time
+          );
+
+
+      return {
+        location,
+        isShanghai:
+          [
+            "shanghai",
+            "loft",
+            "上海",
+            "上海家里"
+          ].includes(
+            String(location)
+              .toLowerCase()
+          )
+      };
+
+    }
+
+
+    return {
+      location: fallbackLocation,
+      isShanghai:
+        [
+          "shanghai",
+          "loft",
+          "上海",
+          "上海家里"
+        ].includes(
+          String(fallbackLocation)
+            .toLowerCase()
+        )
+    };
+
+  }
+
+
+  function createMealTitle(
+    mealType,
+    mealSource
+  ) {
+
+    const mealLabel =
+      config.mealRules
+        ?.types
+        ?.[mealType]
+        ?.label ||
+      "用餐";
+
+
+    const prefixes = {
+      home: "Loft",
+      delivery: "外卖",
+      restaurant: "外出",
+      work_meal: "工作",
+      project_meal: "项目方",
+      travel_meal: "出差"
+    };
+
+
+    return `${prefixes[mealSource] || ""}${mealLabel}`;
+
+  }
+
+
+  function generateMeals(
+    calendarData,
+    dateKey
+  ) {
+
+    const rules =
+      config.mealRules;
+
+
+    if (!rules) return [];
+
+
+    const random =
+      createRandom(
+        `${dateKey}|meals|v${config.version}`
+      );
+
+
+    const date =
+      dateFromKey(dateKey);
+
+
+    const events =
+      getLuzhenScheduleEvents(
+        calendarData,
+        dateKey
+      );
+
+
+    const existingMealTypes =
+      new Set(
+        events
+          .filter(
+            event =>
+              event.eventType === "meal" ||
+              event.tags.includes("meal")
+          )
+          .map(
+            event =>
+              event.mealType ||
+              inferMealType(
+                event.title,
+                event.start
+              )
+          )
+      );
+
+
+    const workload =
+      calculateWorkload(events);
+
+
+    const workEvents =
+      events.filter(
+        event =>
+          event.eventType !== "meal"
+      );
+
+
+    const locationState =
+      resolveMealLocation(
+        calendarData,
+        dateKey,
+        events
+      );
+
+
+    const isShanghai =
+      [
+        "shanghai",
+        "loft",
+        "上海",
+        "上海家里"
+      ].includes(
+        String(locationState)
+          .toLowerCase()
+      );
+
+
+    const latestWorkEnd =
+      workEvents.reduce(
+        function (latest, event) {
+
+          const value =
+            event.end || event.start;
+
+
+          return value > latest
+            ? value
+            : latest;
+
+        },
+        "00:00"
+      );
+
+
+    const context = {
+      highIntensity:
+        workload >= 4 ||
+        workEvents.length >= 4,
+      institutionDay:
+        workEvents.some(
+          event =>
+            /医院|机构|接诊/.test(
+              event.title
+            )
+        ),
+      externalProject:
+        workEvents.some(
+          event =>
+            /项目|讲座|培训|大学活动/.test(
+              event.title
+            )
+        ),
+      fridayEarlyFinish:
+        date.getDay() === 5 &&
+        timeToMinutes(
+          latestWorkEnd
+        ) <= 17 * 60 + 45,
+      sunday:
+        date.getDay() === 0
+    };
+
+
+    const generated = [];
+
+
+    Object.entries(
+      rules.types
+    ).forEach(
+      function ([mealType, rule]) {
+
+        if (
+          existingMealTypes.has(mealType) ||
+          random() > rule.probability
+        ) {
+          return;
+        }
+
+
+        const weights = {
+          ...(rules.sources[mealType] || {})
+        };
+
+
+        Object.entries(context)
+          .filter(entry => entry[1])
+          .forEach(
+            entry =>
+              applyMealContextWeights(
+                weights,
+                entry[0],
+                mealType
+              )
+          );
+
+
+        if (!isShanghai) {
+          Object.keys(weights).forEach(
+            source => {
+              weights[source] = 0;
+            }
+          );
+          weights.travel_meal = 5;
+          weights.project_meal =
+            context.externalProject
+              ? 2
+              : 0.6;
+        }
+
+
+        let mealSource =
+          chooseWeighted(
+            random,
+            weights
+          );
+
+
+        if (!mealSource) return;
+
+
+        const duration =
+          randomInt(
+            random,
+            rule.durationRange[0],
+            rule.durationRange[1]
+          );
+
+
+        let start = "";
+        let end = "";
+
+
+        for (
+          let attempt = 0;
+          attempt < 28;
+          attempt += 1
+        ) {
+
+          const candidate =
+            randomTime(
+              random,
+              rule.timeRange
+            );
+
+
+          const candidateEnd =
+            minutesToTime(
+              timeToMinutes(candidate) +
+              duration
+            );
+
+
+          if (
+            !eventOverlaps(
+              [
+                ...events,
+                ...generated
+              ],
+              candidate,
+              candidateEnd
+            )
+          ) {
+            start = candidate;
+            end = candidateEnd;
+            break;
+          }
+
+        }
+
+
+        if (!start) return;
+
+
+        const mealLocation =
+          getMealLocationAtTime(
+            calendarData,
+            dateKey,
+            start,
+            locationState
+          );
+
+
+        if (!mealLocation.isShanghai) {
+          mealSource =
+            context.externalProject
+              ? "project_meal"
+              : "travel_meal";
+        }
+
+
+        let owner = "luzhen";
+
+
+        if (
+          mealLocation.isShanghai &&
+          mealSource === "home" &&
+          (
+            mealType === "dinner" ||
+            date.getDay() === 0 ||
+            date.getDay() === 6
+          ) &&
+          random() < 0.72
+        ) {
+          owner = "both";
+        }
+
+
+        const location =
+          !mealLocation.isShanghai
+            ? String(mealLocation.location)
+            : mealSource === "home"
+              ? "loft"
+              : "shanghai";
+
+
+        const mealItems =
+          buildMealItems(
+            calendarData,
+            dateKey,
+            mealType,
+            owner,
+            random
+          );
+
+
+        const event = {
+          id:
+            `luzhen_meal_${dateKey}_${mealType}`,
+          eventType: "meal",
+          mealType,
+          mealSource,
+          title:
+            createMealTitle(
+              mealType,
+              mealSource
+            ),
+          owner,
+          start,
+          end,
+          location,
+          source: "generated",
+          world: "secondary",
+          originWorld: "sub",
+          workload: 0,
+          mealItems,
+          tags: [
+            "life",
+            "meal",
+            mealType,
+            mealSource,
+            ...(owner === "both"
+              ? ["together"]
+              : [])
+          ]
+        };
+
+
+        generated.push(event);
+
+      }
+    );
+
+
+    if (
+      !Array.isArray(
+        calendarData.schedule[
+          dateKey
+        ]
+      )
+    ) {
+      calendarData.schedule[dateKey] = [];
+    }
+
+
+    generated.forEach(
+      function (event) {
+
+        const shared =
+          event.owner === "both";
+
+
+        calendarData.schedule[
+          dateKey
+        ].push({
+          eventType: "meal",
+          mealType: event.mealType,
+          mealSource: event.mealSource,
+          owner: event.owner,
+          title: event.title,
+          startTime: event.start,
+          endTime: event.end,
+          location: event.location,
+          source: "generated",
+          world: "secondary",
+          originWorld: "sub",
+          simulationId: event.id,
+          tags: event.tags,
+          status: "planned",
+          expenseContext:
+            createMealExpenseContext(
+              event.mealSource,
+              event.location,
+              event.title
+            ),
+          mealItems: {
+            shared: [...event.mealItems.shared],
+            keshi: [...event.mealItems.keshi],
+            luzhen: [...event.mealItems.luzhen]
+          },
+          keshiTime: shared ? event.start : "",
+          keshiEndTime: shared ? event.end : "",
+          keshi: shared ? event.title : "",
+          luzhenTime: event.start,
+          luzhenEndTime: event.end,
+          luzhen: event.title,
+          luzhenSource: "generated",
+          luzhenSimulationId: event.id,
+          luzhenWorkload: 0,
+          luzhenTags: event.tags,
+          luzhenEventType: "meal",
+          luzhenMealType: event.mealType,
+          luzhenMealSource: event.mealSource,
+          luzhenLocation: event.location,
+          luzhenMealItems: {
+            shared: [...event.mealItems.shared],
+            keshi: [...event.mealItems.keshi],
+            luzhen: [...event.mealItems.luzhen]
+          }
+        });
+
+      }
+    );
+
+
+    return generated;
+
+  }
+
+
+  function resolveMeals(
+    calendarData,
+    dateKey,
+    meta
+  ) {
+
+    const rows =
+      Array.isArray(
+        calendarData.schedule
+          ?.[dateKey]
+      )
+        ? calendarData.schedule[dateKey]
+        : [];
+
+
+    let itemsChanged =
+      false;
+
+
+    rows.forEach(
+      function (row, index) {
+
+        const isMeal =
+          row.eventType === "meal" ||
+          row.luzhenEventType === "meal";
+
+
+        if (
+          !isMeal ||
+          (
+            row.mealItems &&
+            typeof row.mealItems === "object"
+          )
+        ) {
+          return;
+        }
+
+
+        const mealType =
+          row.mealType ||
+          row.luzhenMealType ||
+          inferMealType(
+            row.title ||
+              row.luzhen ||
+              row.keshi ||
+              "",
+            row.startTime ||
+              row.luzhenTime ||
+              row.keshiTime ||
+              "12:00"
+          );
+
+
+        const owner =
+          row.owner ||
+          (
+            row.keshi &&
+            row.luzhen
+              ? "both"
+              : row.keshi
+                ? "keshi"
+                : "luzhen"
+          );
+
+
+        const random =
+          createRandom(
+            `${dateKey}|meal-items|${index}|v${config.version}`
+          );
+
+
+        row.mealItems =
+          buildMealItems(
+            calendarData,
+            dateKey,
+            mealType,
+            owner,
+            random
+          );
+
+
+        row.luzhenMealItems = {
+          shared: [...row.mealItems.shared],
+          keshi: [...row.mealItems.keshi],
+          luzhen: [...row.mealItems.luzhen]
+        };
+
+
+        itemsChanged =
+          true;
+
+      }
+    );
+
+    if (meta.mealResolved) {
+      return itemsChanged;
+    }
+
+
+    generateMeals(
+      calendarData,
+      dateKey
+    );
+
+
+    meta.mealResolved = true;
+    return true;
 
   }
 
@@ -772,10 +1849,49 @@
               row.luzhen,
 
             workload:
-              Number(
-                row.luzhenWorkload ||
-                0.8
+              Number.isFinite(
+                Number(
+                  row.luzhenWorkload
+                )
+              )
+                ? Number(
+                    row.luzhenWorkload
+                  )
+                : 0.8,
+
+            eventType:
+              row.eventType ||
+              row.luzhenEventType ||
+              (
+                (
+                  Array.isArray(
+                    row.luzhenTags
+                  ) &&
+                  row.luzhenTags.includes(
+                    "meal"
+                  )
+                ) ||
+                /早餐|午饭|午餐|晚饭|晚餐|聚餐|一起做饭|咖啡|饮品|加餐|甜点/.test(
+                  row.luzhen
+                )
+                  ? "meal"
+                  : "schedule"
               ),
+
+            mealType:
+              row.mealType ||
+              row.luzhenMealType ||
+              "",
+
+            mealSource:
+              row.mealSource ||
+              row.luzhenMealSource ||
+              "",
+
+            location:
+              row.location ||
+              row.luzhenLocation ||
+              "",
 
             tags:
               Array.isArray(
@@ -1298,8 +2414,16 @@
         .workloadMultiplier;
 
 
+    const workEventCount =
+      events.filter(
+        event =>
+          event.eventType === "schedule" &&
+          Number(event.workload) > 0
+      ).length;
+
+
     if (
-      events.length >=
+      workEventCount >=
         config.bodyRules
           .manyEventsThreshold
     ) {
@@ -1527,6 +2651,49 @@
 
 
     if (
+      resolveMeals(
+        calendarData,
+        dateKey,
+        meta
+      )
+    ) {
+
+      changed = true;
+
+    }
+
+
+    if (
+      !meta.shoppingResolved &&
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .ensureDate === "function"
+    ) {
+
+      const shoppingResult =
+        window
+          .LiminalHouseholdShopping
+          .ensureDate(
+            calendarData,
+            dateKey
+          );
+
+
+      meta.shoppingResolved = true;
+
+
+      changed = true;
+
+
+      if (shoppingResult.changed) {
+        changed = true;
+      }
+
+    }
+
+
+    if (
       resolveSleep(
         calendarData,
         dateKey,
@@ -1559,10 +2726,118 @@
   }
 
 
+  function ensureWeek(
+    calendarData,
+    anchorDateKey
+  ) {
+
+    if (
+      !calendarData ||
+      !anchorDateKey ||
+      !time ||
+      typeof time.mondayWeekRange !== "function"
+    ) {
+      return {
+        changed: false,
+        generated: false,
+        reason: "time_utility_unavailable"
+      };
+    }
+
+
+    ensureContainers(calendarData);
+
+
+    const range =
+      time.mondayWeekRange(anchorDateKey);
+
+
+    const weeklyState =
+      calendarData.simulation.luzhen.generatedWeeks;
+
+
+    const existing =
+      weeklyState[range.start];
+
+
+    if (
+      existing?.completed === true &&
+      existing.weekEnd === range.end
+    ) {
+      calendarData.simulation.luzhen.calendarGenerationState = {
+        generatedWeekStart: range.start,
+        generatedWeekEnd: range.end,
+        generatedAt: existing.generatedAt,
+        version: existing.version
+      };
+      return {
+        changed: false,
+        generated: false,
+        weekStart: range.start,
+        weekEnd: range.end
+      };
+    }
+
+
+    let changed = false;
+
+
+    time.enumerateDateKeys(range.start, range.end).forEach(
+      function (dateKey) {
+
+        if (ensureDate(calendarData, dateKey)) {
+          changed = true;
+        }
+
+      }
+    );
+
+
+    const generatedAt =
+      new Date().toISOString();
+
+
+    weeklyState[range.start] = {
+      weekStart: range.start,
+      weekEnd: range.end,
+      generatedAt,
+      version: config.version,
+      completed: true
+    };
+
+
+    calendarData.simulation.luzhen.calendarGenerationState = {
+      generatedWeekStart: range.start,
+      generatedWeekEnd: range.end,
+      generatedAt,
+      version: config.version
+    };
+
+
+    return {
+      changed: true,
+      generated: true,
+      weekStart: range.start,
+      weekEnd: range.end,
+      contentChanged: changed
+    };
+
+  }
+
+
   window.LiminalLuzhenSimulation = {
 
     ensureDate:
-      ensureDate
+      ensureDate,
+
+    ensureWeek:
+      ensureWeek,
+
+    generateMeals:
+      generateMeals,
+
+    getLuzhenScheduleEvents:
+      getLuzhenScheduleEvents
 
   };
 

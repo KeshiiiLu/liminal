@@ -71,7 +71,12 @@ window.LIMINAL_LUZHEN_SIMULATION_DATA = {
           durationRange: [50, 85],
           probability: 0.68,
           workload: 0.1,
-          tags: ["social", "meal"]
+          tags: ["social", "meal"],
+          eventType: "meal",
+          mealType: "lunch",
+          mealSource: "work_meal",
+          owner: "luzhen",
+          location: "shanghai"
         },
         {
           title: "会议 / 讨论",
@@ -149,7 +154,12 @@ window.LIMINAL_LUZHEN_SIMULATION_DATA = {
           durationRange: [90, 150],
           probability: 0.52,
           workload: 0.25,
-          tags: ["social", "meal"]
+          tags: ["social", "meal"],
+          eventType: "meal",
+          mealType: "dinner",
+          mealSource: "restaurant",
+          owner: "luzhen",
+          location: "shanghai"
         }
       ]
     },
@@ -188,7 +198,12 @@ window.LIMINAL_LUZHEN_SIMULATION_DATA = {
           durationRange: [55, 95],
           probability: 0.66,
           workload: 0.0,
-          tags: ["life", "meal", "together"]
+          tags: ["life", "meal", "together"],
+          eventType: "meal",
+          mealType: "dinner",
+          mealSource: "home",
+          owner: "both",
+          location: "loft"
         }
       ]
     },
@@ -269,6 +284,196 @@ window.LIMINAL_LUZHEN_SIMULATION_DATA = {
           tags: ["exercise"]
         }
       ]
+    }
+
+  },
+
+
+  /* =========================
+     Meal 生活事件规则
+     概率和倾向集中在数据层，渲染层只负责显示。
+     ========================= */
+
+  mealRules: {
+
+    types: {
+      breakfast: {
+        label: "早餐",
+        timeRange: ["07:10", "09:30"],
+        durationRange: [20, 40],
+        probability: 0.94
+      },
+      lunch: {
+        label: "午饭",
+        timeRange: ["11:40", "13:40"],
+        durationRange: [30, 60],
+        probability: 0.98
+      },
+      dinner: {
+        label: "晚饭",
+        timeRange: ["18:00", "20:30"],
+        durationRange: [40, 85],
+        probability: 0.97
+      },
+      snack: {
+        label: "加餐",
+        timeRange: ["15:00", "17:20"],
+        durationRange: [10, 25],
+        probability: 0.18
+      },
+      coffee: {
+        label: "咖啡 / 饮品",
+        timeRange: ["09:40", "16:40"],
+        durationRange: [10, 30],
+        probability: 0.24
+      }
+    },
+
+    sources: {
+      breakfast: {
+        home: 5.2,
+        delivery: 0.45,
+        restaurant: 0.25,
+        work_meal: 0.2
+      },
+      lunch: {
+        home: 2.1,
+        delivery: 1.3,
+        restaurant: 0.65,
+        work_meal: 1.15,
+        project_meal: 0.45,
+        travel_meal: 0.2
+      },
+      dinner: {
+        home: 3.4,
+        delivery: 0.9,
+        restaurant: 1.0,
+        work_meal: 0.25,
+        project_meal: 0.4,
+        travel_meal: 0.2
+      },
+      snack: {
+        home: 2.0,
+        delivery: 0.3,
+        restaurant: 0.25,
+        work_meal: 0.7
+      },
+      coffee: {
+        home: 1.6,
+        delivery: 0.2,
+        restaurant: 0.75,
+        work_meal: 1.0
+      }
+    },
+
+    itemPools: {
+      breakfast: {
+        shared: [
+          "烤面包",
+          "原味酸奶",
+          "蓝莓",
+          "脆苹果",
+          "咖啡"
+        ],
+        keshi: [
+          "黄油松饼",
+          "鸡蛋",
+          "苹果蕉"
+        ],
+        luzhen: [
+          "可生食鸡蛋",
+          "奶酪",
+          "葡萄柚"
+        ]
+      },
+      lunch: {
+        shared: [
+          "乌冬面",
+          "牛肉片",
+          "西兰花",
+          "菌菇",
+          "小馄饨"
+        ],
+        keshi: [
+          "照烧鸡腿",
+          "鸡胸肉",
+          "米饭"
+        ],
+        luzhen: [
+          "海鱼",
+          "豆腐",
+          "荞麦面"
+        ]
+      },
+      dinner: {
+        shared: [
+          "乌冬面",
+          "豆腐",
+          "菌菇",
+          "娃娃菜",
+          "葡萄柚"
+        ],
+        keshi: [
+          "照烧鸡腿",
+          "牛腩",
+          "牛肉片"
+        ],
+        luzhen: [
+          "三文鱼刺身",
+          "海鱼",
+          "日式小菜"
+        ]
+      },
+      snack: {
+        shared: [
+          "原味酸奶",
+          "蓝莓",
+          "坚果",
+          "高可可黑巧"
+        ],
+        keshi: [
+          "杨桃味果冻",
+          "原味薯片"
+        ],
+        luzhen: [
+          "抹茶巧克力",
+          "葡萄柚"
+        ]
+      },
+      coffee: {
+        shared: [
+          "咖啡",
+          "茶",
+          "气泡水"
+        ],
+        keshi: [
+          "奶咖"
+        ],
+        luzhen: [
+          "黑咖啡"
+        ]
+      }
+    },
+
+    contextMultipliers: {
+      highIntensity: {
+        lunch: { delivery: 2.3, home: 0.55 },
+        dinner: { home: 1.25, delivery: 1.2 }
+      },
+      institutionDay: {
+        lunch: { work_meal: 2.4, restaurant: 1.25, home: 0.08 }
+      },
+      externalProject: {
+        lunch: { project_meal: 2.8, work_meal: 1.4, home: 0.1 },
+        dinner: { project_meal: 2.5, restaurant: 1.5, home: 0.35 }
+      },
+      fridayEarlyFinish: {
+        dinner: { home: 2.2, restaurant: 0.75 }
+      },
+      sunday: {
+        lunch: { home: 1.9, restaurant: 1.3, work_meal: 0 },
+        dinner: { home: 2.0, restaurant: 1.2, work_meal: 0 }
+      }
     }
 
   },

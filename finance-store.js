@@ -124,6 +124,14 @@
     const time = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(source.timeOfDay || "")
       ? source.timeOfDay
       : legacyDateTime.time;
+    const sourceName = source.source || "manual";
+    const realityToday = window.LiminalTime?.todayKey?.() || date;
+    const status = ["planned", "pending", "calculated", "realized", "posted", "cancelled"]
+      .includes(source.status)
+      ? source.status
+      : sourceName === "manual" && date > realityToday
+        ? "planned"
+        : "posted";
 
     return {
       ...source,
@@ -140,7 +148,8 @@
       fromAccountId,
       toAccountId: source.toAccountId ? mapLegacyAccount(source.toAccountId, originWorld) : "",
       ledgerOwner: mapLegacyOwner(source.ledgerOwner || source.account, defaultOwner),
-      source: source.source || "manual",
+      source: sourceName,
+      status,
       date,
       timeOfDay: time,
       occurredAt: `${date}T${time}:00`,
@@ -290,6 +299,8 @@
   }
 
   function transactionDeltaForAccount(transaction, accountId) {
+    if (!transactionIsPosted(transaction)) return 0;
+
     if (
       transaction?.accountDeltas &&
       typeof transaction.accountDeltas === "object" &&
@@ -316,6 +327,11 @@
     return transaction.fromAccountId === accountId ? -amount : 0;
   }
 
+  function transactionIsPosted(transaction) {
+    const status = transaction?.status || transaction?.postingStatus || "posted";
+    return !["planned", "pending", "calculated", "cancelled"].includes(status);
+  }
+
   function getHistoryAdjustment(accountId) {
     const adjustments = state.accounts?.[accountId]?.historyAdjustments;
     if (!adjustments || typeof adjustments !== "object") return 0;
@@ -333,6 +349,7 @@
   }
 
   function getStatisticalAmount(transaction, direction) {
+    if (!transactionIsPosted(transaction)) return 0;
     const amount = Number(transaction?.amount) || 0;
     if (direction === "income") {
       if (transaction?.excludeFromIncome || transaction?.type !== "income") return 0;
@@ -478,6 +495,7 @@
     getAccountBalance,
     getCurrencyTotals,
     transactionDeltaForAccount,
+    transactionIsPosted,
     getStatisticalAmount,
     seedHistoricalTransactions,
     upsertTransaction,

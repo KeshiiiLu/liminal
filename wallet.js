@@ -1,6 +1,13 @@
 const finance = window.LiminalFinance;
 const financeData = window.LiminalFinanceData;
 
+if (
+  window.LiminalWalletDailyEngine &&
+  typeof window.LiminalWalletDailyEngine.run === "function"
+) {
+  window.LiminalWalletDailyEngine.run();
+}
+
 if (!finance || !financeData) {
   throw new Error("Wallet finance data layer failed to load.");
 }
@@ -24,6 +31,19 @@ function make(tag, className = "", text = "") {
 }
 
 function localDateParts(date = new Date()) {
+  if (window.LiminalTime) {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: window.LiminalTime.TIME_ZONE,
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return {
+      date: window.LiminalTime.todayKey(date),
+      time: `${values.hour}:${values.minute}`
+    };
+  }
   return {
     date: [
       date.getFullYear(),
@@ -78,16 +98,28 @@ function getTypeLabel(type) {
 
 function getSourceLabel(transaction) {
   if (currentWorld === "sub" && transaction.originWorld === "main") return "现实同步";
-  const labels = { manual: "手动", mall: "Mall", chat: "Chat", system: "系统", main_world_sync: "现实同步" };
+  const labels = {
+    manual: "手动",
+    mall: "Mall",
+    chat: "Chat",
+    system: "系统",
+    main_world_sync: "现实同步",
+    calendar_household_shopping: "Calendar 采购",
+    manual_food_calendar: "今日食签",
+    calendar_meal: "Calendar Meal",
+    calendar_expense: "Calendar 日程",
+    calendar_reimbursement: "差旅报销",
+    payroll_engine: "Payroll"
+  };
   return labels[transaction.source] || transaction.source || "手动";
 }
 
 function isInPeriod(transaction, period) {
   if (period === "all") return true;
-  const now = new Date();
+  const todayKey = window.LiminalTime?.todayKey?.() || localDateParts().date;
   const prefix = period === "month"
-    ? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
-    : String(now.getFullYear());
+    ? todayKey.slice(0, 7)
+    : todayKey.slice(0, 4);
   return String(transaction.date || "").startsWith(prefix);
 }
 
@@ -264,10 +296,17 @@ function renderTransactions(container, transactions) {
     text.appendChild(make("span", "", `${transaction.date} ${transaction.timeOfDay} · ${accountText} · ${transaction.category}`));
     const tags = make("span", "transaction-tags");
     tags.append(make("i", "", getOwnerLabel(transaction.ledgerOwner)), make("i", "", getSourceLabel(transaction)));
+    if (transaction.missionLabel) tags.appendChild(make("i", "", transaction.missionLabel));
     text.appendChild(tags);
     const money = make("strong", `transaction-money ${transaction.type}`, transactionAmountText(transaction));
     row.append(icon, text, money);
-    row.addEventListener("click", () => openTransactionEditor(transaction.transactionId));
+    row.addEventListener("click", () => {
+      if (Array.isArray(transaction.basket) && transaction.basket.length) {
+        openTransactionDetail(transaction.transactionId);
+      } else {
+        openTransactionEditor(transaction.transactionId);
+      }
+    });
     container.appendChild(row);
   });
 }
@@ -500,10 +539,11 @@ function renderAssetAllocation() {
 function renderCashflow() {
   const container = $("cashflowChart");
   container.innerHTML = "";
-  const now = new Date();
+  const todayKey = window.LiminalTime?.todayKey?.() || localDateParts().date;
+  const [todayYear, todayMonth] = todayKey.split("-").map(Number);
   const months = [];
   for (let offset = 5; offset >= 0; offset -= 1) {
-    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const date = new Date(todayYear, todayMonth - 1 - offset, 1);
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
     const rows = getVisibleTransactions("all").filter((item) => item.date.startsWith(key) && item.currency === "CNY");
     const summary = totalsForTransactions(rows).CNY || { income: 0, expense: 0 };
@@ -553,6 +593,48 @@ function detailRow(label, value) {
   const row = make("div", "detail-row");
   row.append(make("span", "", label), make("strong", "", value));
   return row;
+}
+
+function openTransactionDetail(transactionId) {
+  const transaction = finance.getTransaction(transactionId);
+  if (!transaction) return;
+  $("transactionDetailTitle").textContent = transaction.title || "流水详情";
+  const content = $("transactionDetailContent");
+  content.innerHTML = "";
+
+  const hero = make("div", "detail-hero transaction-detail-hero");
+  hero.append(
+    make("span", "", `${getTypeLabel(transaction.type)} · ${getSourceLabel(transaction)}`),
+    make("strong", `transaction-money ${transaction.type}`, transactionAmountText(transaction))
+  );
+
+  const list = make("div", "detail-list");
+  list.append(
+    detailRow("时间", `${transaction.date} · ${transaction.timeOfDay}`),
+    detailRow("商户", transaction.merchant || transaction.title || "—"),
+    detailRow("采购目的", transaction.missionLabel || transaction.subcategory || transaction.category || "—"),
+    detailRow("地点", transaction.location || "—"),
+    detailRow("付款账户", getAccountLabel(transaction.fromAccountId))
+  );
+
+  const basket = make("section", "transaction-basket");
+  basket.appendChild(make("span", "", transaction.sourceType === "food_calendar" ? "今日食签" : "购物篮"));
+  const basketList = make("ul");
+  transaction.basket.forEach((item) => {
+    const value = item && typeof item === "object" ? item.name : item;
+    if (!value) return;
+    const row = make("li");
+    row.appendChild(make("strong", "", String(value)));
+    if (item && typeof item === "object" && Number.isFinite(Number(item.amount)) && Number(item.amount) > 0) {
+      row.appendChild(make("span", "", formatMoney(item.amount, transaction.currency || "CNY")));
+    }
+    basketList.appendChild(row);
+  });
+  if (!basketList.children.length) basketList.appendChild(make("li", "empty-state", "没有可显示的购物篮内容。"));
+  basket.appendChild(basketList);
+
+  content.append(hero, list, basket);
+  $("transactionDetailBackdrop").hidden = false;
 }
 
 function openAssetDetail(assetId) {
@@ -706,6 +788,10 @@ function saveTransaction() {
     toAccountId,
     ledgerOwner: currentWorld === "main" ? "keshi" : $("transactionOwner").value,
     source: existing?.source || "manual",
+    status: (existing?.source || "manual") === "manual" &&
+      date > (window.LiminalTime?.todayKey?.() || localDateParts().date)
+      ? "planned"
+      : "posted",
     date,
     timeOfDay,
     occurredAt: `${date}T${timeOfDay}:00`,
@@ -759,9 +845,10 @@ $("transactionEditorClose").addEventListener("click", closeTransactionEditor);
 $("transactionCancel").addEventListener("click", closeTransactionEditor);
 $("transactionSave").addEventListener("click", saveTransaction);
 $("transactionDelete").addEventListener("click", deleteEditingTransaction);
+$("transactionDetailClose").addEventListener("click", () => { $("transactionDetailBackdrop").hidden = true; });
 $("accountDetailClose").addEventListener("click", () => { $("accountDetailBackdrop").hidden = true; });
 $("assetDetailClose").addEventListener("click", () => { $("assetDetailBackdrop").hidden = true; });
-[$("transactionEditorBackdrop"), $("accountDetailBackdrop"), $("assetDetailBackdrop")].forEach((backdrop) => backdrop.addEventListener("click", (event) => {
+[$("transactionEditorBackdrop"), $("transactionDetailBackdrop"), $("accountDetailBackdrop"), $("assetDetailBackdrop")].forEach((backdrop) => backdrop.addEventListener("click", (event) => {
   if (event.target === backdrop) backdrop.hidden = true;
 }));
 

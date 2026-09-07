@@ -64,8 +64,25 @@ function make(
    当前日期
    ========================= */
 
+const realityTodayKey =
+  window.LiminalTime
+    ?.todayKey?.() ||
+  (() => {
+    const now = new Date();
+    return [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0")
+    ].join("-");
+  })();
+
+
 const today =
-  new Date();
+  (() => {
+    const [year, month, day] =
+      realityTodayKey.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  })();
 
 
 let viewYear =
@@ -90,6 +107,14 @@ let dayOverviewMode =
 
 let scheduleEditorOwner =
   "keshi";
+
+
+let foodCalendarEditorSource =
+  "home";
+
+
+let activeMealDetail =
+  null;
 
 
 let editingSchedule =
@@ -1002,6 +1027,82 @@ const addScheduleButton =
   $("addScheduleButton");
 
 
+const foodCalendarText =
+  $("foodCalendarText");
+
+
+const editFoodCalendarButton =
+  $("editFoodCalendarButton");
+
+
+const foodCalendarEditorBackdrop =
+  $("foodCalendarEditorBackdrop");
+
+
+const foodCalendarEditorClose =
+  $("foodCalendarEditorClose");
+
+
+const foodCalendarDateInput =
+  $("foodCalendarDateInput");
+
+
+const foodCalendarTextInput =
+  $("foodCalendarTextInput");
+
+
+const foodCalendarPriceInput =
+  $("foodCalendarPriceInput");
+
+
+const foodCalendarWalletEnabled =
+  $("foodCalendarWalletEnabled");
+
+
+const foodCalendarSourceButtons =
+  $$(".food-calendar-source");
+
+
+const foodCalendarClear =
+  $("foodCalendarClear");
+
+
+const foodCalendarCancel =
+  $("foodCalendarCancel");
+
+
+const foodCalendarSave =
+  $("foodCalendarSave");
+
+
+const mealDetailBackdrop =
+  $("mealDetailBackdrop");
+
+
+const mealDetailTitle =
+  $("mealDetailTitle");
+
+
+const mealDetailMeta =
+  $("mealDetailMeta");
+
+
+const mealDetailContent =
+  $("mealDetailContent");
+
+
+const mealDetailClose =
+  $("mealDetailClose");
+
+
+const mealDetailDismiss =
+  $("mealDetailDismiss");
+
+
+const mealDetailEdit =
+  $("mealDetailEdit");
+
+
 const scheduleEditorBackdrop =
   $("scheduleEditorBackdrop");
 
@@ -1744,6 +1845,20 @@ function isValidDateKey(
     !Number.isNaN(date.getTime()) &&
     toDateKey(date) === value
   );
+
+}
+
+
+if (
+  !calendarData.foodCalendar ||
+  typeof calendarData.foodCalendar !==
+    "object" ||
+  Array.isArray(
+    calendarData.foodCalendar
+  )
+) {
+
+  calendarData.foodCalendar = {};
 
 }
 
@@ -3634,8 +3749,905 @@ function renderMonth() {
 
 
 /* =========================
+   今日食签
+   ========================= */
+
+function setFoodCalendarEditorSource(
+  source
+) {
+
+  foodCalendarEditorSource =
+    [
+      "home",
+      "delivery",
+      "other"
+    ].includes(source)
+      ? source
+      : "home";
+
+
+  foodCalendarSourceButtons.forEach(
+    function (button) {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.foodSource ===
+          foodCalendarEditorSource
+      );
+
+    }
+  );
+
+}
+
+
+function getFoodCalendarRecord(
+  dateKey
+) {
+
+  const record =
+    calendarData.foodCalendar
+      ?.[dateKey];
+
+
+  return record &&
+    typeof record === "object"
+      ? record
+      : null;
+
+}
+
+
+function renderFoodCalendar() {
+
+  const dateKey =
+    toDateKey(
+      selectedDate
+    );
+
+
+  const record =
+    getFoodCalendarRecord(
+      dateKey
+    );
+
+
+  const text =
+    typeof record?.text === "string"
+      ? record.text.trim()
+      : "";
+
+
+  foodCalendarText.textContent =
+    text ||
+    "今天还没有记录";
+
+
+  foodCalendarText.classList.toggle(
+    "is-empty",
+    !text
+  );
+
+}
+
+
+function openFoodCalendarEditor() {
+
+  const dateKey =
+    toDateKey(
+      selectedDate
+    );
+
+
+  const record =
+    getFoodCalendarRecord(
+      dateKey
+    );
+
+
+  foodCalendarDateInput.value =
+    dateKey;
+
+
+  foodCalendarTextInput.value =
+    typeof record?.text === "string"
+      ? record.text
+      : "";
+
+
+  setFoodCalendarEditorSource(
+    record?.mealSource ||
+    "home"
+  );
+
+
+  foodCalendarPriceInput.value =
+    record &&
+    Object.prototype.hasOwnProperty.call(
+      record,
+      "price"
+    ) &&
+    record.price !== null &&
+    Number.isFinite(
+      Number(record.price)
+    )
+      ? String(record.price)
+      : "";
+
+
+  foodCalendarWalletEnabled.checked =
+    record?.walletEnabled === true;
+
+
+  foodCalendarEditorBackdrop.hidden =
+    false;
+
+
+  setTimeout(
+    function () {
+
+      foodCalendarTextInput.focus();
+
+    },
+    50
+  );
+
+}
+
+
+function closeFoodCalendarEditor() {
+
+  foodCalendarEditorBackdrop.hidden =
+    true;
+
+}
+
+
+editFoodCalendarButton.addEventListener(
+  "click",
+  openFoodCalendarEditor
+);
+
+
+foodCalendarEditorClose.addEventListener(
+  "click",
+  closeFoodCalendarEditor
+);
+
+
+foodCalendarCancel.addEventListener(
+  "click",
+  closeFoodCalendarEditor
+);
+
+
+foodCalendarEditorBackdrop.addEventListener(
+  "click",
+  function (event) {
+
+    if (
+      event.target ===
+        foodCalendarEditorBackdrop
+    ) {
+      closeFoodCalendarEditor();
+    }
+
+  }
+);
+
+
+foodCalendarSourceButtons.forEach(
+  function (button) {
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        setFoodCalendarEditorSource(
+          button.dataset.foodSource
+        );
+
+      }
+    );
+
+  }
+);
+
+
+foodCalendarClear.addEventListener(
+  "click",
+  function () {
+
+    const dateKey =
+      foodCalendarDateInput.value;
+
+
+    if (!dateKey) return;
+
+
+    const existing =
+      getFoodCalendarRecord(
+        dateKey
+      );
+
+
+    if (
+      existing &&
+      !window.confirm(
+        "清空这一天的今日食签吗？"
+      )
+    ) {
+      return;
+    }
+
+
+    if (
+      existing &&
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .removeFoodCalendarWallet ===
+          "function"
+    ) {
+
+      const removal =
+        window
+          .LiminalHouseholdShopping
+          .removeFoodCalendarWallet(
+            dateKey,
+            existing
+          );
+
+
+      if (
+        removal.status !==
+          "removed"
+      ) {
+
+        window.alert(
+          "关联的 Wallet 流水暂时无法安全移除，今日食签没有被清空。"
+        );
+
+
+        return;
+
+      }
+
+    }
+
+
+    delete calendarData
+      .foodCalendar[dateKey];
+
+
+    saveCalendarData();
+    closeFoodCalendarEditor();
+    renderFoodCalendar();
+
+  }
+);
+
+
+foodCalendarSave.addEventListener(
+  "click",
+  function () {
+
+    const dateKey =
+      foodCalendarDateInput.value;
+
+
+    const text =
+      foodCalendarTextInput
+        .value
+        .trim();
+
+
+    const rawPrice =
+      foodCalendarPriceInput
+        .value
+        .trim();
+
+
+    const price =
+      rawPrice === ""
+        ? null
+        : Number(rawPrice);
+
+
+    if (!dateKey || !text) {
+      window.alert(
+        "请填写今日食签。"
+      );
+      return;
+    }
+
+
+    if (
+      price !== null &&
+      (
+        !Number.isFinite(price) ||
+        price < 0
+      )
+    ) {
+
+      window.alert(
+        "价格必须为空、0 或有效的正数。"
+      );
+
+
+      return;
+
+    }
+
+
+    const existing =
+      getFoodCalendarRecord(
+        dateKey
+      );
+
+
+    const record = {
+      ...(existing || {}),
+      text,
+      source: "manual",
+      anchorType: "food_calendar",
+      world: "secondary",
+      originWorld: "sub",
+      mealSource:
+        foodCalendarEditorSource,
+      delivery:
+        foodCalendarEditorSource ===
+          "delivery",
+      mealType: "",
+      price,
+      walletEnabled:
+        foodCalendarWalletEnabled
+          .checked === true,
+      walletTransactionId:
+        existing
+          ?.walletTransactionId ||
+        null,
+      note:
+        typeof existing?.note ===
+          "string"
+          ? existing.note
+          : "",
+      expenseContext: {
+        source:
+          foodCalendarEditorSource,
+        immediateExpense:
+          foodCalendarWalletEnabled
+            .checked === true &&
+          Number(price) > 0,
+        category:
+          foodCalendarEditorSource ===
+            "delivery"
+              ? "外卖"
+              : "",
+        scope: "household",
+        world: "secondary",
+        originWorld: "sub",
+        status:
+          foodCalendarWalletEnabled
+            .checked === true &&
+          Number(price) > 0
+            ? "wallet_enabled"
+            : "context_only"
+      },
+      walletDraft: null
+    };
+
+
+    if (
+      window.LiminalHouseholdShopping &&
+      typeof window
+        .LiminalHouseholdShopping
+        .syncFoodCalendarWallet ===
+          "function"
+    ) {
+
+      window
+        .LiminalHouseholdShopping
+        .syncFoodCalendarWallet(
+          dateKey,
+          record,
+          existing
+        );
+
+    }
+
+
+    calendarData.foodCalendar[
+      dateKey
+    ] = record;
+
+
+    selectedDate =
+      dateFromKey(dateKey);
+
+
+    viewYear =
+      selectedDate.getFullYear();
+
+
+    viewMonth =
+      selectedDate.getMonth();
+
+
+    saveCalendarData();
+    closeFoodCalendarEditor();
+    renderAll();
+
+  }
+);
+
+
+/* =========================
    日程
    ========================= */
+
+function inferScheduleMealType(
+  title,
+  time
+) {
+
+  if (/早餐/.test(title)) return "breakfast";
+  if (/午饭|午餐/.test(title)) return "lunch";
+  if (/晚饭|晚餐|聚餐|一起做饭/.test(title)) return "dinner";
+  if (/咖啡|饮品/.test(title)) return "coffee";
+  if (/加餐|甜点/.test(title)) return "snack";
+
+
+  if (time < "10:30") return "breakfast";
+  if (time < "15:00") return "lunch";
+  if (time >= "17:00") return "dinner";
+  return "snack";
+
+}
+
+
+function normalizeMealItems(
+  value
+) {
+
+  const source =
+    value &&
+    typeof value === "object"
+      ? value
+      : {};
+
+
+  const normalize =
+    list =>
+      Array.isArray(list)
+        ? [
+            ...new Set(
+              list
+                .map(item => String(item || "").trim())
+                .filter(Boolean)
+            )
+          ]
+        : [];
+
+
+  return {
+    shared: normalize(source.shared),
+    keshi: normalize(source.keshi),
+    luzhen: normalize(source.luzhen)
+  };
+
+}
+
+
+function getScheduleRowEvent(
+  row,
+  rowIndex,
+  owner
+) {
+
+  if (
+    row.eventType === "meal" &&
+    row.startTime &&
+    row.title
+  ) {
+
+    return {
+      time: row.startTime,
+      endTime: row.endTime || "",
+      title: row.title,
+      rowIndex,
+      owner: row.owner || owner || "luzhen",
+      eventType: "meal",
+      mealType:
+        row.mealType ||
+        inferScheduleMealType(
+          row.title,
+          row.startTime
+        ),
+      mealSource: row.mealSource || "",
+      location: row.location || "",
+      mealItems:
+        normalizeMealItems(
+          row.mealItems ||
+          row.luzhenMealItems
+        ),
+      source: row.source || "",
+      id:
+        row.id ||
+        row.simulationId ||
+        ""
+    };
+
+  }
+
+
+  const isLuzhen =
+    owner === "luzhen";
+
+
+  const title =
+    isLuzhen
+      ? row.luzhen
+      : row.keshi;
+
+
+  const time =
+    isLuzhen
+      ? row.luzhenTime
+      : row.keshiTime;
+
+
+  if (!title || !time) return null;
+
+
+  const endTime =
+    isLuzhen
+      ? row.luzhenEndTime || ""
+      : row.keshiEndTime || "";
+
+
+  const tags =
+    isLuzhen
+      ? row.luzhenTags
+      : row.keshiTags;
+
+
+  const explicitType =
+    isLuzhen
+      ? row.luzhenEventType
+      : row.keshiEventType;
+
+
+  const eventType =
+    explicitType ||
+    (
+      (
+        Array.isArray(tags) &&
+        tags.includes("meal")
+      ) ||
+      /早餐|午饭|午餐|晚饭|晚餐|聚餐|一起做饭|咖啡|饮品|加餐|甜点/.test(
+        title
+      )
+        ? "meal"
+        : "schedule"
+    );
+
+
+  return {
+    time,
+    endTime,
+    title,
+    rowIndex,
+    owner:
+      eventType === "meal" &&
+      Array.isArray(tags) &&
+      tags.includes("together")
+        ? "both"
+        : owner,
+    eventType,
+    mealType:
+      eventType === "meal"
+        ? (
+            (
+              isLuzhen
+                ? row.luzhenMealType
+                : row.keshiMealType
+            ) ||
+            inferScheduleMealType(
+              title,
+              time
+            )
+          )
+        : "",
+    mealSource:
+      (
+        isLuzhen
+          ? row.luzhenMealSource
+          : row.keshiMealSource
+      ) ||
+      "",
+    location:
+      (
+        isLuzhen
+          ? row.luzhenLocation
+          : row.keshiLocation
+      ) ||
+      "",
+    mealItems:
+      normalizeMealItems(
+        (
+          isLuzhen
+            ? row.luzhenMealItems
+            : row.keshiMealItems
+        ) ||
+        row.mealItems
+      ),
+    source:
+      (
+        isLuzhen
+          ? row.luzhenSource
+          : row.keshiSource
+      ) ||
+      row.source ||
+      "",
+    id:
+      row.id ||
+      row.simulationId ||
+      row.luzhenSimulationId ||
+      ""
+  };
+
+}
+
+
+function closeMealDetail() {
+
+  mealDetailBackdrop.hidden =
+    true;
+
+
+  activeMealDetail =
+    null;
+
+}
+
+
+function appendMealDetailGroup(
+  label,
+  items,
+  className = ""
+) {
+
+  const values =
+    Array.isArray(items)
+      ? items.filter(Boolean)
+      : [];
+
+
+  if (!values.length) return;
+
+
+  const section =
+    make(
+      "section",
+      `meal-detail-group ${className}`.trim()
+    );
+
+
+  section.appendChild(
+    make(
+      "span",
+      "",
+      label
+    )
+  );
+
+
+  const list =
+    make(
+      "ul"
+    );
+
+
+  values.forEach(
+    function (value) {
+
+      list.appendChild(
+        make(
+          "li",
+          "",
+          value
+        )
+      );
+
+    }
+  );
+
+
+  section.appendChild(list);
+  mealDetailContent.appendChild(section);
+
+}
+
+
+function openMealDetail(
+  target,
+  event
+) {
+
+  const details =
+    event ||
+    getScheduleEvent(target);
+
+
+  if (
+    !details ||
+    details.eventType !== "meal"
+  ) {
+    openScheduleEditor(target);
+    return;
+  }
+
+
+  activeMealDetail = {
+    ...target
+  };
+
+
+  mealDetailTitle.textContent =
+    details.title ||
+    "用餐详情";
+
+
+  mealDetailMeta.innerHTML =
+    "";
+
+
+  const sourceLabels = {
+    home: "Loft / 家中",
+    delivery: "外卖",
+    restaurant: "外出餐厅",
+    work_meal: "工作餐",
+    project_meal: "项目方工作餐",
+    travel_meal: "出差用餐",
+    food_calendar: "今日食签"
+  };
+
+
+  [
+    details.endTime
+      ? `${details.startTime || details.time}–${details.endTime}`
+      : details.startTime || details.time,
+    sourceLabels[details.mealSource] || details.mealSource,
+    details.location
+  ].filter(Boolean).forEach(
+    function (value) {
+
+      mealDetailMeta.appendChild(
+        make(
+          "span",
+          "",
+          value
+        )
+      );
+
+    }
+  );
+
+
+  mealDetailContent.innerHTML =
+    "";
+
+
+  const mealItems =
+    normalizeMealItems(
+      details.mealItems
+    );
+
+
+  appendMealDetailGroup(
+    "一起吃",
+    mealItems.shared
+  );
+
+
+  appendMealDetailGroup(
+    "Keshi",
+    mealItems.keshi
+  );
+
+
+  appendMealDetailGroup(
+    "陆榛",
+    mealItems.luzhen
+  );
+
+
+  const foodRecord =
+    getFoodCalendarRecord(
+      target.dateKey
+    );
+
+
+  if (
+    typeof foodRecord?.text === "string" &&
+    foodRecord.text.trim()
+  ) {
+
+    appendMealDetailGroup(
+      "今日食签",
+      foodRecord.text
+        .trim()
+        .split(/\n+/),
+      "food-calendar"
+    );
+
+  }
+
+
+  if (!mealDetailContent.children.length) {
+
+    mealDetailContent.appendChild(
+      make(
+        "p",
+        "meal-detail-empty",
+        "这顿饭还没有记录具体内容。"
+      )
+    );
+
+  }
+
+
+  mealDetailBackdrop.hidden =
+    false;
+
+}
+
+
+mealDetailClose.addEventListener(
+  "click",
+  closeMealDetail
+);
+
+
+mealDetailDismiss.addEventListener(
+  "click",
+  closeMealDetail
+);
+
+
+mealDetailBackdrop.addEventListener(
+  "click",
+  function (event) {
+
+    if (
+      event.target ===
+        mealDetailBackdrop
+    ) {
+      closeMealDetail();
+    }
+
+  }
+);
+
+
+mealDetailEdit.addEventListener(
+  "click",
+  function () {
+
+    if (!activeMealDetail) return;
+
+
+    const target = {
+      ...activeMealDetail
+    };
+
+
+    closeMealDetail();
+    openScheduleEditor(target);
+
+  }
+);
 
 function renderSchedule() {
 
@@ -3695,6 +4707,10 @@ function renderSchedule() {
     [];
 
 
+  const sharedEvents =
+    [];
+
+
   sourceRows.forEach(
     function (
       row,
@@ -3702,57 +4718,62 @@ function renderSchedule() {
     ) {
 
       if (
-        row.keshiTime &&
-        row.keshi
+        row.eventType === "meal"
       ) {
 
-        keshiEvents.push({
-
-          time:
-            row.keshiTime,
-
-          endTime:
-            row.keshiEndTime ||
-            "",
-
-          title:
-            row.keshi,
-
-          rowIndex:
+        const event =
+          getScheduleRowEvent(
+            row,
             rowIndex,
+            row.owner || "luzhen"
+          );
 
-          owner:
-            "keshi"
 
-        });
+        if (!event) return;
+
+
+        if (event.owner === "both") {
+          sharedEvents.push(event);
+        } else if (event.owner === "keshi") {
+          keshiEvents.push(event);
+        } else {
+          luzhenEvents.push(event);
+        }
+
+
+        return;
 
       }
 
 
-      if (
-        row.luzhenTime &&
-        row.luzhen
-      ) {
+      const keshiEvent =
+        getScheduleRowEvent(
+          row,
+          rowIndex,
+          "keshi"
+        );
 
-        luzhenEvents.push({
 
-          time:
-            row.luzhenTime,
+      const luzhenEvent =
+        getScheduleRowEvent(
+          row,
+          rowIndex,
+          "luzhen"
+        );
 
-          endTime:
-            row.luzhenEndTime ||
-            "",
 
-          title:
-            row.luzhen,
+      if (keshiEvent) {
+        keshiEvents.push(keshiEvent);
+      }
 
-          rowIndex:
-            rowIndex,
 
-          owner:
-            "luzhen"
+      if (luzhenEvent) {
 
-        });
+        if (luzhenEvent.owner === "both") {
+          sharedEvents.push(luzhenEvent);
+        } else {
+          luzhenEvents.push(luzhenEvent);
+        }
 
       }
 
@@ -3769,6 +4790,11 @@ function renderSchedule() {
       ),
 
       ...luzhenEvents.map(
+        event =>
+          event.time
+      ),
+
+      ...sharedEvents.map(
         event =>
           event.time
       )
@@ -3833,6 +4859,26 @@ function renderSchedule() {
       );
 
 
+    if (
+      event.eventType === "meal"
+    ) {
+
+      item.classList.add(
+        "meal",
+        `schedule-meal-${
+          event.mealType ||
+          "snack"
+        }`
+      );
+
+
+      item.dataset.mealSource =
+        event.mealSource ||
+        "";
+
+    }
+
+
     item.tabIndex =
       0;
 
@@ -3873,7 +4919,7 @@ function renderSchedule() {
 
     function editThisEvent() {
 
-      openScheduleEditor({
+      const target = {
 
         dateKey:
           dateKey,
@@ -3884,7 +4930,22 @@ function renderSchedule() {
         owner:
           event.owner
 
-      });
+      };
+
+
+      if (
+        event.eventType ===
+          "meal"
+      ) {
+        openMealDetail(
+          target,
+          event
+        );
+      } else {
+        openScheduleEditor(
+          target
+        );
+      }
 
     }
 
@@ -3966,6 +5027,70 @@ function renderSchedule() {
 
           }
         );
+
+
+      const sharedAtTime =
+        sharedEvents.filter(
+          function (event) {
+
+            return event.time === time;
+
+          }
+        );
+
+
+      sharedAtTime.forEach(
+        function (event) {
+
+          const sharedRow =
+            make(
+              "div",
+              "schedule-row schedule-row-shared"
+            );
+
+
+          const sharedCell =
+            make(
+              "div",
+              "schedule-item schedule-shared"
+            );
+
+
+          appendScheduleEvent(
+            sharedCell,
+            event
+          );
+
+
+          sharedRow.append(
+            make(
+              "span",
+              "schedule-time",
+              time
+            ),
+            sharedCell,
+            make(
+              "span",
+              "schedule-time",
+              time
+            )
+          );
+
+
+          scheduleList.appendChild(
+            sharedRow
+          );
+
+        }
+      );
+
+
+      if (
+        !keshiAtTime.length &&
+        !luzhenAtTime.length
+      ) {
+        return;
+      }
 
 
       const leftTime =
@@ -4054,10 +5179,11 @@ function setScheduleEditorOwner(
 ) {
 
   scheduleEditorOwner =
-    owner ===
-      "luzhen"
-      ? "luzhen"
-      : "keshi";
+    owner === "both"
+      ? "both"
+      : owner === "luzhen"
+        ? "luzhen"
+        : "keshi";
 
 
   scheduleOwnerButtons.forEach(
@@ -4068,6 +5194,7 @@ function setScheduleEditorOwner(
       button.classList.toggle(
         "active",
 
+        scheduleEditorOwner === "both" ||
         button.dataset.scheduleOwner ===
           scheduleEditorOwner
       );
@@ -4124,6 +5251,133 @@ function getScheduleEvent(
 
 
   if (
+    row.eventType === "meal" ||
+    target.owner === "both"
+  ) {
+
+    const title =
+      row.title ||
+      row.luzhen ||
+      row.keshi ||
+      "";
+
+
+    const startTime =
+      row.startTime ||
+      row.luzhenTime ||
+      row.keshiTime ||
+      "";
+
+
+    return {
+      title,
+      startTime,
+      endTime:
+        row.endTime ||
+        row.luzhenEndTime ||
+        row.keshiEndTime ||
+        "",
+      eventType: "meal",
+      mealType:
+        row.mealType ||
+        row.luzhenMealType ||
+        inferScheduleMealType(
+          title,
+          startTime
+        ),
+      mealSource:
+        row.mealSource ||
+        row.luzhenMealSource ||
+        "",
+      location:
+        row.location ||
+        row.luzhenLocation ||
+        "",
+      source:
+        row.source ||
+        row.luzhenSource ||
+        "",
+      tags:
+        Array.isArray(row.tags)
+          ? row.tags
+          : Array.isArray(row.luzhenTags)
+            ? row.luzhenTags
+            : [],
+      expenseContext:
+        row.expenseContext ||
+        null,
+      mealItems:
+        normalizeMealItems(
+          row.mealItems ||
+          row.luzhenMealItems
+        ),
+      id:
+        row.id ||
+        row.simulationId ||
+        row.luzhenSimulationId ||
+        "",
+      simulationId:
+        row.simulationId ||
+        row.luzhenSimulationId ||
+        "",
+      world:
+        row.world ||
+        "secondary",
+      originWorld:
+        row.originWorld ||
+        "sub"
+    };
+
+  }
+
+
+  const inferredEvent =
+    getScheduleRowEvent(
+      row,
+      target.rowIndex,
+      target.owner
+    );
+
+
+  if (
+    inferredEvent?.eventType ===
+      "meal"
+  ) {
+
+    return {
+      title:
+        inferredEvent.title,
+      startTime:
+        inferredEvent.time,
+      endTime:
+        inferredEvent.endTime,
+      eventType: "meal",
+      mealType:
+        inferredEvent.mealType,
+      mealSource:
+        inferredEvent.mealSource ||
+        "home",
+      location:
+        inferredEvent.location ||
+        "shanghai",
+      source: "manual",
+      tags: ["life", "meal"],
+      expenseContext: null,
+      mealItems:
+        normalizeMealItems(
+          inferredEvent.mealItems
+        ),
+      id:
+        inferredEvent.id ||
+        "",
+      world: "secondary",
+      originWorld: "sub"
+    };
+
+  }
+
+
+  if (
     target.owner ===
       "luzhen"
   ) {
@@ -4171,8 +5425,187 @@ function createScheduleRow(
   owner,
   title,
   startTime,
-  endTime
+  endTime,
+  metadata = {}
 ) {
+
+  if (
+    metadata.eventType ===
+      "meal"
+  ) {
+
+    const normalizedOwner =
+      owner === "both"
+        ? "both"
+        : owner === "luzhen"
+          ? "luzhen"
+          : "keshi";
+
+
+    const shared =
+      normalizedOwner ===
+        "both";
+
+
+    const luzhenOwned =
+      shared ||
+      normalizedOwner ===
+        "luzhen";
+
+
+    const keshiOwned =
+      shared ||
+      normalizedOwner ===
+        "keshi";
+
+
+    const mealItems =
+      normalizeMealItems(
+        metadata.mealItems
+      );
+
+
+    const tags =
+      [
+        ...(Array.isArray(metadata.tags)
+          ? metadata.tags
+          : ["life", "meal"]),
+        ...(shared ? ["together"] : [])
+      ].filter(
+        (value, index, values) =>
+          values.indexOf(value) === index
+      );
+
+
+    return {
+      eventType: "meal",
+      mealType:
+        metadata.mealType ||
+        inferScheduleMealType(
+          title,
+          startTime
+        ),
+      mealSource:
+        metadata.mealSource ||
+        "home",
+      owner: normalizedOwner,
+      title,
+      startTime,
+      endTime,
+      location:
+        metadata.location ||
+        "shanghai",
+      source:
+        metadata.source ||
+        "manual",
+      world:
+        metadata.world ||
+        "secondary",
+      originWorld:
+        metadata.originWorld ||
+        "sub",
+      id:
+        metadata.id ||
+        metadata.simulationId ||
+        "",
+      simulationId:
+        metadata.simulationId ||
+        "",
+      tags,
+      expenseContext:
+        metadata.expenseContext ||
+        null,
+      mealItems,
+      keshiTime:
+        keshiOwned
+          ? startTime
+          : "",
+      keshiEndTime:
+        keshiOwned
+          ? endTime
+          : "",
+      keshi:
+        keshiOwned
+          ? title
+          : "",
+      keshiEventType:
+        keshiOwned
+          ? "meal"
+          : "",
+      keshiMealType:
+        keshiOwned
+          ? metadata.mealType ||
+            inferScheduleMealType(
+              title,
+              startTime
+            )
+          : "",
+      keshiMealSource:
+        keshiOwned
+          ? metadata.mealSource ||
+            "home"
+          : "",
+      keshiLocation:
+        keshiOwned
+          ? metadata.location ||
+            "shanghai"
+          : "",
+      keshiMealItems:
+        keshiOwned
+          ? normalizeMealItems(mealItems)
+          : undefined,
+      luzhenTime:
+        luzhenOwned
+          ? startTime
+          : "",
+      luzhenEndTime:
+        luzhenOwned
+          ? endTime
+          : "",
+      luzhen:
+        luzhenOwned
+          ? title
+          : "",
+      luzhenSource:
+        luzhenOwned
+          ? metadata.source ||
+            "manual"
+          : "",
+      luzhenEventType:
+        luzhenOwned
+          ? "meal"
+          : "",
+      luzhenMealType:
+        luzhenOwned
+          ? metadata.mealType ||
+            inferScheduleMealType(
+              title,
+              startTime
+            )
+          : "",
+      luzhenMealSource:
+        luzhenOwned
+          ? metadata.mealSource ||
+            "home"
+          : "",
+      luzhenLocation:
+        luzhenOwned
+          ? metadata.location ||
+            "shanghai"
+          : "",
+      luzhenTags:
+        luzhenOwned
+          ? [...tags]
+          : [],
+      luzhenMealItems:
+        luzhenOwned
+          ? normalizeMealItems(mealItems)
+          : undefined,
+      source: "manual",
+      manualEdited: true
+    };
+
+  }
 
   const row = {
 
@@ -4192,7 +5625,13 @@ function createScheduleRow(
       "",
 
     luzhen:
-      ""
+      "",
+
+    source:
+      "manual",
+
+    manualEdited:
+      true
 
   };
 
@@ -4269,6 +5708,30 @@ function removeScheduleEvent(
   if (
     !row
   ) {
+
+    return;
+
+  }
+
+
+  if (
+    row.eventType === "meal" ||
+    target.owner === "both"
+  ) {
+
+    rows.splice(
+      target.rowIndex,
+      1
+    );
+
+
+    if (!rows.length) {
+      delete calendarData
+        .schedule[
+          target.dateKey
+        ];
+    }
+
 
     return;
 
@@ -4665,6 +6128,14 @@ scheduleEditorSave.addEventListener(
     }
 
 
+    const existingEvent =
+      editingSchedule
+        ? getScheduleEvent(
+            editingSchedule
+          )
+        : null;
+
+
     if (
       editingSchedule
     ) {
@@ -4700,7 +6171,8 @@ scheduleEditorSave.addEventListener(
         scheduleEditorOwner,
         title,
         startTime,
-        endTime
+        endTime,
+        existingEvent || {}
       )
 
     );
@@ -6997,6 +8469,77 @@ function normalizeBodyDiscomfort(
         ? source.note
         : ""
   };
+
+
+  if (
+    metadata.eventType === "meal"
+  ) {
+
+    Object.assign(
+      row,
+      {
+        eventType: "meal",
+        mealType:
+          metadata.mealType ||
+          inferScheduleMealType(
+            title,
+            startTime
+          ),
+        mealSource:
+          metadata.mealSource ||
+          "home",
+        owner,
+        title,
+        startTime,
+        endTime,
+        location:
+          metadata.location ||
+          "shanghai",
+        source:
+          metadata.source ||
+          "manual",
+        world: "secondary",
+        originWorld: "sub",
+        tags:
+          Array.isArray(metadata.tags)
+            ? [...metadata.tags]
+            : ["life", "meal"],
+        expenseContext:
+          metadata.expenseContext ||
+          null
+      }
+    );
+
+
+    if (
+      owner === "keshi" ||
+      owner === "both"
+    ) {
+      row.keshiTime = startTime;
+      row.keshiEndTime = endTime;
+      row.keshi = title;
+    }
+
+
+    if (
+      owner === "luzhen" ||
+      owner === "both"
+    ) {
+      row.luzhenTime = startTime;
+      row.luzhenEndTime = endTime;
+      row.luzhen = title;
+      row.luzhenEventType = "meal";
+      row.luzhenMealType = row.mealType;
+      row.luzhenMealSource = row.mealSource;
+      row.luzhenLocation = row.location;
+      row.luzhenTags = [...row.tags];
+      row.luzhenWorkload = 0;
+    }
+
+
+    return row;
+
+  }
 
 }
 
@@ -12414,14 +13957,13 @@ function renderAll() {
   /*
     榛榛生活模拟。
 
-    第一次打开某个日期时：
+    每周第一次打开 Calendar 时：
 
-    1. 生成榛榛日程
-    2. 根据日程生成睡眠
-    3. 根据睡眠 + 日程负荷生成身体状态
-    4. 保存
+    1. 按周一至周日生成并保存整周计划
+    2. 未来计划保持 planned，不提前写入 Wallet
+    3. Daily Engine 只兑现现实已经到达的日期
 
-    已经生成过的日期不会再次覆盖。
+    已经生成过的周不会再次洗牌或覆盖手动内容。
   */
 
   const dateKey =
@@ -12434,21 +13976,21 @@ function renderAll() {
     window.LiminalLuzhenSimulation &&
     typeof window
       .LiminalLuzhenSimulation
-      .ensureDate ===
+      .ensureWeek ===
         "function"
   ) {
 
-    const changed =
+    const planningResult =
       window
         .LiminalLuzhenSimulation
-        .ensureDate(
+        .ensureWeek(
           calendarData,
-          dateKey
+          realityTodayKey
         );
 
 
     if (
-      changed
+      planningResult.changed
     ) {
 
       saveCalendarData();
@@ -12458,9 +14000,29 @@ function renderAll() {
   }
 
 
+  if (
+    window.LiminalWalletDailyEngine &&
+    typeof window
+      .LiminalWalletDailyEngine
+      .run === "function"
+  ) {
+
+    window
+      .LiminalWalletDailyEngine
+      .run({
+        calendarData,
+        saveCalendar:
+          saveCalendarData
+      });
+
+  }
+
+
   renderMonth();
 
   renderDayOverview();
+
+  renderFoodCalendar();
 
   renderSchedule();
 

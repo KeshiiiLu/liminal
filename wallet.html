@@ -112,6 +112,14 @@
     </section>
   </div>
 
+  <div class="sheet-backdrop" id="transactionDetailBackdrop" hidden>
+    <section class="wallet-sheet detail-sheet transaction-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="transactionDetailTitle">
+      <div class="sheet-handle"></div>
+      <header class="sheet-header"><div><span>TRANSACTION DETAIL</span><h2 id="transactionDetailTitle">流水详情</h2></div><button id="transactionDetailClose" type="button" aria-label="关闭">×</button></header>
+      <div id="transactionDetailContent"></div>
+    </section>
+  </div>
+
   <div class="sheet-backdrop" id="accountDetailBackdrop" hidden>
     <section class="wallet-sheet detail-sheet" role="dialog" aria-modal="true" aria-labelledby="accountDetailTitle"><div class="sheet-handle"></div><header class="sheet-header"><div><span>ACCOUNT</span><h2 id="accountDetailTitle">账户详情</h2></div><button id="accountDetailClose" type="button" aria-label="关闭">×</button></header><div id="accountDetailContent"></div></section>
   </div>
@@ -120,10 +128,15 @@
     <section class="wallet-sheet detail-sheet" role="dialog" aria-modal="true" aria-labelledby="assetDetailTitle"><div class="sheet-handle"></div><header class="sheet-header"><div><span>ASSET</span><h2 id="assetDetailTitle">资产详情</h2></div><button id="assetDetailClose" type="button" aria-label="关闭">×</button></header><div id="assetDetailContent"></div></section>
   </div>
 
+  <script src="liminal-time.js"></script>
   <script src="finance-data.js"></script>
   <script src="finance-store.js"></script>
+  <script src="wallet-runtime-data.js"></script>
   <script src="wallet-history-data.js"></script>
   <script src="wallet-history-seed.js"></script>
+  <script src="household-shopping-data.js"></script>
+  <script src="household-shopping.js"></script>
+  <script src="wallet-daily-engine.js"></script>
   <script src="wallet.js"></script>
 </body>
 </html>

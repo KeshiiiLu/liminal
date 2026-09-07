@@ -421,6 +421,36 @@
                     </div>
 
 
+                    <section class="food-calendar-note" id="foodCalendarNote">
+
+                        <div class="food-calendar-copy">
+
+                            <span>
+                                TODAY'S FOOD
+                            </span>
+
+                            <strong>
+                                今日食签
+                            </strong>
+
+                            <p id="foodCalendarText">
+                                今天还没有记录
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            class="food-calendar-edit"
+                            id="editFoodCalendarButton"
+                            type="button"
+                        >
+                            编辑
+                        </button>
+
+                    </section>
+
+
                     <div class="schedule-head">
 
                         <span>
@@ -1681,6 +1711,219 @@
 </div>
 
     <!-- =========================
+     今日食签新增 / 编辑 Sheet
+     ========================= -->
+
+    <div
+        class="food-calendar-editor-backdrop"
+        id="foodCalendarEditorBackdrop"
+        hidden
+    >
+
+        <section class="food-calendar-editor-sheet">
+
+            <div class="sheet-handle"></div>
+
+
+            <header class="food-calendar-editor-header">
+
+                <div>
+
+                    <span>
+                        TODAY'S FOOD
+                    </span>
+
+                    <strong>
+                        今日食签
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="foodCalendarEditorClose"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </header>
+
+
+            <label class="food-calendar-field">
+
+                <span>
+                    日期
+                </span>
+
+                <input
+                    id="foodCalendarDateInput"
+                    type="date"
+                >
+
+            </label>
+
+
+            <label class="food-calendar-field">
+
+                <span>
+                    今日食签
+                </span>
+
+                <textarea
+                    id="foodCalendarTextInput"
+                    rows="4"
+                    placeholder="例如：黄油松饼&#10;樱桃奶油鲜果甜点"
+                ></textarea>
+
+            </label>
+
+
+            <div class="food-calendar-field">
+
+                <span>
+                    获取方式
+                </span>
+
+                <div class="food-calendar-source-options">
+
+                    <button
+                        class="food-calendar-source active"
+                        type="button"
+                        data-food-source="home"
+                    >
+                        在 Loft 自己准备
+                    </button>
+
+                    <button
+                        class="food-calendar-source"
+                        type="button"
+                        data-food-source="delivery"
+                    >
+                        外卖送来
+                    </button>
+
+                    <button
+                        class="food-calendar-source"
+                        type="button"
+                        data-food-source="other"
+                    >
+                        其他 / 不记录
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <label class="food-calendar-field food-calendar-price-field">
+
+                <span>
+                    价格
+                </span>
+
+                <span class="food-calendar-price-control">
+                    <b>¥</b>
+                    <input
+                        id="foodCalendarPriceInput"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="留空则不记录支出"
+                    >
+                </span>
+
+            </label>
+
+
+            <label class="food-calendar-wallet-toggle">
+
+                <span>
+                    <strong>计入 Wallet</strong>
+                    <small>仅在价格大于 0 时同步副世界支出</small>
+                </span>
+
+                <input
+                    id="foodCalendarWalletEnabled"
+                    type="checkbox"
+                    role="switch"
+                >
+
+            </label>
+
+
+            <footer class="food-calendar-editor-actions">
+
+                <button
+                    class="danger"
+                    id="foodCalendarClear"
+                    type="button"
+                >
+                    清空
+                </button>
+
+                <button
+                    id="foodCalendarCancel"
+                    type="button"
+                >
+                    取消
+                </button>
+
+                <button
+                    class="primary"
+                    id="foodCalendarSave"
+                    type="button"
+                >
+                    保存
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+    <!-- =========================
+     Meal 详情 Sheet
+     ========================= -->
+
+    <div
+        class="schedule-editor-backdrop"
+        id="mealDetailBackdrop"
+        hidden
+    >
+
+        <section
+            class="schedule-editor-sheet meal-detail-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mealDetailTitle"
+        >
+
+            <div class="sheet-handle"></div>
+
+            <header class="schedule-editor-header">
+                <div>
+                    <span>MEAL</span>
+                    <strong id="mealDetailTitle">用餐详情</strong>
+                </div>
+                <button id="mealDetailClose" type="button" aria-label="关闭">×</button>
+            </header>
+
+            <div class="meal-detail-meta" id="mealDetailMeta"></div>
+            <div class="meal-detail-content" id="mealDetailContent"></div>
+
+            <footer class="meal-detail-actions">
+                <button id="mealDetailDismiss" type="button">关闭</button>
+                <button class="primary" id="mealDetailEdit" type="button">编辑日程</button>
+            </footer>
+
+        </section>
+
+    </div>
+
+    <!-- =========================
      日程新增 / 编辑 Sheet
      ========================= -->
 
@@ -2142,13 +2385,27 @@
     </div>
 
 
+    <script src="liminal-time.js"></script>
+
+    <script src="finance-data.js"></script>
+
+    <script src="finance-store.js"></script>
+
+    <script src="wallet-runtime-data.js"></script>
+
     <script src="luzhen-simulation-data.js"></script>
+
+    <script src="household-shopping-data.js"></script>
+
+    <script src="household-shopping.js"></script>
 
     <script src="cycle-data.js"></script>
 
     <script src="sex-data.js"></script>
 
 <script src="luzhen-simulation.js"></script>
+
+<script src="wallet-daily-engine.js"></script>
 
 <script src="calendar.js"></script>
 

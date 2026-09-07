@@ -307,6 +307,14 @@ button.transaction-row { cursor: pointer; }
 .detail-timeline div { display: grid; gap: 3px; }
 .detail-timeline span { color: var(--quiet); font-size: 9px; }
 .detail-timeline strong { font-size: 11px; font-weight: 550; }
+.transaction-detail-hero .transaction-money { max-width: none; text-align: left; font-size: 24px; }
+.transaction-basket { margin-top: 18px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.46); }
+.transaction-basket > span { display: block; margin-bottom: 9px; color: var(--quiet); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+.transaction-basket ul { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.transaction-basket li { min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.transaction-basket li:last-child { border-bottom: 0; }
+.transaction-basket li strong { min-width: 0; color: #625f59; font-size: 11px; font-weight: 550; line-height: 1.45; overflow-wrap: anywhere; }
+.transaction-basket li span { flex: 0 0 auto; color: var(--muted); font-size: 10px; }
 
 @media (max-width: 767px) {
   .wallet-page { max-width: 100%; padding-right: max(16px, env(safe-area-inset-right)); padding-left: max(16px, env(safe-area-inset-left)); }

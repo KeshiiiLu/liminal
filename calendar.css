@@ -808,6 +808,55 @@ body {
 }
 
 
+.schedule-event.meal {
+  border:
+    1px solid
+    rgba(98, 91, 78, 0.07);
+}
+
+
+.schedule-meal-breakfast {
+  background:
+    rgba(240, 224, 196, 0.64);
+}
+
+
+.schedule-meal-lunch {
+  background:
+    rgba(215, 226, 211, 0.68);
+}
+
+
+.schedule-meal-dinner {
+  background:
+    rgba(222, 217, 228, 0.68);
+}
+
+
+.schedule-meal-snack,
+.schedule-meal-coffee {
+  background:
+    rgba(231, 226, 216, 0.68);
+}
+
+
+.schedule-item.schedule-shared {
+  grid-column: 2 / 4;
+
+  padding-right: 12px;
+  padding-left: 12px;
+
+  border-right: 0;
+
+  text-align: center;
+}
+
+
+.schedule-row-shared .schedule-event {
+  width: 100%;
+}
+
+
 .schedule-event:active {
   transform: scale(0.985);
 
@@ -2309,6 +2358,90 @@ span:last-child {
 }
 
 
+.food-calendar-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 12px 15px;
+
+  border-bottom:
+    1px solid
+    rgba(55, 52, 47, 0.05);
+
+  background:
+    rgba(247, 244, 236, 0.42);
+}
+
+
+.food-calendar-copy {
+  min-width: 0;
+}
+
+
+.food-calendar-copy span {
+  display: block;
+
+  color: #aaa49a;
+
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+
+.food-calendar-copy strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #6d6962;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+
+.food-calendar-copy p {
+  margin: 4px 0 0;
+
+  color: #77736c;
+
+  font-size: 9px;
+  line-height: 1.55;
+
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+
+.food-calendar-copy p.is-empty {
+  color: #b1ada5;
+}
+
+
+.food-calendar-edit {
+  min-width: 44px;
+  min-height: 36px;
+
+  flex: 0 0 auto;
+
+  border: 0;
+  border-radius: 11px;
+
+  background:
+    rgba(86, 82, 74, 0.055);
+
+  color: #8c877f;
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+
 .body-legacy-pain {
   margin:
     0 0 9px;
@@ -3555,6 +3688,347 @@ input:disabled {
 
 
 /* =========================
+   Food Calendar Editor
+   ========================= */
+
+.food-calendar-editor-backdrop {
+  position: fixed;
+
+  z-index: 1040;
+
+  inset: 0;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background:
+    rgba(35, 34, 31, 0.22);
+
+  backdrop-filter:
+    blur(4px);
+}
+
+
+.food-calendar-editor-backdrop[hidden] {
+  display: none;
+}
+
+
+.food-calendar-editor-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+
+  overflow-y: auto;
+
+  padding:
+    8px
+    22px
+    calc(28px + env(safe-area-inset-bottom));
+
+  border-radius:
+    26px 26px 0 0;
+
+  background:
+    #f8f7f4;
+
+  box-shadow:
+    0 -16px 50px
+    rgba(30, 30, 30, 0.12);
+}
+
+
+.food-calendar-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 16px;
+
+  border-bottom:
+    1px solid
+    rgba(55, 52, 47, 0.06);
+}
+
+
+.food-calendar-editor-header span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #aaa79f;
+
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+
+.food-calendar-editor-header strong {
+  font-size: 17px;
+}
+
+
+.food-calendar-editor-header button {
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background:
+    rgba(70, 68, 62, 0.055);
+
+  color: #89857e;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+
+.food-calendar-field {
+  display: block;
+
+  padding: 15px 2px 0;
+}
+
+
+.food-calendar-field > span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #8f8b84;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+
+.food-calendar-field input,
+.food-calendar-field textarea {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.07);
+
+  border-radius: 12px;
+
+  outline: 0;
+
+  background:
+    rgba(255, 255, 255, 0.76);
+
+  color: #55524d;
+
+  font: inherit;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+
+.food-calendar-field input {
+  height: 43px;
+}
+
+
+.food-calendar-field textarea {
+  min-height: 96px;
+
+  resize: vertical;
+}
+
+
+.food-calendar-price-control {
+  min-height: 43px;
+
+  display: grid !important;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: center;
+
+  margin-bottom: 0 !important;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.07);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.76);
+}
+
+
+.food-calendar-price-control b {
+  color: #8f8b84;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  text-align: right;
+}
+
+
+.food-calendar-price-control input {
+  min-width: 0;
+
+  border: 0;
+
+  background: transparent;
+}
+
+
+.food-calendar-wallet-toggle {
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-top: 15px;
+  padding: 10px 13px;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.06);
+
+  border-radius: 13px;
+
+  background:
+    rgba(255, 255, 255, 0.48);
+
+  cursor: pointer;
+}
+
+
+.food-calendar-wallet-toggle > span {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 3px;
+}
+
+
+.food-calendar-wallet-toggle strong {
+  color: #6e6a63;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+
+.food-calendar-wallet-toggle small {
+  color: #a19d95;
+
+  font-size: 7px;
+  line-height: 1.45;
+}
+
+
+.food-calendar-wallet-toggle input {
+  width: 42px;
+  height: 24px;
+
+  flex: 0 0 auto;
+
+  accent-color: #777b76;
+}
+
+
+.food-calendar-source-options {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+
+.food-calendar-source {
+  min-height: 44px;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.06);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.56);
+
+  color: #918e87;
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+
+.food-calendar-source.active {
+  background: #e6e1d6;
+
+  color: #5f5a51;
+
+  font-weight: 600;
+}
+
+
+.food-calendar-editor-actions {
+  display: grid;
+
+  grid-template-columns:
+    0.85fr 1fr 1fr;
+
+  gap: 8px;
+
+  margin-top: 22px;
+}
+
+
+.food-calendar-editor-actions button {
+  min-height: 42px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    rgba(70, 68, 62, 0.055);
+
+  color: #77736d;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+
+.food-calendar-editor-actions .primary {
+  background: #555650;
+
+  color: #ffffff;
+}
+
+
+.food-calendar-editor-actions .danger {
+  background:
+    rgba(165, 125, 125, 0.09);
+
+  color: #a57d7d;
+}
+
+
+/* =========================
    Schedule Editor
    ========================= */
 
@@ -3656,6 +4130,137 @@ input:disabled {
   font-size: 18px;
 
   cursor: pointer;
+}
+
+
+.meal-detail-sheet {
+  max-height:
+    calc(88vh - env(safe-area-inset-top));
+}
+
+
+.meal-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  padding: 14px 2px 3px;
+}
+
+
+.meal-detail-meta span {
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(78, 75, 69, 0.055);
+
+  color: #8f8b84;
+
+  font-size: 7px;
+}
+
+
+.meal-detail-content {
+  display: grid;
+
+  gap: 10px;
+
+  padding-top: 10px;
+}
+
+
+.meal-detail-group {
+  padding: 12px 13px;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.055);
+
+  border-radius: 14px;
+
+  background:
+    rgba(255, 255, 255, 0.48);
+}
+
+
+.meal-detail-group > span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #aaa59d;
+
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+
+.meal-detail-group ul {
+  display: grid;
+
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.meal-detail-group li,
+.meal-detail-empty {
+  color: #66625c;
+
+  font-size: 10px;
+  line-height: 1.55;
+
+  overflow-wrap: anywhere;
+}
+
+
+.meal-detail-group.food-calendar {
+  background:
+    rgba(247, 240, 224, 0.58);
+}
+
+
+.meal-detail-actions {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+
+.meal-detail-actions button {
+  min-height: 44px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    rgba(70, 68, 62, 0.055);
+
+  color: #77736d;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+
+.meal-detail-actions .primary {
+  background: #555650;
+
+  color: #ffffff;
 }
 
 
@@ -4444,6 +5049,7 @@ input:disabled {
   .body-editor-sheet,
   .cycle-manager-sheet,
   .sex-manager-sheet,
+  .food-calendar-editor-sheet,
   .schedule-editor-sheet,
   .milestone-editor-sheet,
   .transmission-editor-sheet {
@@ -4457,6 +5063,8 @@ input:disabled {
   }
 
   .body-editor-header button,
+  .food-calendar-editor-header button,
+  .food-calendar-source,
   .schedule-editor-header button,
   .milestone-editor-header button,
   .transmission-editor-header button,
@@ -4468,6 +5076,9 @@ input:disabled {
   .transmission-type-option,
   .body-energy-options button,
   .body-editor-actions button,
+  .food-calendar-editor-actions button,
+  .food-calendar-wallet-toggle,
+  .meal-detail-actions button,
   .cycle-period-row,
   .cycle-add-period,
   .cycle-editor-back,
@@ -4493,6 +5104,7 @@ input:disabled {
   }
 
   .body-editor-header button,
+  .food-calendar-editor-header button,
   .schedule-editor-header button,
   .milestone-editor-header button,
   .transmission-editor-header button {
@@ -4502,6 +5114,8 @@ input:disabled {
 
   .body-field input,
   .body-field textarea,
+  .food-calendar-field input,
+  .food-calendar-field textarea,
   .cycle-custom-box > input,
   .cycle-note-field textarea,
   .sex-custom-box > input,
@@ -4510,6 +5124,10 @@ input:disabled {
   .transmission-field input,
   .transmission-field textarea {
     max-width: 100%;
+    font-size: 16px;
+  }
+
+  .food-calendar-price-control input {
     font-size: 16px;
   }
 
