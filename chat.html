@@ -337,7 +337,7 @@
 
         <section class="more-page">
 
-          <button class="more-item" id="chatRedPacketButton" type="button">
+          <button class="more-item" type="button">
             <span class="more-icon">▧</span>
             <small>相片</small>
           </button>
@@ -357,19 +357,19 @@
             <small>视频通话</small>
           </button>
 
-          <button class="more-item" id="chatTransferButton" type="button">
+          <button class="more-item" type="button">
             <span class="more-icon">⌖</span>
             <small>位置</small>
           </button>
 
-          <button class="more-item">
-            <span class="more-icon">封</span>
-            <small>红包</small>
+          <button class="more-item" id="pokeButton" type="button">
+            <span class="more-icon">☞</span>
+            <small>拍一拍</small>
           </button>
 
-          <button class="more-item">
-            <span class="more-icon">礼</span>
-            <small>礼物</small>
+          <button class="more-item" id="chatTarotButton" type="button">
+            <span class="more-icon">◇</span>
+            <small>塔罗</small>
           </button>
 
           <button class="more-item">
@@ -382,15 +382,19 @@
 
         <section class="more-page">
 
-          <button class="more-item" id="pokeButton" type="button">
-            <span class="more-icon">☞</span>
-            <small>拍一拍</small>
+          <button class="more-item" id="chatRedPacketButton" type="button">
+            <span class="more-icon">封</span>
+            <small>红包</small>
           </button>
 
-
-          <button class="more-item">
+          <button class="more-item" id="chatTransferButton" type="button">
             <span class="more-icon">￥</span>
             <small>转账</small>
+          </button>
+
+          <button class="more-item" id="chatGiftButton" type="button">
+            <span class="more-icon">礼</span>
+            <small>礼物</small>
           </button>
 
         </section>
@@ -504,6 +508,60 @@
       </div>
 
     </div>
+
+  </div>
+
+  <!-- 聊天快捷塔罗 -->
+
+  <div class="chat-tarot-panel" id="chatTarotPanel" hidden>
+
+    <section class="chat-tarot-sheet" role="dialog" aria-modal="true" aria-labelledby="chatTarotTitle">
+
+      <div class="chat-tarot-handle" aria-hidden="true"></div>
+
+      <header class="chat-tarot-header">
+
+        <div>
+          <span>QUICK TAROT</span>
+          <strong id="chatTarotTitle">快捷塔罗</strong>
+        </div>
+
+        <button class="chat-tarot-close" id="chatTarotClose" type="button" aria-label="关闭快捷塔罗">×</button>
+
+      </header>
+
+      <p class="chat-tarot-intro">在聊天里抽一张牌。牌义提供语义方向，不替你决定答案。</p>
+
+      <label class="chat-tarot-question">
+        <span>此刻想问的事 <small>可留空</small></span>
+        <input id="chatTarotQuestion" type="text" maxlength="120" autocomplete="off" placeholder="把问题安静地放在这里…">
+      </label>
+
+      <article class="chat-tarot-result" id="chatTarotResult" hidden aria-live="polite">
+
+        <div class="chat-tarot-card" id="chatTarotCard" aria-hidden="true">
+          <span class="chat-tarot-number" id="chatTarotNumber"></span>
+          <b class="chat-tarot-symbol" id="chatTarotSymbol">◇</b>
+          <strong id="chatTarotCardName"></strong>
+          <small id="chatTarotCardNameEn"></small>
+        </div>
+
+        <div class="chat-tarot-reading">
+          <span class="chat-tarot-orientation" id="chatTarotOrientation"></span>
+          <div class="chat-tarot-keywords" id="chatTarotKeywords"></div>
+          <p id="chatTarotSummary"></p>
+        </div>
+
+      </article>
+
+      <p class="chat-tarot-error" id="chatTarotError" hidden></p>
+
+      <div class="chat-tarot-actions">
+        <button class="chat-tarot-draw" id="chatTarotDraw" type="button">抽一张牌</button>
+        <a class="chat-tarot-study-link" id="chatTarotStudyLink" href="tarot-study.html" hidden>查看完整牌义 →</a>
+      </div>
+
+    </section>
 
   </div>
 
@@ -718,11 +776,16 @@
 <script src="finance-data.js"></script>
 <script src="finance-store.js"></script>
 
+<script src="tarot-data.js"></script>
+<script src="tarot-study-data.js"></script>
+<script src="tarot-history.js"></script>
+
 <script src="avatar-store.js"></script>
 <script src="chat-person-state.js"></script>
 <script src="chat.js"></script>
 <script src="chat-finance.js"></script>
 <script src="chat-corpus.js"></script>
+<script src="chat-tarot.js"></script>
 
 <script src="chat-actions.js"></script>
 <script src="chat-selection.js"></script>

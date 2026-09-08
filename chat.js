@@ -40,6 +40,9 @@ const morePanel =
 const morePages =
   document.getElementById("morePages");
 
+const chatGiftButton =
+  document.getElementById("chatGiftButton");
+
 const pageDots =
   document.querySelectorAll(".page-dot");
 
@@ -4905,6 +4908,29 @@ function openMorePanel() {
 
   chatInput.blur();
 
+  const previousScrollBehavior =
+    morePages.style.scrollBehavior;
+
+  morePages.style.scrollBehavior =
+    "auto";
+
+  morePages.scrollLeft =
+    0;
+
+  morePages.style.scrollBehavior =
+    previousScrollBehavior;
+
+  pageDots.forEach(
+    function (dot, index) {
+
+      dot.classList.toggle(
+        "active",
+        index === 0
+      );
+
+    }
+  );
+
   morePanel.classList.add("open");
 
   document.body.classList.add(
@@ -5393,6 +5419,23 @@ function saveChatHistory() {
     JSON.stringify(
       chatHistory
     )
+  );
+
+}
+
+
+if (chatGiftButton) {
+
+  chatGiftButton.addEventListener(
+    "click",
+    function () {
+
+      closeMorePanel();
+
+      window.location.href =
+        "mall.html";
+
+    }
   );
 
 }
