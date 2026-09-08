@@ -4649,6 +4649,395 @@ mealDetailEdit.addEventListener(
   }
 );
 
+
+const SCHEDULE_LAYOUT_FALLBACK_MINUTES =
+  30;
+
+
+const SCHEDULE_LAYOUT_PADDING_MINUTES =
+  20;
+
+
+function scheduleTimeToMinutes(
+  value
+) {
+
+  if (
+    typeof value !== "string" ||
+    !/^([01]\d|2[0-3]):[0-5]\d$/.test(
+      value
+    )
+  ) {
+
+    return null;
+
+  }
+
+
+  const [hours, minutes] =
+    value
+      .split(":")
+      .map(Number);
+
+
+  return (
+    hours * 60 +
+    minutes
+  );
+
+}
+
+
+function getSchedulePixelsPerMinute() {
+
+  const viewportWidth =
+    document.documentElement
+      .clientWidth ||
+    window.innerWidth ||
+    390;
+
+
+  if (viewportWidth <= 374) {
+    return 0.86;
+  }
+
+
+  if (viewportWidth <= 767) {
+    return 0.9;
+  }
+
+
+  return 1;
+
+}
+
+
+function prepareScheduleLayoutEvent(
+  event,
+  owner,
+  dateKey
+) {
+
+  const startMinutes =
+    scheduleTimeToMinutes(
+      event.time
+    );
+
+
+  if (
+    startMinutes === null
+  ) {
+
+    console.warn(
+      "[Liminal Calendar] Schedule event has an invalid start time and cannot be positioned.",
+      {
+        dateKey,
+        owner,
+        title: event.title,
+        startTime: event.time
+      }
+    );
+
+
+    return null;
+
+  }
+
+
+  const parsedEndMinutes =
+    scheduleTimeToMinutes(
+      event.endTime
+    );
+
+
+  const hasUsableEndTime =
+    parsedEndMinutes !== null &&
+    parsedEndMinutes > startMinutes;
+
+
+  const endMinutes =
+    hasUsableEndTime
+      ? parsedEndMinutes
+      : startMinutes +
+        SCHEDULE_LAYOUT_FALLBACK_MINUTES;
+
+
+  return {
+    ...event,
+    owner,
+    startMinutes,
+    endMinutes,
+    layoutDurationMinutes:
+      endMinutes - startMinutes,
+    hasUsableEndTime,
+    layoutLane: 0,
+    layoutLaneCount: 1
+  };
+
+}
+
+
+function scheduleEventsOverlap(
+  first,
+  second
+) {
+
+  return (
+    first.startMinutes <
+      second.endMinutes &&
+    second.startMinutes <
+      first.endMinutes
+  );
+
+}
+
+
+function warnScheduleOverlap(
+  dateKey,
+  kind,
+  first,
+  second
+) {
+
+  console.warn(
+    "[Liminal Calendar] Schedule overlap conflict.",
+    {
+      dateKey,
+      kind,
+      first: {
+        owner: first.owner,
+        title: first.title,
+        startTime: first.time,
+        endTime: first.endTime || ""
+      },
+      second: {
+        owner: second.owner,
+        title: second.title,
+        startTime: second.time,
+        endTime: second.endTime || ""
+      }
+    }
+  );
+
+}
+
+
+function assignScheduleOverlapLanes(
+  events,
+  owner,
+  dateKey
+) {
+
+  const ordered =
+    events
+      .slice()
+      .sort(
+        function (first, second) {
+
+          return (
+            first.startMinutes -
+              second.startMinutes ||
+            first.endMinutes -
+              second.endMinutes ||
+            first.rowIndex -
+              second.rowIndex
+          );
+
+        }
+      );
+
+
+  for (
+    let firstIndex = 0;
+    firstIndex < ordered.length;
+    firstIndex += 1
+  ) {
+
+    for (
+      let secondIndex = firstIndex + 1;
+      secondIndex < ordered.length;
+      secondIndex += 1
+    ) {
+
+      if (
+        ordered[secondIndex].startMinutes >=
+        ordered[firstIndex].endMinutes
+      ) {
+        break;
+      }
+
+
+      if (
+        scheduleEventsOverlap(
+          ordered[firstIndex],
+          ordered[secondIndex]
+        )
+      ) {
+
+        warnScheduleOverlap(
+          dateKey,
+          `${owner}-personal`,
+          ordered[firstIndex],
+          ordered[secondIndex]
+        );
+
+      }
+
+    }
+
+  }
+
+
+  let group = [];
+  let groupEnd = -1;
+
+
+  function finishGroup() {
+
+    if (!group.length) return;
+
+
+    const laneEnds = [];
+    let laneCount = 1;
+
+
+    group.forEach(
+      function (event) {
+
+        let lane =
+          laneEnds.findIndex(
+            endMinutes =>
+              endMinutes <=
+              event.startMinutes
+          );
+
+
+        if (lane < 0) {
+          lane = laneEnds.length;
+        }
+
+
+        laneEnds[lane] =
+          event.endMinutes;
+
+
+        event.layoutLane =
+          lane;
+
+
+        laneCount =
+          Math.max(
+            laneCount,
+            lane + 1
+          );
+
+      }
+    );
+
+
+    group.forEach(
+      function (event) {
+
+        event.layoutLaneCount =
+          laneCount;
+
+      }
+    );
+
+
+    group = [];
+    groupEnd = -1;
+
+  }
+
+
+  ordered.forEach(
+    function (event) {
+
+      if (
+        group.length &&
+        event.startMinutes >=
+          groupEnd
+      ) {
+
+        finishGroup();
+
+      }
+
+
+      group.push(event);
+      groupEnd =
+        Math.max(
+          groupEnd,
+          event.endMinutes
+        );
+
+    }
+  );
+
+
+  finishGroup();
+  return ordered;
+
+}
+
+
+function collectScheduleTimeNodes(
+  personalEvents,
+  sharedEvents
+) {
+
+  const nodes =
+    new Map();
+
+
+  [
+    ...personalEvents,
+    ...sharedEvents
+  ].forEach(
+    function (event) {
+
+      if (
+        !nodes.has(
+          event.startMinutes
+        )
+      ) {
+
+        nodes.set(
+          event.startMinutes,
+          event.time
+        );
+
+      }
+
+
+      if (
+        event.hasUsableEndTime &&
+        !nodes.has(
+          event.endMinutes
+        )
+      ) {
+
+        nodes.set(
+          event.endMinutes,
+          event.endTime
+        );
+
+      }
+
+    }
+  );
+
+
+  return [
+    ...nodes.entries()
+  ].sort(
+    (first, second) =>
+      first[0] - second[0]
+  );
+
+}
+
 function renderSchedule() {
 
   const dateKey =
@@ -4763,7 +5152,13 @@ function renderSchedule() {
 
 
       if (keshiEvent) {
-        keshiEvents.push(keshiEvent);
+
+        if (keshiEvent.owner === "both") {
+          sharedEvents.push(keshiEvent);
+        } else {
+          keshiEvents.push(keshiEvent);
+        }
+
       }
 
 
@@ -4782,53 +5177,177 @@ function renderSchedule() {
 
 
 
-  const allTimes =
-    [
-      ...keshiEvents.map(
-        event =>
-          event.time
-      ),
+  const sharedKeys =
+    new Set();
 
-      ...luzhenEvents.map(
-        event =>
-          event.time
-      ),
 
-      ...sharedEvents.map(
+  const uniqueSharedEvents =
+    sharedEvents.filter(
+      function (event) {
+
+        const key =
+          [
+            event.rowIndex,
+            event.time,
+            event.endTime,
+            event.title
+          ].join("|");
+
+
+        if (sharedKeys.has(key)) {
+          return false;
+        }
+
+
+        sharedKeys.add(key);
+        return true;
+
+      }
+    );
+
+
+  const preparedKeshiEvents =
+    keshiEvents
+      .map(
         event =>
-          event.time
+          prepareScheduleLayoutEvent(
+            event,
+            "keshi",
+            dateKey
+          )
       )
-    ];
+      .filter(Boolean);
 
 
-  const uniqueTimes =
-    [
-      ...new Set(
-        allTimes
+  const preparedLuzhenEvents =
+    luzhenEvents
+      .map(
+        event =>
+          prepareScheduleLayoutEvent(
+            event,
+            "luzhen",
+            dateKey
+          )
       )
-    ];
+      .filter(Boolean);
 
 
-  uniqueTimes.sort(
-    function (
-      a,
-      b
-    ) {
-
-      return (
-        a.localeCompare(
-          b
-        )
+  const preparedSharedEvents =
+    uniqueSharedEvents
+      .map(
+        event =>
+          prepareScheduleLayoutEvent(
+            event,
+            "both",
+            dateKey
+          )
+      )
+      .filter(Boolean)
+      .sort(
+        (first, second) =>
+          first.startMinutes -
+            second.startMinutes ||
+          first.endMinutes -
+            second.endMinutes
       );
+
+
+  const positionedKeshiEvents =
+    assignScheduleOverlapLanes(
+      preparedKeshiEvents,
+      "keshi",
+      dateKey
+    );
+
+
+  const positionedLuzhenEvents =
+    assignScheduleOverlapLanes(
+      preparedLuzhenEvents,
+      "luzhen",
+      dateKey
+    );
+
+
+  preparedSharedEvents.forEach(
+    function (sharedEvent, sharedIndex) {
+
+      [
+        ...positionedKeshiEvents,
+        ...positionedLuzhenEvents
+      ].forEach(
+        function (personalEvent) {
+
+          if (
+            scheduleEventsOverlap(
+              sharedEvent,
+              personalEvent
+            )
+          ) {
+
+            warnScheduleOverlap(
+              dateKey,
+              "shared-personal",
+              sharedEvent,
+              personalEvent
+            );
+
+          }
+
+        }
+      );
+
+
+      for (
+        let otherIndex = sharedIndex + 1;
+        otherIndex < preparedSharedEvents.length;
+        otherIndex += 1
+      ) {
+
+        const otherSharedEvent =
+          preparedSharedEvents[
+            otherIndex
+          ];
+
+
+        if (
+          otherSharedEvent.startMinutes >=
+          sharedEvent.endMinutes
+        ) {
+          break;
+        }
+
+
+        if (
+          scheduleEventsOverlap(
+            sharedEvent,
+            otherSharedEvent
+          )
+        ) {
+
+          warnScheduleOverlap(
+            dateKey,
+            "shared-shared",
+            sharedEvent,
+            otherSharedEvent
+          );
+
+        }
+
+      }
 
     }
   );
 
 
+  const allEvents =
+    [
+      ...positionedKeshiEvents,
+      ...positionedLuzhenEvents,
+      ...preparedSharedEvents
+    ];
 
-  if (
-    !uniqueTimes.length
-  ) {
+
+  if (!allEvents.length) {
 
     scheduleList.appendChild(
 
@@ -4847,16 +5366,194 @@ function renderSchedule() {
 
 
 
-  function appendScheduleEvent(
-    container,
-    event
+  const earliestStartMinutes =
+    Math.min(
+      ...allEvents.map(
+        event =>
+          event.startMinutes
+      )
+    );
+
+
+  const latestEndMinutes =
+    Math.max(
+      ...allEvents.map(
+        event =>
+          event.endMinutes
+      )
+    );
+
+
+  const dayStartMinutes =
+    Math.max(
+      0,
+      earliestStartMinutes -
+        SCHEDULE_LAYOUT_PADDING_MINUTES
+    );
+
+
+  const dayEndMinutes =
+    latestEndMinutes +
+    SCHEDULE_LAYOUT_PADDING_MINUTES;
+
+
+  const pxPerMinute =
+    getSchedulePixelsPerMinute();
+
+
+  const layout =
+    make(
+      "div",
+      "schedule-proportional-layout"
+    );
+
+
+  layout.dataset.dayStartMinutes =
+    String(dayStartMinutes);
+
+
+  layout.dataset.dayEndMinutes =
+    String(dayEndMinutes);
+
+
+  layout.dataset.pxPerMinute =
+    String(pxPerMinute);
+
+
+  layout.style.height =
+    `${
+      (
+        dayEndMinutes -
+        dayStartMinutes
+      ) * pxPerMinute
+    }px`;
+
+
+  const keshiTimeTrack =
+    make(
+      "div",
+      "schedule-person-time-track schedule-keshi-time-track"
+    );
+
+
+  const keshiEventTrack =
+    make(
+      "div",
+      "schedule-person-event-track schedule-keshi-event-track"
+    );
+
+
+  const luzhenEventTrack =
+    make(
+      "div",
+      "schedule-person-event-track schedule-luzhen-event-track"
+    );
+
+
+  const luzhenTimeTrack =
+    make(
+      "div",
+      "schedule-person-time-track schedule-luzhen-time-track"
+    );
+
+
+  const sharedEventLayer =
+    make(
+      "div",
+      "schedule-shared-event-layer"
+    );
+
+
+  sharedEventLayer.setAttribute(
+    "aria-label",
+    "共同日程"
+  );
+
+
+  function createScheduleEvent(
+    event,
+    isShared = false
   ) {
 
     const item =
       make(
         "div",
-        "schedule-event"
+        `schedule-event schedule-positioned-event${
+          isShared
+            ? " schedule-shared-positioned-event"
+            : ""
+        }`
       );
+
+
+    const surface =
+      make(
+        "div",
+        "schedule-event-surface"
+      );
+
+
+    item.dataset.owner =
+      event.owner;
+
+
+    item.dataset.startMinutes =
+      String(event.startMinutes);
+
+
+    item.dataset.endMinutes =
+      String(event.endMinutes);
+
+
+    item.dataset.layoutDurationMinutes =
+      String(
+        event.layoutDurationMinutes
+      );
+
+
+    item.style.top =
+      `${
+        (
+          event.startMinutes -
+          dayStartMinutes
+        ) * pxPerMinute
+      }px`;
+
+
+    item.style.height =
+      `${
+        event.layoutDurationMinutes *
+        pxPerMinute
+      }px`;
+
+
+    if (isShared) {
+
+      item.style.left =
+        "6px";
+
+
+      item.style.right =
+        "6px";
+
+    } else {
+
+      const laneWidth =
+        100 /
+        event.layoutLaneCount;
+
+
+      item.style.left =
+        `calc(${
+          event.layoutLane *
+          laneWidth
+        }% + 2px)`;
+
+
+      item.style.width =
+        `calc(${laneWidth}% - 4px)`;
+
+    }
 
 
     if (
@@ -4889,7 +5586,7 @@ function renderSchedule() {
     );
 
 
-    item.appendChild(
+    surface.appendChild(
 
       make(
         "strong",
@@ -4900,16 +5597,16 @@ function renderSchedule() {
     );
 
 
-    if (
-      event.endTime
-    ) {
+    if (event.time) {
 
-      item.appendChild(
+      surface.appendChild(
 
         make(
           "span",
           "schedule-event-range",
-          `${event.time}–${event.endTime}`
+          event.endTime
+            ? `${event.time}–${event.endTime}`
+            : event.time
         )
 
       );
@@ -4979,194 +5676,139 @@ function renderSchedule() {
     );
 
 
-    container.appendChild(
-      item
+    item.appendChild(surface);
+    return item;
+
+  }
+
+
+  function appendTimeNodes(
+    container,
+    nodes
+  ) {
+
+    nodes.forEach(
+      function ([minutes, label]) {
+
+        const node =
+          make(
+            "span",
+            "schedule-time schedule-time-node",
+            label
+          );
+
+
+        node.dataset.minutes =
+          String(minutes);
+
+
+        node.style.top =
+          `${
+            (
+              minutes -
+              dayStartMinutes
+            ) * pxPerMinute
+          }px`;
+
+
+        container.appendChild(node);
+
+      }
     );
 
   }
 
 
-
-  uniqueTimes.forEach(
-    function (
-      time
-    ) {
-
-      const row =
-        make(
-          "div",
-          "schedule-row"
-        );
-
-
-      const keshiAtTime =
-        keshiEvents.filter(
-          function (
-            event
-          ) {
-
-            return (
-              event.time ===
-              time
-            );
-
-          }
-        );
-
-
-      const luzhenAtTime =
-        luzhenEvents.filter(
-          function (
-            event
-          ) {
-
-            return (
-              event.time ===
-              time
-            );
-
-          }
-        );
-
-
-      const sharedAtTime =
-        sharedEvents.filter(
-          function (event) {
-
-            return event.time === time;
-
-          }
-        );
-
-
-      sharedAtTime.forEach(
-        function (event) {
-
-          const sharedRow =
-            make(
-              "div",
-              "schedule-row schedule-row-shared"
-            );
-
-
-          const sharedCell =
-            make(
-              "div",
-              "schedule-item schedule-shared"
-            );
-
-
-          appendScheduleEvent(
-            sharedCell,
-            event
-          );
-
-
-          sharedRow.append(
-            make(
-              "span",
-              "schedule-time",
-              time
-            ),
-            sharedCell,
-            make(
-              "span",
-              "schedule-time",
-              time
-            )
-          );
-
-
-          scheduleList.appendChild(
-            sharedRow
-          );
-
-        }
-      );
-
-
-      if (
-        !keshiAtTime.length &&
-        !luzhenAtTime.length
-      ) {
-        return;
-      }
-
-
-      const leftTime =
-        make(
-          "span",
-          "schedule-time",
-          time
-        );
-
-
-      const keshiCell =
-        make(
-          "div",
-          "schedule-item keshi"
-        );
-
-
-      keshiAtTime.forEach(
-        function (
-          event
-        ) {
-
-          appendScheduleEvent(
-            keshiCell,
-            event
-          );
-
-        }
-      );
-
-
-      const luzhenCell =
-        make(
-          "div",
-          "schedule-item luzhen"
-        );
-
-
-      luzhenAtTime.forEach(
-        function (
-          event
-        ) {
-
-          appendScheduleEvent(
-            luzhenCell,
-            event
-          );
-
-        }
-      );
-
-
-      const rightTime =
-        make(
-          "span",
-          "schedule-time",
-          time
-        );
-
-
-      row.append(
-        leftTime,
-        keshiCell,
-        luzhenCell,
-        rightTime
-      );
-
-
-      scheduleList.appendChild(
-        row
-      );
-
-    }
+  appendTimeNodes(
+    keshiTimeTrack,
+    collectScheduleTimeNodes(
+      positionedKeshiEvents,
+      preparedSharedEvents
+    )
   );
 
+
+  appendTimeNodes(
+    luzhenTimeTrack,
+    collectScheduleTimeNodes(
+      positionedLuzhenEvents,
+      preparedSharedEvents
+    )
+  );
+
+
+  positionedKeshiEvents.forEach(
+    event =>
+      keshiEventTrack.appendChild(
+        createScheduleEvent(event)
+      )
+  );
+
+
+  positionedLuzhenEvents.forEach(
+    event =>
+      luzhenEventTrack.appendChild(
+        createScheduleEvent(event)
+      )
+  );
+
+
+  preparedSharedEvents.forEach(
+    event =>
+      sharedEventLayer.appendChild(
+        createScheduleEvent(
+          event,
+          true
+        )
+      )
+  );
+
+
+  layout.append(
+    keshiTimeTrack,
+    keshiEventTrack,
+    luzhenEventTrack,
+    luzhenTimeTrack,
+    sharedEventLayer
+  );
+
+
+  scheduleList.appendChild(layout);
+
 }
+
+
+window.addEventListener(
+  "resize",
+  function () {
+
+    const currentLayout =
+      scheduleList.querySelector(
+        ".schedule-proportional-layout"
+      );
+
+
+    if (!currentLayout) return;
+
+
+    const currentScale =
+      Number(
+        currentLayout.dataset
+          .pxPerMinute
+      );
+
+
+    if (
+      currentScale !==
+      getSchedulePixelsPerMinute()
+    ) {
+
+      renderSchedule();
+
+    }
+
+  }
+);
 
 
 

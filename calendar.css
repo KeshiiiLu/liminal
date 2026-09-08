@@ -1494,6 +1494,291 @@ span:last-child {
 }
 
 
+/*
+  Schedule proportional layout
+
+  The two outer time tracks are intentionally independent. The two inner
+  event tracks and the shared layer use one minute-to-height scale.
+*/
+
+.schedule-list {
+  min-width: 0;
+}
+
+
+.schedule-proportional-layout {
+  --schedule-time-column: 44px;
+
+  position: relative;
+
+  display: grid;
+
+  width: 100%;
+  min-height: 90px;
+
+  grid-template-columns:
+    var(--schedule-time-column)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    var(--schedule-time-column);
+
+  border-top:
+    1px solid
+    rgba(55, 52, 47, 0.045);
+}
+
+
+.schedule-person-time-track,
+.schedule-person-event-track {
+  position: relative;
+
+  min-width: 0;
+  height: 100%;
+}
+
+
+.schedule-person-time-track {
+  z-index: 3;
+}
+
+
+.schedule-person-event-track {
+  z-index: 2;
+}
+
+
+.schedule-keshi-event-track {
+  border-right:
+    1px solid
+    rgba(55, 52, 47, 0.055);
+}
+
+
+.schedule-time-node {
+  position: absolute;
+  right: 0;
+  left: 0;
+
+  display: block;
+
+  padding: 0 2px;
+
+  line-height: 1;
+  white-space: nowrap;
+
+  transform:
+    translateY(-50%);
+}
+
+
+.schedule-shared-event-layer {
+  position: absolute;
+  z-index: 8;
+  top: 0;
+  right:
+    var(--schedule-time-column);
+  bottom: 0;
+  left:
+    var(--schedule-time-column);
+
+  pointer-events: none;
+}
+
+
+.schedule-positioned-event {
+  position: absolute;
+  z-index: 2;
+  min-height: 0;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+
+  overflow: visible;
+
+  touch-action: manipulation;
+}
+
+
+.schedule-positioned-event::before {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: -2px;
+  left: -2px;
+
+  height: max(44px, 100%);
+
+  border-radius: 12px;
+
+  content: "";
+
+  transform:
+    translateY(-50%);
+}
+
+
+.schedule-event-surface {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 4px 7px;
+
+  border:
+    1px solid
+    rgba(55, 52, 47, 0.035);
+  border-radius: 10px;
+
+  background:
+    rgba(225, 229, 226, 0.72);
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
+}
+
+
+.schedule-positioned-event:active {
+  transform: none;
+
+  background: transparent;
+}
+
+
+.schedule-positioned-event:active
+  .schedule-event-surface {
+  transform: scale(0.985);
+
+  background:
+    rgba(216, 221, 217, 0.86);
+}
+
+
+.schedule-positioned-event:focus-visible {
+  outline:
+    2px solid
+    rgba(92, 92, 87, 0.34);
+  outline-offset: 2px;
+}
+
+
+.schedule-positioned-event
+  .schedule-event-title,
+.schedule-positioned-event
+  .schedule-event-range {
+  max-width: 100%;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.schedule-positioned-event
+  .schedule-event-title {
+  max-height: 2.8em;
+}
+
+
+.schedule-positioned-event
+  .schedule-event-range {
+  flex: 0 0 auto;
+
+  white-space: nowrap;
+}
+
+
+.schedule-keshi-event-track
+  .schedule-event-surface {
+  align-items: flex-end;
+
+  text-align: right;
+}
+
+
+.schedule-luzhen-event-track
+  .schedule-event-surface {
+  align-items: flex-start;
+
+  text-align: left;
+}
+
+
+.schedule-shared-positioned-event {
+  z-index: 10;
+
+  width: auto;
+
+  pointer-events: auto;
+}
+
+
+.schedule-shared-positioned-event
+  .schedule-event-surface {
+  align-items: center;
+
+  border-color:
+    rgba(98, 91, 78, 0.07);
+
+  background:
+    rgba(229, 227, 222, 0.94);
+
+  text-align: center;
+}
+
+
+.schedule-positioned-event.meal
+  .schedule-event-surface {
+  border:
+    1px solid
+    rgba(98, 91, 78, 0.07);
+}
+
+
+.schedule-meal-breakfast
+  .schedule-event-surface {
+  background:
+    rgba(240, 224, 196, 0.92);
+}
+
+
+.schedule-meal-lunch
+  .schedule-event-surface {
+  background:
+    rgba(215, 226, 211, 0.94);
+}
+
+
+.schedule-meal-dinner
+  .schedule-event-surface {
+  background:
+    rgba(222, 217, 228, 0.94);
+}
+
+
+.schedule-meal-snack
+  .schedule-event-surface,
+.schedule-meal-coffee
+  .schedule-event-surface {
+  background:
+    rgba(231, 226, 216, 0.94);
+}
+
+
 .shared-timeline-event {
   position: relative;
   z-index: 2;
@@ -5025,6 +5310,10 @@ input:disabled {
       36px minmax(0, 1fr) minmax(0, 1fr) 36px;
   }
 
+  .schedule-proportional-layout {
+    --schedule-time-column: 36px;
+  }
+
   .schedule-head,
   .schedule-row {
     padding-right: 5px;
@@ -5208,6 +5497,10 @@ input:disabled {
   .schedule-row {
     grid-template-columns:
       32px minmax(0, 1fr) minmax(0, 1fr) 32px;
+  }
+
+  .schedule-proportional-layout {
+    --schedule-time-column: 32px;
   }
 
 

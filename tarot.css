@@ -1,0 +1,1089 @@
+:root {
+  color-scheme: light;
+  --tarot-bg: #f2f0eb;
+  --tarot-bg-deep: #e9e7e2;
+  --tarot-paper: rgba(255, 255, 255, 0.62);
+  --tarot-paper-solid: #f8f7f3;
+  --tarot-ink: #45474d;
+  --tarot-muted: #878990;
+  --tarot-faint: #aaa9ad;
+  --tarot-line: rgba(76, 78, 86, 0.13);
+  --tarot-blue: #929ba9;
+  --tarot-violet: #9d98a7;
+  --tarot-sage: #9da69b;
+  --tarot-warm: #b3a895;
+  --tarot-shadow: 0 20px 55px rgba(70, 68, 72, 0.09);
+  --tarot-radius: 28px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--tarot-bg);
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 13% 7%, rgba(157, 166, 155, 0.1), transparent 28%),
+    radial-gradient(circle at 89% 88%, rgba(157, 152, 167, 0.09), transparent 31%),
+    var(--tarot-bg);
+  color: var(--tarot-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  border: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.tarot-app {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.tarot-stage {
+  width: min(100%, 1040px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(24px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.tarot-stage.is-active {
+  animation: stage-enter 520ms cubic-bezier(0.2, 0.72, 0.25, 1) forwards;
+}
+
+@keyframes stage-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tarot-kicker {
+  margin: 0 0 7px;
+  color: var(--tarot-muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+}
+
+.tarot-header {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 9px 0 30px;
+}
+
+.tarot-header h1 {
+  margin: 0;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(25px, 5vw, 38px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.tarot-back,
+.header-mark {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid var(--tarot-line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--tarot-ink);
+  text-decoration: none;
+}
+
+button.tarot-back {
+  cursor: pointer;
+}
+
+.tarot-back {
+  font-size: 27px;
+  line-height: 1;
+}
+
+.header-mark {
+  border-color: transparent;
+  background: transparent;
+  color: var(--tarot-violet);
+  font-size: 20px;
+}
+
+.tarot-primary-button,
+.tarot-secondary-button {
+  min-height: 50px;
+  padding: 12px 23px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  touch-action: manipulation;
+}
+
+.tarot-primary-button {
+  background: #666b72;
+  color: #f7f5f1;
+  box-shadow: 0 10px 24px rgba(72, 75, 82, 0.16);
+}
+
+.tarot-secondary-button {
+  border: 1px solid var(--tarot-line);
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--tarot-ink);
+}
+
+.tarot-primary-button:hover,
+.tarot-secondary-button:hover,
+.mode-card:hover {
+  transform: translateY(-2px);
+}
+
+.tarot-primary-button:active,
+.tarot-secondary-button:active,
+.mode-card:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.tarot-primary-button:focus-visible,
+.tarot-secondary-button:focus-visible,
+.mode-card:focus-visible,
+.fan-card:focus-visible,
+.result-card:focus-visible,
+.tarot-back:focus-visible {
+  outline: 2px solid rgba(94, 99, 109, 0.58);
+  outline-offset: 3px;
+}
+
+/* Frequency opening */
+
+.frequency-stage {
+  position: relative;
+  display: grid;
+  max-width: none;
+  place-items: center;
+  overflow: hidden;
+}
+
+.frequency-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(100%, 430px);
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.frequency-content h1 {
+  margin: 32px 0 10px;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(34px, 9vw, 52px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.frequency-copy {
+  margin: 0;
+  color: var(--tarot-muted);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+
+.frequency-status {
+  min-height: 22px;
+  margin: 28px 0 16px;
+  color: var(--tarot-faint);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  transition: opacity 250ms ease;
+}
+
+.frequency-button {
+  min-width: 154px;
+}
+
+.frequency-orbit {
+  position: relative;
+  width: clamp(210px, 57vw, 280px);
+  aspect-ratio: 1;
+  margin: 17px 0 0;
+  display: grid;
+  place-items: center;
+}
+
+.frequency-ring {
+  position: absolute;
+  border: 1px solid rgba(103, 107, 116, 0.17);
+  border-radius: 50%;
+}
+
+.frequency-ring::before,
+.frequency-ring::after {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tarot-violet);
+  content: "";
+  opacity: 0.45;
+}
+
+.frequency-ring::before {
+  top: -3px;
+  left: 50%;
+}
+
+.frequency-ring::after {
+  right: 9%;
+  bottom: 17%;
+}
+
+.frequency-ring-outer {
+  inset: 0;
+  animation: orbit-turn 24s linear infinite;
+}
+
+.frequency-ring-inner {
+  inset: 15%;
+  border-style: dashed;
+  animation: orbit-turn 19s linear infinite reverse;
+}
+
+.frequency-card {
+  position: relative;
+  width: 76px;
+  aspect-ratio: 0.59;
+  border-radius: 10px;
+  box-shadow: 0 14px 35px rgba(71, 73, 80, 0.14);
+  animation: frequency-breathe 4.8s ease-in-out infinite;
+}
+
+.tarot-card-back-design {
+  border: 1px solid rgba(250, 249, 244, 0.64);
+  background:
+    radial-gradient(circle, rgba(248, 247, 243, 0.82) 0 2px, transparent 2.5px),
+    linear-gradient(135deg, transparent 47%, rgba(247, 245, 240, 0.19) 48% 52%, transparent 53%),
+    #7c818a;
+  background-size: 23px 23px, 100% 100%, auto;
+}
+
+.tarot-card-back-design::before,
+.tarot-card-back-design::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.tarot-card-back-design::before {
+  inset: 7px;
+  border: 1px solid rgba(250, 249, 244, 0.55);
+  border-radius: inherit;
+}
+
+.tarot-card-back-design::after {
+  top: 50%;
+  left: 50%;
+  width: 22%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(250, 249, 244, 0.72);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.frequency-stage.is-tuning .frequency-card {
+  animation: frequency-focus 2.4s cubic-bezier(0.36, 0, 0.2, 1) both;
+}
+
+.frequency-stage.is-tuning .frequency-ring-outer {
+  animation-duration: 4s;
+}
+
+.frequency-stage.is-tuning .frequency-ring-inner {
+  animation-duration: 3s;
+}
+
+.frequency-stage.is-ready .frequency-orbit {
+  filter: drop-shadow(0 15px 30px rgba(133, 130, 143, 0.14));
+}
+
+@keyframes orbit-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes frequency-breathe {
+  0%, 100% { transform: translateY(3px) scale(0.98); opacity: 0.82; }
+  50% { transform: translateY(-5px) scale(1.025); opacity: 1; }
+}
+
+@keyframes frequency-focus {
+  0% { transform: scale(1); }
+  44% { transform: scale(0.9) rotate(-3deg); }
+  100% { transform: scale(1.08) rotate(0); }
+}
+
+.frequency-particles i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--tarot-violet);
+  opacity: 0.2;
+  animation: particle-float 8s ease-in-out infinite;
+}
+
+.frequency-particles i:nth-child(1) { top: 17%; left: 17%; }
+.frequency-particles i:nth-child(2) { top: 24%; right: 18%; animation-delay: -2s; }
+.frequency-particles i:nth-child(3) { top: 58%; left: 9%; animation-delay: -4s; }
+.frequency-particles i:nth-child(4) { right: 10%; bottom: 26%; animation-delay: -1s; }
+.frequency-particles i:nth-child(5) { left: 27%; bottom: 11%; animation-delay: -5s; }
+.frequency-particles i:nth-child(6) { right: 31%; bottom: 9%; animation-delay: -3s; }
+
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0); opacity: 0.13; }
+  50% { transform: translateY(-16px); opacity: 0.38; }
+}
+
+/* Mode home and question */
+
+.home-stage,
+.question-stage,
+.shuffle-stage,
+.select-stage,
+.result-stage {
+  display: flex;
+  flex-direction: column;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: auto 0;
+}
+
+.mode-card {
+  position: relative;
+  min-height: 230px;
+  padding: 26px;
+  overflow: hidden;
+  border: 1px solid var(--tarot-line);
+  border-radius: var(--tarot-radius);
+  background: var(--tarot-paper);
+  color: var(--tarot-ink);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--tarot-shadow);
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.mode-card::after {
+  position: absolute;
+  right: -48px;
+  bottom: -62px;
+  width: 170px;
+  height: 170px;
+  border: 1px solid rgba(104, 108, 117, 0.11);
+  border-radius: 50%;
+  content: "";
+}
+
+.mode-card-primary {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(224, 227, 229, 0.48));
+}
+
+.mode-index,
+.mode-title,
+.mode-copy {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.mode-index {
+  margin-bottom: 44px;
+  color: var(--tarot-faint);
+  font-family: Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+}
+
+.mode-title {
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 26px;
+}
+
+.mode-copy {
+  max-width: 250px;
+  margin-top: 10px;
+  color: var(--tarot-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.mode-arrow {
+  position: absolute;
+  right: 25px;
+  bottom: 22px;
+  color: var(--tarot-muted);
+  font-size: 21px;
+}
+
+.future-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 28px 0 4px;
+}
+
+.future-modes span {
+  padding: 8px 12px;
+  border: 1px solid rgba(76, 78, 86, 0.08);
+  border-radius: 999px;
+  color: var(--tarot-faint);
+  font-size: 12px;
+}
+
+.question-panel {
+  width: min(100%, 680px);
+  margin: auto;
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid var(--tarot-line);
+  border-radius: var(--tarot-radius);
+  background: var(--tarot-paper);
+  box-shadow: var(--tarot-shadow);
+}
+
+.question-panel label {
+  display: block;
+  margin-bottom: 13px;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 20px;
+}
+
+.question-panel label span {
+  color: var(--tarot-muted);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.question-panel textarea {
+  display: block;
+  width: 100%;
+  min-height: 144px;
+  resize: vertical;
+  padding: 17px 18px;
+  border: 1px solid var(--tarot-line);
+  border-radius: 18px;
+  outline: none;
+  background: rgba(250, 249, 246, 0.72);
+  color: var(--tarot-ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.question-panel textarea:focus {
+  border-color: rgba(103, 107, 116, 0.36);
+  box-shadow: 0 0 0 3px rgba(103, 107, 116, 0.06);
+}
+
+.question-panel > p {
+  margin: 12px 0 28px;
+  color: var(--tarot-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.question-panel .tarot-primary-button {
+  width: 100%;
+}
+
+/* Shuffle */
+
+.shuffle-stage {
+  overflow: hidden;
+}
+
+.shuffle-table {
+  position: relative;
+  flex: 1;
+  min-height: 390px;
+  overflow: hidden;
+  border: 1px solid rgba(76, 78, 86, 0.08);
+  border-radius: clamp(24px, 4vw, 42px);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.58), rgba(230, 229, 225, 0.34) 53%, rgba(222, 223, 220, 0.22));
+  box-shadow: inset 0 0 80px rgba(88, 90, 96, 0.035);
+}
+
+.scatter-deck {
+  position: absolute;
+  inset: 26px 28px 54px;
+  transform-origin: center;
+}
+
+.scatter-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(42px, 7vw, 62px);
+  aspect-ratio: 0.59;
+  border-radius: 7px;
+  box-shadow: 0 8px 19px rgba(62, 64, 70, 0.12);
+  transform: translate(-50%, -50%) translate(var(--scatter-x), var(--scatter-y)) rotate(var(--scatter-rotate));
+  transition: transform 720ms cubic-bezier(0.17, 0.78, 0.24, 1), opacity 250ms ease;
+  will-change: transform;
+}
+
+.scatter-card::before {
+  inset: 5px;
+}
+
+.scatter-deck.is-gathering .scatter-card {
+  transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(0.82);
+  opacity: 0.7;
+}
+
+.scatter-deck.is-rotating {
+  animation: deck-turn 820ms cubic-bezier(0.28, 0.68, 0.32, 1);
+}
+
+@keyframes deck-turn {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(185deg) scale(0.92); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.shuffle-whisper {
+  position: absolute;
+  right: 20px;
+  bottom: 16px;
+  left: 20px;
+  margin: 0;
+  color: var(--tarot-faint);
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.shuffle-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(150px, 1.1fr);
+  gap: 12px;
+  padding-top: 18px;
+}
+
+/* Fan selection */
+
+.selection-count {
+  justify-self: end;
+  margin: 0;
+  color: var(--tarot-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.fan-area {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 345px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--tarot-line);
+}
+
+.fan-deck {
+  position: absolute;
+  inset: 0;
+}
+
+.fan-card {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  width: clamp(58px, 11vw, 78px);
+  aspect-ratio: 0.59;
+  padding: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  box-shadow: 0 9px 18px rgba(56, 58, 64, 0.11);
+  transform-origin: 50% 106%;
+  transform: translateX(calc(-50% + var(--fan-x))) translateY(var(--fan-y)) rotate(var(--fan-rotate));
+  transition: transform 480ms cubic-bezier(0.16, 0.78, 0.3, 1), opacity 300ms ease, filter 200ms ease;
+  touch-action: manipulation;
+}
+
+.fan-card:hover {
+  filter: brightness(1.05);
+  transform: translateX(calc(-50% + var(--fan-x))) translateY(calc(var(--fan-y) - 13px)) rotate(var(--fan-rotate));
+}
+
+.fan-card.is-picked {
+  z-index: 100 !important;
+  opacity: 0;
+  transform: translateX(calc(-50% + var(--fan-x))) translateY(-185px) rotate(0deg) scale(1.08);
+  pointer-events: none;
+}
+
+.fan-card:disabled {
+  cursor: default;
+}
+
+.draw-status {
+  min-height: 22px;
+  margin: 14px 0 7px;
+  color: var(--tarot-muted);
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.drawn-preview {
+  display: flex;
+  min-height: 89px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: 3px 0;
+}
+
+.preview-card {
+  width: 44px;
+  aspect-ratio: 0.59;
+  border-radius: 6px;
+  animation: preview-arrive 560ms cubic-bezier(0.16, 0.78, 0.3, 1) both;
+  box-shadow: 0 8px 17px rgba(60, 62, 68, 0.13);
+}
+
+@keyframes preview-arrive {
+  from { opacity: 0; transform: translateY(35px) scale(0.82); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Results and three-state cards */
+
+.result-stage {
+  padding-bottom: max(36px, env(safe-area-inset-bottom));
+}
+
+.result-instruction {
+  margin: 0 0 22px;
+  color: var(--tarot-muted);
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.result-cards {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 430px;
+}
+
+.result-cards.is-multiple {
+  justify-content: flex-start;
+  overflow-x: auto;
+  padding: 10px max(9%, 24px) 24px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: max(9%, 24px);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(95, 98, 106, 0.24) transparent;
+}
+
+.result-cards.is-multiple::-webkit-scrollbar {
+  height: 4px;
+}
+
+.result-cards.is-multiple::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.result-cards.is-multiple::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(95, 98, 106, 0.24);
+}
+
+.result-card-wrap {
+  flex: 0 0 min(66vw, 250px);
+  text-align: center;
+  scroll-snap-align: center;
+}
+
+.result-cards:not(.is-multiple) .result-card-wrap {
+  width: min(72vw, 264px);
+  flex-basis: min(72vw, 264px);
+}
+
+.result-position {
+  margin: 0 0 11px;
+  color: var(--tarot-muted);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+.result-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.59;
+  padding: 0;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  perspective: 1100px;
+  touch-action: manipulation;
+}
+
+.result-card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 460ms cubic-bezier(0.2, 0.72, 0.25, 1);
+}
+
+.result-card[data-view="face"] .result-card-inner {
+  transform: rotateY(180deg);
+}
+
+.result-card[data-view="meaning"] .result-card-inner {
+  transform: rotateY(360deg);
+}
+
+.result-card-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(74, 77, 84, 0.13);
+  border-radius: 16px;
+  box-shadow: 0 19px 40px rgba(58, 60, 66, 0.14);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.result-card-back {
+  background-color: #777d87;
+}
+
+.result-card-face {
+  padding: 17px 13px;
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(rgba(250, 249, 245, 0.92), rgba(235, 234, 230, 0.92)),
+    var(--tarot-paper-solid);
+  transition: opacity 120ms linear 170ms;
+}
+
+.result-card-meaning {
+  padding: 20px 16px;
+  transform: rotateY(360deg);
+  background: linear-gradient(155deg, #f7f5ef, #e7e8e6);
+  opacity: 0;
+  transition: opacity 120ms linear 170ms;
+}
+
+.result-card[data-view="meaning"] .result-card-back,
+.result-card[data-view="meaning"] .result-card-face {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.result-card[data-view="meaning"] .result-card-meaning {
+  opacity: 1;
+}
+
+.result-card[data-view="face"] .result-card-meaning,
+.result-card[data-view="back"] .result-card-meaning {
+  visibility: hidden;
+}
+
+.tarot-face-art {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 8px;
+  border: 1px solid rgba(80, 82, 88, 0.15);
+  border-radius: 10px;
+  transition: transform 420ms ease;
+}
+
+.result-card.is-reversed .tarot-face-art {
+  transform: rotate(180deg);
+}
+
+.face-number {
+  color: var(--tarot-muted);
+  font-family: Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+
+.face-symbol {
+  display: grid;
+  width: 62%;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(84, 86, 94, 0.14);
+  border-radius: 50%;
+  color: var(--tarot-violet);
+  font-family: Georgia, serif;
+  font-size: clamp(30px, 9vw, 52px);
+}
+
+.face-name-zh {
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(18px, 5vw, 25px);
+  letter-spacing: 0.08em;
+}
+
+.face-name-en {
+  color: var(--tarot-muted);
+  font-family: Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+}
+
+.orientation-label {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(246, 244, 239, 0.84);
+  color: var(--tarot-muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.meaning-name {
+  margin: 0;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(20px, 5vw, 27px);
+  font-weight: 400;
+}
+
+.meaning-orientation {
+  margin: 7px 0 25px;
+  color: var(--tarot-muted);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+.meaning-label {
+  margin: 0 0 8px;
+  color: var(--tarot-faint);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.meaning-keywords {
+  margin: 0;
+  color: #60636a;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(14px, 3.5vw, 17px);
+  line-height: 1.75;
+}
+
+.meaning-hint {
+  margin: 22px 0 0;
+  color: var(--tarot-muted);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  width: min(100%, 520px);
+  margin: 25px auto 0;
+}
+
+@media (max-width: 600px) {
+  .tarot-stage {
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-left: max(16px, env(safe-area-inset-left));
+  }
+
+  .tarot-header {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 10px;
+    padding-bottom: 21px;
+  }
+
+  .tarot-back,
+  .header-mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .tarot-header h1 {
+    overflow: hidden;
+    font-size: 24px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mode-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    margin: 8px 0 auto;
+  }
+
+  .mode-card {
+    min-height: 166px;
+    padding: 21px;
+  }
+
+  .mode-index {
+    margin-bottom: 24px;
+  }
+
+  .mode-title {
+    font-size: 23px;
+  }
+
+  .future-modes {
+    padding-top: 20px;
+  }
+
+  .question-panel {
+    margin: 24px auto auto;
+  }
+
+  .shuffle-table {
+    min-height: 390px;
+  }
+
+  .scatter-deck {
+    inset: 20px 10px 52px;
+  }
+
+  .shuffle-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .shuffle-controls .tarot-primary-button {
+    grid-column: 1 / -1;
+  }
+
+  .selection-count {
+    font-size: 12px;
+  }
+
+  .fan-area {
+    min-height: 330px;
+  }
+
+  .result-cards {
+    min-height: 390px;
+  }
+
+  .result-card-wrap {
+    flex-basis: min(72vw, 245px);
+  }
+}
+
+@media (max-width: 380px) {
+  .frequency-content h1 {
+    font-size: 33px;
+  }
+
+  .tarot-header h1 {
+    font-size: 21px;
+  }
+
+  .question-panel {
+    padding: 22px 18px;
+  }
+
+  .shuffle-table {
+    min-height: 355px;
+  }
+
+  .shuffle-controls {
+    gap: 9px;
+  }
+
+  .shuffle-controls button {
+    padding-right: 14px;
+    padding-left: 14px;
+    font-size: 14px;
+  }
+
+  .fan-area {
+    min-height: 305px;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-stage,
+  .question-stage,
+  .shuffle-stage,
+  .select-stage,
+  .result-stage {
+    padding-top: max(40px, env(safe-area-inset-top));
+    padding-bottom: max(44px, env(safe-area-inset-bottom));
+  }
+
+  .mode-grid {
+    width: min(100%, 790px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .future-modes {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

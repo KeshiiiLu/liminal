@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f0eb">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Liminal">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Tarot · Liminal</title>
+  <link rel="stylesheet" href="tarot.css">
+  <script src="storage-migrations.js"></script>
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
+</head>
+
+<body data-tarot-stage="frequency">
+  <main class="tarot-app" id="tarotApp">
+    <section class="tarot-stage frequency-stage is-active" data-stage="frequency" aria-labelledby="frequencyTitle">
+      <div class="frequency-particles" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="frequency-content">
+        <p class="tarot-kicker">TAROT</p>
+        <div class="frequency-orbit" aria-hidden="true">
+          <span class="frequency-ring frequency-ring-outer"></span>
+          <span class="frequency-ring frequency-ring-inner"></span>
+          <span class="frequency-card tarot-card-back-design"></span>
+        </div>
+        <h1 id="frequencyTitle">调整频率</h1>
+        <p class="frequency-copy">让注意力回到这一次问题</p>
+        <p class="frequency-status" id="frequencyStatus" aria-live="polite">准备开始</p>
+        <button class="tarot-primary-button frequency-button" id="frequencyButton" type="button">开始</button>
+      </div>
+    </section>
+
+    <section class="tarot-stage home-stage" data-stage="home" aria-labelledby="tarotHomeTitle" hidden>
+      <header class="tarot-header">
+        <a class="tarot-back" href="index.html?page=1" aria-label="返回首页">‹</a>
+        <div>
+          <p class="tarot-kicker">TAROT</p>
+          <h1 id="tarotHomeTitle">选择这一次的方式</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">✦</span>
+      </header>
+
+      <div class="mode-grid">
+        <button class="mode-card mode-card-primary" type="button" data-mode="single">
+          <span class="mode-index">01</span>
+          <span class="mode-title">单张回应</span>
+          <span class="mode-copy">为此刻抽取一张回应牌</span>
+          <span class="mode-arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="mode-card" type="button" data-mode="triple">
+          <span class="mode-index">02</span>
+          <span class="mode-title">三张补充</span>
+          <span class="mode-copy">让三张牌依次补充同一个问题</span>
+          <span class="mode-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+
+      <div class="future-modes" aria-label="以后开放的模式">
+        <span>今日运势</span><span>本周运势</span><span>Ta 的状态</span><span>爱情指引</span>
+      </div>
+    </section>
+
+    <section class="tarot-stage question-stage" data-stage="question" aria-labelledby="questionTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="back-home" aria-label="返回 Tarot">‹</button>
+        <div>
+          <p class="tarot-kicker">QUESTION</p>
+          <h1 id="questionTitle">单张回应</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">○</span>
+      </header>
+
+      <div class="question-panel">
+        <label for="tarotQuestion">问题 <span>（可选）</span></label>
+        <textarea id="tarotQuestion" rows="5" maxlength="280" placeholder="输入问题……"></textarea>
+        <p>问题可以留空。牌池不会根据问题内容改变。</p>
+        <button class="tarot-primary-button" id="startShuffleButton" type="button">开始洗牌</button>
+      </div>
+    </section>
+
+    <section class="tarot-stage shuffle-stage" data-stage="shuffle" aria-labelledby="shuffleTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="back-question" aria-label="返回问题页">‹</button>
+        <div>
+          <p class="tarot-kicker">SHUFFLE</p>
+          <h1 id="shuffleTitle">让牌慢慢散开</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">↻</span>
+      </header>
+
+      <div class="shuffle-table" id="shuffleTable" aria-label="洗牌桌面">
+        <div class="scatter-deck" id="scatterDeck" aria-hidden="true"></div>
+        <p class="shuffle-whisper" id="shuffleWhisper" aria-live="polite">按照自己的节奏，直到你觉得可以了</p>
+      </div>
+
+      <div class="shuffle-controls">
+        <button class="tarot-secondary-button" id="scatterButton" type="button">重新散开</button>
+        <button class="tarot-secondary-button" id="rotateButton" type="button">转动洗牌</button>
+        <button class="tarot-primary-button" id="finishShuffleButton" type="button">洗好了</button>
+      </div>
+    </section>
+
+    <section class="tarot-stage select-stage" data-stage="select" aria-labelledby="selectTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="back-shuffle" aria-label="返回洗牌">‹</button>
+        <div>
+          <p class="tarot-kicker">DRAW</p>
+          <h1 id="selectTitle">从牌堆中选择</h1>
+        </div>
+        <p class="selection-count" id="selectionCount">已选择 0 / 1</p>
+      </header>
+
+      <div class="fan-area" id="fanArea">
+        <div class="fan-deck" id="fanDeck" role="group" aria-label="扇形塔罗牌堆"></div>
+      </div>
+      <p class="draw-status" id="drawStatus" aria-live="polite">轻触一张牌</p>
+      <div class="drawn-preview" id="drawnPreview" aria-label="已抽出的牌"></div>
+    </section>
+
+    <section class="tarot-stage result-stage" data-stage="result" aria-labelledby="resultTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="return-home" aria-label="返回 Tarot">‹</button>
+        <div>
+          <p class="tarot-kicker">RESULT</p>
+          <h1 id="resultTitle">这一次的牌</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">✦</span>
+      </header>
+
+      <p class="result-instruction" id="resultInstruction">轻触牌背翻开</p>
+      <div class="result-cards" id="resultCards"></div>
+      <div class="result-actions">
+        <button class="tarot-secondary-button" type="button" data-action="return-home">返回 Tarot</button>
+        <button class="tarot-primary-button" id="restartReadingButton" type="button">重新抽牌</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="tarot-data.js"></script>
+  <script src="tarot.js"></script>
+</body>
+
+</html>
