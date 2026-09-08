@@ -253,6 +253,13 @@
   document.getElementById("avatarEditorClose").addEventListener("click", handleEditorCancel);
   document.getElementById("avatarEditorCancel").addEventListener("click", handleEditorCancel);
   document.getElementById("avatarEditorBackdrop").addEventListener("click", handleEditorCancel);
+
+  if (params.get("avatar") === USER_PROFILE.id) {
+    window.setTimeout(function () {
+      openEditor(USER_PROFILE, userAvatarSetting);
+    }, 0);
+  }
+
   window.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && !editor.hidden) closeAvatarEditor();
   });

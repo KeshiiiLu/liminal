@@ -21,18 +21,17 @@
   <main class="sleep-shell">
     <header class="sleep-header">
       <a class="sleep-back" href="index.html?page=2" aria-label="返回首页">‹</a>
-      <div>
-        <span>SLEEP</span>
-        <h1>和榛榛一起慢下来</h1>
+      <div class="sleep-header-context">
+        <span id="sleepLocationLabel">Liminal · quiet hours</span>
+        <span id="sleepPersonState">陆榛 · 在旁边</span>
       </div>
-      <span class="sleep-moon" aria-hidden="true">☾</span>
+      <time id="sleepClock" aria-label="当前时间"></time>
     </header>
 
     <section id="sleepApp" class="sleep-stage" aria-live="polite"></section>
 
     <footer class="sleep-footer">
-      <span id="sleepLocationLabel">Liminal · quiet hours</span>
-      <span id="sleepClock" aria-label="当前时间"></span>
+      <span id="sleepFooterHint">慢一点也可以。</span>
     </footer>
   </main>
 

@@ -5,6 +5,7 @@
   const studyData = window.TAROT_STUDY;
   const studyValidation = window.LiminalTarotStudyValidation;
   const historyStore = window.LiminalTarotHistory;
+  const tarotRandom = window.LiminalTarotRandom;
   const app = document.getElementById("tarotApp");
 
   if (
@@ -15,7 +16,8 @@
     !studyData ||
     !studyValidation ||
     !studyValidation.complete ||
-    !historyStore
+    !historyStore ||
+    !tarotRandom
   ) {
     if (app) {
       app.innerHTML = '<section class="tarot-stage is-active"><p>Tarot 所需数据未能完整加载。</p></section>';
@@ -243,44 +245,15 @@
   }
 
   function randomInteger(maxExclusive) {
-    if (!Number.isInteger(maxExclusive) || maxExclusive <= 0) {
-      throw new RangeError("maxExclusive must be a positive integer");
-    }
-
-    if (window.crypto && typeof window.crypto.getRandomValues === "function") {
-      const range = 0x100000000;
-      const limit = Math.floor(range / maxExclusive) * maxExclusive;
-      const buffer = new Uint32Array(1);
-      let value;
-      do {
-        window.crypto.getRandomValues(buffer);
-        value = buffer[0];
-      } while (value >= limit);
-      return value % maxExclusive;
-    }
-
-    return Math.floor(Math.random() * maxExclusive);
+    return tarotRandom.randomInteger(maxExclusive);
   }
 
   function shuffledCopy(items) {
-    const shuffled = items.slice();
-    for (let index = shuffled.length - 1; index > 0; index -= 1) {
-      const target = randomInteger(index + 1);
-      const current = shuffled[index];
-      shuffled[index] = shuffled[target];
-      shuffled[target] = current;
-    }
-    return shuffled;
+    return tarotRandom.shuffledCopy(items);
   }
 
   function buildFreshDeck() {
-    const deck = tarotData.cards.map(function (card) {
-      return Object.freeze({
-        card: card,
-        reversed: randomInteger(2) === 1
-      });
-    });
-    return shuffledCopy(deck);
+    return tarotRandom.buildDeck(tarotData.cards);
   }
 
   function getMode(modeId) {

@@ -93,6 +93,7 @@
           <button class="water-quick-button" type="button" data-water-amount="200">+200 <small>ml</small></button>
           <button class="water-quick-button" type="button" data-water-amount="300">+300 <small>ml</small></button>
           <button class="water-quick-button" type="button" data-water-amount="500">+500 <small>ml</small></button>
+          <button class="water-quick-button" type="button" data-water-amount="700">+700 <small>ml</small></button>
         </div>
 
         <button class="water-custom-toggle" id="waterCustomToggle" type="button" aria-expanded="false">
@@ -102,7 +103,7 @@
 
         <form class="water-custom-form" id="waterCustomForm" hidden>
           <label for="waterCustomAmount">这次喝了多少</label>
-          <div>
+          <div class="water-custom-amount-row">
             <input
               id="waterCustomAmount"
               type="number"
@@ -115,6 +116,14 @@
             >
             <span>ml</span>
             <button type="submit">记下</button>
+          </div>
+
+          <div class="water-custom-time-row">
+            <label for="waterCustomTime">
+              饮水时间
+              <small>可选，默认现在</small>
+            </label>
+            <input id="waterCustomTime" type="time" step="60">
           </div>
           <p id="waterCustomError" role="alert" hidden></p>
         </form>
@@ -182,6 +191,54 @@
         <div class="water-sheet-actions">
           <button id="waterGoalCancel" type="button">取消</button>
           <button class="primary" type="submit">保存</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+
+  <div class="water-sheet-backdrop" id="waterEditBackdrop" hidden>
+    <section class="water-sheet" role="dialog" aria-modal="true" aria-labelledby="waterEditTitle">
+      <div class="water-sheet-handle"></div>
+
+      <header>
+        <div>
+          <span>EDIT RECORD</span>
+          <h2 id="waterEditTitle">修改饮水记录</h2>
+        </div>
+        <button id="waterEditClose" type="button" aria-label="关闭">×</button>
+      </header>
+
+      <form id="waterEditForm">
+        <div class="water-edit-fields">
+          <label for="waterEditAmount">
+            <span>饮水量</span>
+            <span class="water-input-with-unit">
+              <input
+                id="waterEditAmount"
+                type="number"
+                min="1"
+                max="5000"
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+              >
+              <small>ml</small>
+            </span>
+          </label>
+
+          <label for="waterEditTime">
+            <span>饮水时间</span>
+            <input id="waterEditTime" type="time" step="60" required>
+          </label>
+        </div>
+
+        <p id="waterEditError" role="alert" hidden></p>
+
+        <div class="water-sheet-actions">
+          <button id="waterEditCancel" type="button">取消</button>
+          <button class="primary" type="submit">保存修改</button>
         </div>
       </form>
     </section>

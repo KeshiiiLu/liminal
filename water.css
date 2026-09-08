@@ -108,6 +108,7 @@ a {
 .water-quick-button:active,
 .water-custom-toggle:active,
 .water-custom-form button:active,
+.water-record-edit:active,
 .water-record-delete:active,
 .water-sheet button:active {
   transform: scale(0.97);
@@ -282,7 +283,7 @@ a {
 
 .water-quick-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 
   gap: 9px;
 }
@@ -368,7 +369,7 @@ a {
   font-size: 0.78rem;
 }
 
-.water-custom-form > div {
+.water-custom-amount-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 72px;
   align-items: center;
@@ -403,10 +404,54 @@ a {
   box-shadow: 0 0 0 3px rgba(118, 145, 146, 0.09);
 }
 
-.water-custom-form > div > span,
+.water-custom-amount-row > span,
 .water-goal-control span {
   color: #8d918d;
   font-size: 0.78rem;
+}
+
+.water-custom-time-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, 0.85fr);
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(69, 72, 69, 0.07);
+}
+
+.water-custom-time-row label {
+  color: #777770;
+  font-size: 0.78rem;
+}
+
+.water-custom-time-row label small {
+  display: block;
+  margin-top: 3px;
+  color: #a09e98;
+  font-size: 0.68rem;
+  font-weight: 400;
+}
+
+.water-custom-time-row input,
+.water-edit-fields input {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid rgba(69, 72, 69, 0.1);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #454743;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.water-custom-time-row input:focus,
+.water-edit-fields input:focus {
+  border-color: rgba(94, 119, 120, 0.36);
+  box-shadow: 0 0 0 3px rgba(118, 145, 146, 0.09);
 }
 
 .water-custom-form button {
@@ -457,7 +502,7 @@ a {
 
 .water-record-item {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 44px;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
   align-items: center;
 
   min-height: 62px;
@@ -477,6 +522,12 @@ a {
   font-weight: 600;
 }
 
+.water-record-actions {
+  display: flex;
+  align-items: center;
+}
+
+.water-record-edit,
 .water-record-delete {
   width: 44px;
   height: 44px;
@@ -488,6 +539,44 @@ a {
 
   font-size: 1rem;
   cursor: pointer;
+}
+
+.water-record-edit {
+  color: #858d8b;
+  font-size: 0.74rem;
+}
+
+.water-edit-fields {
+  display: grid;
+  gap: 17px;
+}
+
+.water-edit-fields > label {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  color: #777770;
+  font-size: 0.78rem;
+}
+
+.water-input-with-unit {
+  position: relative;
+  display: block;
+}
+
+.water-input-with-unit input {
+  padding-right: 42px;
+}
+
+.water-input-with-unit small {
+  position: absolute;
+  top: 50%;
+  right: 13px;
+  color: #8d918d;
+  font-size: 0.72rem;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .water-empty {
@@ -708,7 +797,12 @@ a {
 
   .water-quick-button {
     min-height: 50px;
-    font-size: 0.82rem;
+    font-size: 0.76rem;
+  }
+
+  .water-record-item {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    padding-left: 12px;
   }
 }
 
@@ -721,6 +815,7 @@ a {
   .water-view-toggle:hover,
   .water-quick-button:hover,
   .water-custom-toggle:hover,
+  .water-record-edit:hover,
   .water-record-delete:hover,
   .water-goal-button:hover {
     background-color: rgba(255, 255, 255, 0.88);

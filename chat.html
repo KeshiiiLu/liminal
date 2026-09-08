@@ -18,6 +18,7 @@
 
   <link rel="stylesheet" href="chat-corpus.css">
   <link rel="stylesheet" href="chat-finance.css">
+  <link rel="stylesheet" href="tarot-study.css">
 
   <script src="storage-migrations.js"></script>
   <link rel="stylesheet" href="interaction.css">
@@ -514,55 +515,84 @@
   <!-- 聊天快捷塔罗 -->
 
   <div class="chat-tarot-panel" id="chatTarotPanel" hidden>
-
     <section class="chat-tarot-sheet" role="dialog" aria-modal="true" aria-labelledby="chatTarotTitle">
-
       <div class="chat-tarot-handle" aria-hidden="true"></div>
 
       <header class="chat-tarot-header">
-
         <div>
           <span>QUICK TAROT</span>
           <strong id="chatTarotTitle">快捷塔罗</strong>
         </div>
-
-        <button class="chat-tarot-close" id="chatTarotClose" type="button" aria-label="关闭快捷塔罗">×</button>
-
+        <div class="chat-tarot-header-actions">
+          <button class="chat-tarot-history-button" id="chatTarotHistoryButton" type="button">历史</button>
+          <button class="chat-tarot-close" id="chatTarotClose" type="button" aria-label="关闭快捷塔罗">×</button>
+        </div>
       </header>
 
-      <p class="chat-tarot-intro">在聊天里抽一张牌。牌义提供语义方向，不替你决定答案。</p>
+      <div class="chat-tarot-main" id="chatTarotMain">
+        <p class="chat-tarot-intro">牌义提供语义方向，不替你决定答案。</p>
 
-      <label class="chat-tarot-question">
-        <span>此刻想问的事 <small>可留空</small></span>
-        <input id="chatTarotQuestion" type="text" maxlength="120" autocomplete="off" placeholder="把问题安静地放在这里…">
-      </label>
+        <label class="chat-tarot-question">
+          <span>此刻想问的事 <small>可留空</small></span>
+          <input id="chatTarotQuestion" type="text" maxlength="120" autocomplete="off" placeholder="把问题安静地放在这里…">
+        </label>
 
-      <article class="chat-tarot-result" id="chatTarotResult" hidden aria-live="polite">
+        <div class="chat-tarot-mode-viewport" id="chatTarotModeViewport">
+          <div class="chat-tarot-mode-pages" id="chatTarotModePages">
+            <section class="chat-tarot-mode-page" data-quick-tarot-mode="single_response">
+              <header class="chat-tarot-mode-heading">
+                <span>ONE CARD</span>
+                <strong>一张回应牌</strong>
+              </header>
+              <p class="chat-tarot-status" data-quick-tarot-status aria-live="polite">准备好时，抽一张回应。</p>
+              <div class="chat-tarot-card-stage is-single" data-quick-tarot-cards></div>
+              <button class="chat-tarot-draw" type="button" data-quick-tarot-draw>抽一张回应牌</button>
+            </section>
 
-        <div class="chat-tarot-card" id="chatTarotCard" aria-hidden="true">
-          <span class="chat-tarot-number" id="chatTarotNumber"></span>
-          <b class="chat-tarot-symbol" id="chatTarotSymbol">◇</b>
-          <strong id="chatTarotCardName"></strong>
-          <small id="chatTarotCardNameEn"></small>
+            <section class="chat-tarot-mode-page" data-quick-tarot-mode="triple_supplement">
+              <header class="chat-tarot-mode-heading">
+                <span>THREE CARDS</span>
+                <strong>三张补充牌</strong>
+              </header>
+              <p class="chat-tarot-status" data-quick-tarot-status aria-live="polite">三张牌会依次出现，不设固定时序牌位。</p>
+              <div class="chat-tarot-card-stage is-triple" data-quick-tarot-cards></div>
+              <button class="chat-tarot-draw" type="button" data-quick-tarot-draw>抽三张补充牌</button>
+            </section>
+          </div>
         </div>
 
-        <div class="chat-tarot-reading">
-          <span class="chat-tarot-orientation" id="chatTarotOrientation"></span>
-          <div class="chat-tarot-keywords" id="chatTarotKeywords"></div>
-          <p id="chatTarotSummary"></p>
+        <div class="chat-tarot-mode-dots" aria-label="快捷塔罗模式">
+          <button class="is-active" type="button" data-quick-tarot-page="0" aria-label="一张回应牌"></button>
+          <button type="button" data-quick-tarot-page="1" aria-label="三张补充牌"></button>
         </div>
 
-      </article>
-
-      <p class="chat-tarot-error" id="chatTarotError" hidden></p>
-
-      <div class="chat-tarot-actions">
-        <button class="chat-tarot-draw" id="chatTarotDraw" type="button">抽一张牌</button>
-        <a class="chat-tarot-study-link" id="chatTarotStudyLink" href="tarot-study.html" hidden>查看完整牌义 →</a>
+        <p class="chat-tarot-error" id="chatTarotError" hidden></p>
       </div>
 
+      <section class="chat-tarot-history" id="chatTarotHistory" hidden aria-labelledby="chatTarotHistoryTitle">
+        <header class="chat-tarot-history-heading">
+          <button id="chatTarotHistoryBack" type="button">← 返回抽牌</button>
+          <div>
+            <span>QUICK HISTORY</span>
+            <strong id="chatTarotHistoryTitle">聊天快捷抽牌</strong>
+          </div>
+        </header>
+        <div class="chat-tarot-history-list" id="chatTarotHistoryList"></div>
+        <p class="chat-tarot-history-empty" id="chatTarotHistoryEmpty" hidden>还没有快捷抽牌记录。</p>
+      </section>
     </section>
+  </div>
 
+  <div class="tarot-study-overlay" data-tarot-study-overlay hidden>
+    <div class="tarot-study-overlay-backdrop" data-study-action="close-overlay"></div>
+    <section class="tarot-study-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="tarotStudyOverlayTitle">
+      <header class="study-overlay-header">
+        <button class="study-overlay-close" type="button" data-study-action="close-overlay" aria-label="关闭完整牌义">×</button>
+        <h2 id="tarotStudyOverlayTitle" data-study-overlay-title>完整牌义</h2>
+        <span class="study-overlay-spacer" aria-hidden="true"></span>
+      </header>
+      <article class="study-detail-content" data-study-overlay-detail></article>
+    </section>
   </div>
 
   <!-- =========================
@@ -777,6 +807,7 @@
 <script src="finance-store.js"></script>
 
 <script src="tarot-data.js"></script>
+<script src="tarot-random.js"></script>
 <script src="tarot-study-data.js"></script>
 <script src="tarot-history.js"></script>
 
@@ -786,6 +817,7 @@
 <script src="chat-finance.js"></script>
 <script src="chat-corpus.js"></script>
 <script src="chat-tarot.js"></script>
+<script src="tarot-study.js"></script>
 
 <script src="chat-actions.js"></script>
 <script src="chat-selection.js"></script>

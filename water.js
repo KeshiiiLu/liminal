@@ -64,6 +64,7 @@
     customToggle: document.getElementById("waterCustomToggle"),
     customForm: document.getElementById("waterCustomForm"),
     customAmount: document.getElementById("waterCustomAmount"),
+    customTime: document.getElementById("waterCustomTime"),
     customError: document.getElementById("waterCustomError"),
     recordCount: document.getElementById("waterRecordCount"),
     recordList: document.getElementById("waterRecordList"),
@@ -74,6 +75,13 @@
     goalForm: document.getElementById("waterGoalForm"),
     goalInput: document.getElementById("waterGoalInput"),
     goalError: document.getElementById("waterGoalError"),
+    editBackdrop: document.getElementById("waterEditBackdrop"),
+    editClose: document.getElementById("waterEditClose"),
+    editCancel: document.getElementById("waterEditCancel"),
+    editForm: document.getElementById("waterEditForm"),
+    editAmount: document.getElementById("waterEditAmount"),
+    editTime: document.getElementById("waterEditTime"),
+    editError: document.getElementById("waterEditError"),
     toast: document.getElementById("waterToast")
   };
 
@@ -83,6 +91,7 @@
   let recordingLocked = false;
   let toastTimer = null;
   let lastFeedback = "";
+  let editingRecordId = null;
 
   function isPlainObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -135,6 +144,14 @@
     return Number.isInteger(number) && number > 0 && number <= maximum;
   }
 
+  function isValidTime(value) {
+    return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(value || ""));
+  }
+
+  function isTodayTimeAllowed(value) {
+    return isValidTime(value) && value <= getCurrentTime();
+  }
+
   function createEmptyState() {
     return {
       schemaVersion: SCHEMA_VERSION,
@@ -148,7 +165,7 @@
 
   function normalizeRecord(record, dateKey, index) {
     if (!isPlainObject(record) || !validPositiveInteger(record.amountMl, MAX_ENTRY_ML)) return null;
-    const time = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(record.time || ""))
+    const time = isValidTime(record.time)
       ? String(record.time)
       : "";
     return {
@@ -318,19 +335,26 @@
     }
 
     const sorted = [...records].sort((first, second) => (
-      String(second.createdAt).localeCompare(String(first.createdAt)) ||
-      String(second.time).localeCompare(String(first.time))
+      String(second.time).localeCompare(String(first.time)) ||
+      String(second.createdAt).localeCompare(String(first.createdAt))
     ));
 
     sorted.forEach((record) => {
       const row = make("article", "water-record-item");
+      row.dataset.recordId = record.id;
       const time = make("time", "", record.time || "—");
       const amount = make("strong", "", `${record.amountMl} ml`);
+      const actions = make("div", "water-record-actions");
+      const edit = make("button", "water-record-edit", "编辑");
+      edit.type = "button";
+      edit.setAttribute("aria-label", `编辑 ${record.time || "这条"} 的 ${record.amountMl} ml 记录`);
+      edit.addEventListener("click", () => openEditSheet(record.id));
       const remove = make("button", "water-record-delete", "×");
       remove.type = "button";
       remove.setAttribute("aria-label", `删除 ${record.time || "这条"} 的 ${record.amountMl} ml 记录`);
       remove.addEventListener("click", () => deleteRecord(record.id));
-      row.append(time, amount, remove);
+      actions.append(edit, remove);
+      row.append(time, amount, actions);
       elements.recordList.appendChild(row);
     });
   }
@@ -371,9 +395,14 @@
     if (customSubmit) customSubmit.disabled = locked;
   }
 
-  function addWater(amount) {
+  function addWater(amount, time = getCurrentTime()) {
     const safeAmount = Number(amount);
-    if (recordingLocked || !validPositiveInteger(safeAmount, MAX_ENTRY_ML)) return false;
+    const safeTime = String(time || getCurrentTime());
+    if (
+      recordingLocked ||
+      !validPositiveInteger(safeAmount, MAX_ENTRY_ML) ||
+      !isTodayTimeAllowed(safeTime)
+    ) return false;
     checkDateRollover();
     setRecordingLock(true);
 
@@ -381,7 +410,7 @@
     const previousTotal = totalForDay(day);
     const record = {
       id: createId(),
-      time: getCurrentTime(),
+      time: safeTime,
       amountMl: safeAmount,
       createdAt: new Date().toISOString()
     };
@@ -397,6 +426,64 @@
     showToast(feedbackFor(previousTotal, previousTotal + safeAmount, currentGoal()));
     window.setTimeout(() => setRecordingLock(false), 360);
     return true;
+  }
+
+  function openEditSheet(recordId) {
+    checkDateRollover();
+    const record = state.days[activeDateKey]?.records?.find((item) => item.id === recordId);
+    if (!record) return;
+    editingRecordId = record.id;
+    elements.editAmount.value = String(record.amountMl);
+    elements.editTime.value = isValidTime(record.time) ? record.time : getCurrentTime();
+    elements.editTime.max = getCurrentTime();
+    elements.editError.hidden = true;
+    elements.editBackdrop.hidden = false;
+    window.setTimeout(() => elements.editAmount.focus(), 40);
+  }
+
+  function closeEditSheet() {
+    editingRecordId = null;
+    elements.editForm.reset();
+    elements.editError.hidden = true;
+    elements.editBackdrop.hidden = true;
+  }
+
+  function saveEditedRecord(event) {
+    event.preventDefault();
+    checkDateRollover();
+    const amount = Number(elements.editAmount.value);
+    const time = String(elements.editTime.value || "");
+    if (!validPositiveInteger(amount, MAX_ENTRY_ML)) {
+      elements.editError.textContent = `请输入 1–${MAX_ENTRY_ML} ml 之间的整数。`;
+      elements.editError.hidden = false;
+      return;
+    }
+    if (!isTodayTimeAllowed(time)) {
+      elements.editError.textContent = "请选择今天已经发生的时间。";
+      elements.editError.hidden = false;
+      return;
+    }
+
+    const day = state.days[activeDateKey];
+    const record = day?.records?.find((item) => item.id === editingRecordId);
+    if (!record) {
+      closeEditSheet();
+      showToast("这条记录已经不存在了。", "warning");
+      return;
+    }
+
+    const previous = { amountMl: record.amountMl, time: record.time };
+    record.amountMl = amount;
+    record.time = time;
+    if (!saveState()) {
+      record.amountMl = previous.amountMl;
+      record.time = previous.time;
+      return;
+    }
+
+    closeEditSheet();
+    renderToday();
+    showToast("已修改。");
   }
 
   function deleteRecord(recordId) {
@@ -427,7 +514,10 @@
     elements.customForm.hidden = !open;
     elements.customToggle.setAttribute("aria-expanded", String(open));
     elements.customError.hidden = true;
-    if (open) window.setTimeout(() => elements.customAmount.focus(), 40);
+    if (open) {
+      elements.customTime.max = getCurrentTime();
+      window.setTimeout(() => elements.customAmount.focus(), 40);
+    }
   }
 
   function openGoalSheet() {
@@ -471,6 +561,7 @@
     if (nextDateKey === activeDateKey) return;
     activeDateKey = nextDateKey;
     setCustomOpen(false);
+    closeEditSheet();
     renderToday();
     if (currentView === "history") renderHistory();
   }
@@ -484,13 +575,21 @@
   elements.customForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const amount = Number(elements.customAmount.value);
+    const chosenTime = String(elements.customTime.value || "");
+    const time = chosenTime || getCurrentTime();
     if (!validPositiveInteger(amount, MAX_ENTRY_ML)) {
       elements.customError.textContent = `请输入 1–${MAX_ENTRY_ML} ml 之间的整数。`;
       elements.customError.hidden = false;
       return;
     }
-    if (addWater(amount)) {
+    if (!isTodayTimeAllowed(time)) {
+      elements.customError.textContent = "只能补记今天已经发生的时间。";
+      elements.customError.hidden = false;
+      return;
+    }
+    if (addWater(amount, time)) {
       elements.customAmount.value = "";
+      elements.customTime.value = "";
       setCustomOpen(false);
     }
   });
@@ -503,6 +602,16 @@
     if (event.target === elements.goalBackdrop) closeGoalSheet();
   });
   elements.goalForm.addEventListener("submit", saveGoal);
+  elements.editClose.addEventListener("click", closeEditSheet);
+  elements.editCancel.addEventListener("click", closeEditSheet);
+  elements.editBackdrop.addEventListener("click", (event) => {
+    if (event.target === elements.editBackdrop) closeEditSheet();
+  });
+  elements.editForm.addEventListener("submit", saveEditedRecord);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !elements.editBackdrop.hidden) closeEditSheet();
+  });
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) checkDateRollover();

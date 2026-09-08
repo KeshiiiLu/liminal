@@ -15,32 +15,39 @@
     return Boolean(value) && typeof value === "object" && !Array.isArray(value);
   }
 
+  function emptyProfiles() {
+    return { version: STORAGE_VERSION, customAvatars: {}, profiles: {} };
+  }
+
   function readProfiles() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (cachedProfiles && raw === cachedRaw) return cachedProfiles;
     if (!raw) {
       cachedRaw = null;
-      cachedProfiles = { version: STORAGE_VERSION, customAvatars: {} };
+      cachedProfiles = emptyProfiles();
       return cachedProfiles;
     }
 
     try {
       const parsed = JSON.parse(raw);
       if (!isPlainObject(parsed)) {
-        return { version: STORAGE_VERSION, customAvatars: {} };
+        return emptyProfiles();
       }
       cachedRaw = raw;
       cachedProfiles = Object.assign({}, parsed, {
         version: Number.isInteger(parsed.version) ? parsed.version : STORAGE_VERSION,
         customAvatars: isPlainObject(parsed.customAvatars)
           ? Object.assign({}, parsed.customAvatars)
+          : {},
+        profiles: isPlainObject(parsed.profiles)
+          ? Object.assign({}, parsed.profiles)
           : {}
       });
       return cachedProfiles;
     } catch (error) {
       console.warn("[Liminal Avatar] Existing profile data could not be parsed; it was left untouched.", error);
       cachedRaw = raw;
-      cachedProfiles = { version: STORAGE_VERSION, customAvatars: {} };
+      cachedProfiles = emptyProfiles();
       return cachedProfiles;
     }
   }
@@ -65,6 +72,71 @@
     return typeof value === "string" && /^data:image\/(?:jpeg|png|webp);base64,/i.test(value)
       ? value
       : "";
+  }
+
+  function getProfile(personId) {
+    const id = normalizePersonId(personId);
+    if (!id) return {};
+    const value = readProfiles().profiles[id];
+    return isPlainObject(value) ? Object.assign({}, value) : {};
+  }
+
+  function updateProfile(personId, changes) {
+    const id = normalizePersonId(personId);
+    if (!id) throw new Error("Unknown profile personId.");
+    if (!isPlainObject(changes)) throw new Error("Profile changes must be an object.");
+    const currentProfiles = readProfiles();
+    const profiles = Object.assign({}, currentProfiles, {
+      profiles: Object.assign({}, currentProfiles.profiles)
+    });
+    profiles.version = STORAGE_VERSION;
+    profiles.profiles[id] = Object.assign({}, getProfile(id), changes);
+    writeProfiles(profiles);
+    window.dispatchEvent(new CustomEvent("liminal:profilechange", {
+      detail: { personId: id, fields: Object.keys(changes) }
+    }));
+  }
+
+  function getBio(personId) {
+    const value = getProfile(personId).bio;
+    return typeof value === "string" ? value : "";
+  }
+
+  function setBio(personId, value) {
+    updateProfile(personId, { bio: typeof value === "string" ? value : "" });
+  }
+
+  function getCustomCover(personId) {
+    const value = getProfile(personId).cover;
+    return typeof value === "string" && /^data:image\/(?:jpeg|png|webp);base64,/i.test(value)
+      ? value
+      : "";
+  }
+
+  function setCustomCover(personId, dataUrl) {
+    if (typeof dataUrl !== "string" || !/^data:image\/(?:jpeg|png|webp);base64,/i.test(dataUrl)) {
+      throw new Error("Cover must be a supported image data URL.");
+    }
+    updateProfile(personId, { cover: dataUrl });
+  }
+
+  function clearCustomCover(personId) {
+    const id = normalizePersonId(personId);
+    if (!id) throw new Error("Unknown profile personId.");
+    const currentProfiles = readProfiles();
+    const currentPersonProfile = getProfile(id);
+    if (!Object.prototype.hasOwnProperty.call(currentPersonProfile, "cover")) return;
+    const nextPersonProfile = Object.assign({}, currentPersonProfile);
+    delete nextPersonProfile.cover;
+    const profiles = Object.assign({}, currentProfiles, {
+      profiles: Object.assign({}, currentProfiles.profiles)
+    });
+    profiles.profiles[id] = nextPersonProfile;
+    profiles.version = STORAGE_VERSION;
+    writeProfiles(profiles);
+    window.dispatchEvent(new CustomEvent("liminal:profilechange", {
+      detail: { personId: id, fields: ["cover"] }
+    }));
   }
 
   function render(element, personId, fallbackText) {
@@ -154,6 +226,13 @@
   window.LiminalAvatars = Object.freeze({
     storageKey: STORAGE_KEY,
     storageVersion: STORAGE_VERSION,
+    getProfile: getProfile,
+    getBio: getBio,
+    setBio: setBio,
+    getCustomCover: getCustomCover,
+    hasCustomCover: function (personId) { return Boolean(getCustomCover(personId)); },
+    setCustomCover: setCustomCover,
+    clearCustomCover: clearCustomCover,
     getCustomAvatar: getCustomAvatar,
     hasCustomAvatar: function (personId) { return Boolean(getCustomAvatar(personId)); },
     render: render,

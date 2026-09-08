@@ -26,7 +26,11 @@
   <main class="messages-page">
 
     <!-- 顶部封面 -->
-    <section class="profile-cover">
+    <section class="profile-cover" id="profileCover">
+
+      <img class="profile-cover-image" id="profileCoverImage" alt="" hidden>
+
+      <button class="profile-cover-action" id="profileCoverAction" type="button" aria-label="更换个人主页背景"></button>
 
       <button class="back-button" onclick="window.location.href='index.html'" aria-label="返回">
         ‹
@@ -38,9 +42,9 @@
     <!-- 个人资料 -->
     <section class="profile-card">
 
-      <div class="profile-avatar" data-avatar-person="keshi" data-avatar-fallback="K">
+      <button class="profile-avatar" id="profileAvatarButton" type="button" data-avatar-person="keshi" data-avatar-fallback="K" aria-label="更换 Keshi 头像">
         K
-      </div>
+      </button>
 
       <h1>Keshi</h1>
 
@@ -48,7 +52,7 @@
         @Keshiii_Lu
       </p>
 
-      <button class="profile-bio">
+      <button class="profile-bio is-empty" id="profileBioButton" type="button">
         这里点击替换文案
       </button>
 
@@ -130,7 +134,62 @@
 
   </main>
 
+  <div class="profile-editor" id="bioEditor" aria-hidden="true" inert hidden>
+    <button class="profile-editor-backdrop" type="button" data-profile-editor-close aria-label="取消编辑个人简介"></button>
+    <section class="profile-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="bioEditorTitle">
+      <div class="profile-editor-handle" aria-hidden="true"></div>
+      <header class="profile-editor-header">
+        <div>
+          <span>PROFILE BIO</span>
+          <h2 id="bioEditorTitle">个人简介</h2>
+        </div>
+        <button class="profile-editor-close" type="button" data-profile-editor-close aria-label="取消">×</button>
+      </header>
+
+      <form id="bioEditorForm">
+        <label for="profileBioInput">写一点关于现在的自己</label>
+        <textarea id="profileBioInput" maxlength="160" rows="4" placeholder="可以留空"></textarea>
+        <div class="profile-editor-actions">
+          <button class="profile-editor-secondary" type="button" data-profile-editor-close>取消</button>
+          <button class="profile-editor-primary" type="submit">保存</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="profile-editor" id="coverEditor" aria-hidden="true" inert hidden>
+    <button class="profile-editor-backdrop" type="button" data-profile-editor-close aria-label="取消更换背景"></button>
+    <section class="profile-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="coverEditorTitle">
+      <div class="profile-editor-handle" aria-hidden="true"></div>
+      <header class="profile-editor-header">
+        <div>
+          <span>PROFILE COVER</span>
+          <h2 id="coverEditorTitle">更换背景</h2>
+        </div>
+        <button class="profile-editor-close" type="button" data-profile-editor-close aria-label="取消">×</button>
+      </header>
+
+      <div class="profile-cover-preview" id="profileCoverPreview" aria-label="背景预览"></div>
+      <p class="profile-cover-help">图片会居中裁切并压缩，只保存在这台设备。</p>
+
+      <label class="profile-file-button" for="profileCoverFile">
+        从相册选择
+        <input id="profileCoverFile" type="file" accept="image/*">
+      </label>
+
+      <p class="profile-editor-status" id="profileCoverStatus" aria-live="polite"></p>
+
+      <div class="profile-editor-actions">
+        <button class="profile-editor-secondary" id="profileCoverCancel" type="button">取消</button>
+        <button class="profile-editor-primary" id="profileCoverSave" type="button" data-liminal-allow-repeat disabled>保存</button>
+      </div>
+
+      <button class="profile-cover-reset" id="profileCoverReset" type="button">恢复默认背景</button>
+    </section>
+  </div>
+
   <script src="avatar-store.js"></script>
+  <script src="messages.js"></script>
   <script src="call-global.js"></script>
 
 </body>

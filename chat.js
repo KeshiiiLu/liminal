@@ -5249,14 +5249,55 @@ pageDots.forEach(
       const pageWidth =
         morePages.clientWidth;
 
+      const targetLeft =
+        pageWidth * index;
+
 
       morePages.scrollTo({
         left:
-          pageWidth * index,
+          targetLeft,
 
         behavior:
           "smooth"
       });
+
+
+      window.setTimeout(
+        function () {
+
+          if (
+            Math.abs(
+              morePages.scrollLeft -
+              targetLeft
+            ) <= 2
+          ) {
+
+            return;
+
+          }
+
+
+          const previousBehavior =
+            morePages.style.scrollBehavior;
+
+          morePages.style.scrollBehavior =
+            "auto";
+
+          morePages.scrollLeft =
+            targetLeft;
+
+          window.requestAnimationFrame(
+            function () {
+
+              morePages.style.scrollBehavior =
+                previousBehavior;
+
+            }
+          );
+
+        },
+        180
+      );
 
     }
 

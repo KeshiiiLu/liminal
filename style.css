@@ -1253,6 +1253,633 @@ body.chat-tarot-open {
   }
 }
 
+/* Quick Tarot v2: two in-chat reading modes and shared history. */
+
+.chat-page {
+  --tarot-ink: #45474d;
+  --tarot-muted: #878990;
+}
+
+.chat-tarot-sheet {
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.chat-tarot-header-actions,
+.chat-tarot-header-actions > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chat-tarot-history-button,
+.chat-tarot-history-heading > button,
+.chat-tarot-history-actions button,
+.chat-tarot-history-detail button,
+.chat-quick-study-button {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: #77727d;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.chat-tarot-history-button {
+  padding: 0 8px;
+}
+
+.chat-tarot-main[hidden],
+.chat-tarot-history[hidden] {
+  display: none;
+}
+
+.chat-tarot-mode-viewport {
+  width: calc(100% + 40px);
+  margin: 17px -20px 0;
+  overflow: hidden;
+}
+
+.chat-tarot-mode-pages {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-tarot-mode-pages::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-tarot-mode-page {
+  display: flex;
+  width: 100%;
+  min-width: 100%;
+  min-height: 383px;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0 20px;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.chat-tarot-mode-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chat-tarot-mode-heading span {
+  color: #aaa6ae;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.chat-tarot-mode-heading strong {
+  color: #56525b;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.chat-tarot-status {
+  min-height: 18px;
+  margin: 8px 0 10px;
+  color: #97939b;
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.chat-tarot-card-stage {
+  display: grid;
+  min-width: 0;
+  min-height: 253px;
+  align-items: start;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chat-tarot-card-stage.is-single {
+  grid-template-columns: minmax(138px, 170px);
+}
+
+.chat-tarot-card-stage.is-triple {
+  grid-template-columns: repeat(3, minmax(0, 112px));
+}
+
+.chat-quick-card-result {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  animation: quick-tarot-reveal 340ms ease both;
+}
+
+@keyframes quick-tarot-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-quick-card-position {
+  min-height: 23px;
+  color: #98939c;
+  font-size: 9px;
+  line-height: 23px;
+  text-align: center;
+}
+
+.chat-quick-card {
+  width: 100%;
+  aspect-ratio: 0.64;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  perspective: 900px;
+  touch-action: manipulation;
+}
+
+.chat-quick-card-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 430ms cubic-bezier(0.22, 0.72, 0.24, 1);
+  transform-style: preserve-3d;
+}
+
+.chat-quick-card[data-view="face"] .chat-quick-card-inner {
+  transform: rotateY(180deg);
+}
+
+.chat-quick-card[data-view="meaning"] .chat-quick-card-inner {
+  transform: rotateY(360deg);
+}
+
+.chat-quick-card-side {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid rgba(84, 80, 94, 0.16);
+  border-radius: 13px;
+  box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 9px 24px rgba(61, 57, 70, 0.08);
+}
+
+.chat-quick-card-back {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.12), transparent 48%),
+    #74717c;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: Georgia, serif;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+}
+
+.chat-quick-card-back::before {
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  content: "";
+}
+
+.chat-quick-card-back-mark {
+  font-size: 33px;
+  line-height: 1;
+}
+
+.chat-quick-card-face {
+  align-items: stretch;
+  padding: 10px;
+  background: linear-gradient(155deg, #faf9f5, #e9e7eb);
+  color: #5c5864;
+  transform: rotateY(180deg);
+}
+
+.chat-quick-card-face-art {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(85, 81, 94, 0.1);
+  border-radius: 9px;
+  text-align: center;
+}
+
+.chat-quick-card-face-art.is-reversed {
+  transform: rotate(180deg);
+}
+
+.chat-quick-card-face-art small {
+  position: absolute;
+  top: 17px;
+  left: 17px;
+  color: #99949e;
+  font-size: 8px;
+}
+
+.chat-quick-card-face-art b {
+  font-size: 31px;
+  font-weight: 400;
+}
+
+.chat-quick-card-face-art strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chat-quick-card-face-art em {
+  max-width: 90%;
+  color: #8f8a95;
+  font-family: Georgia, serif;
+  font-size: 7px;
+  font-style: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.chat-quick-card-face-art > span {
+  color: #8a8490;
+  font-size: 8px;
+}
+
+.chat-quick-card-meaning {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 9px;
+  background: #f7f5f1;
+  color: #5e5a64;
+  text-align: center;
+  transform: rotateY(360deg);
+}
+
+.chat-quick-card-meaning > strong {
+  font-size: 12px;
+}
+
+.chat-quick-card-meaning > small {
+  color: #918b97;
+  font-size: 8px;
+}
+
+.chat-quick-card-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.chat-quick-card-keywords span {
+  padding: 3px 5px;
+  border-radius: 999px;
+  background: rgba(120, 113, 130, 0.08);
+  font-size: 7px;
+}
+
+.chat-quick-card-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #706b75;
+  font-size: 8px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.chat-quick-study-button {
+  min-height: 40px;
+  margin-top: 2px;
+  padding: 0 2px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.chat-quick-study-button[hidden] {
+  display: none;
+}
+
+.chat-tarot-card-stage.is-triple .chat-quick-card-summary {
+  -webkit-line-clamp: 3;
+}
+
+.chat-tarot-draw {
+  width: 100%;
+  margin-top: 12px;
+  flex: 0 0 auto;
+}
+
+.chat-tarot-draw:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.chat-tarot-mode-dots {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.chat-tarot-mode-dots button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.chat-tarot-mode-dots button::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c7c4c8;
+  content: "";
+  transform: translate(-50%, -50%);
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.chat-tarot-mode-dots button.is-active::after {
+  background: #74717a;
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+.chat-tarot-history {
+  min-height: 410px;
+}
+
+.chat-tarot-history-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0 13px;
+}
+
+.chat-tarot-history-heading > button {
+  padding: 0 4px;
+}
+
+.chat-tarot-history-heading > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.chat-tarot-history-heading span {
+  color: #aaa6ae;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.chat-tarot-history-heading strong {
+  color: #55515a;
+  font-size: 15px;
+}
+
+.chat-tarot-history-list {
+  display: grid;
+  gap: 9px;
+}
+
+.chat-tarot-history-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  padding: 14px;
+  border: 1px solid rgba(77, 73, 84, 0.08);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.chat-tarot-history-summary {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.chat-tarot-history-summary strong {
+  color: #59555e;
+  font-size: 13px;
+}
+
+.chat-tarot-history-summary span {
+  color: #9b969f;
+  font-size: 9px;
+}
+
+.chat-tarot-history-summary p {
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: #747079;
+  font-size: 10px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-tarot-history-actions {
+  display: flex;
+  align-items: start;
+}
+
+.chat-tarot-history-actions button {
+  padding: 0 6px;
+}
+
+.chat-tarot-history-detail {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(77, 73, 84, 0.07);
+  padding-top: 9px;
+}
+
+.chat-tarot-history-detail[hidden] {
+  display: none;
+}
+
+.chat-tarot-history-detail > div {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 44px;
+  gap: 8px;
+  color: #77727c;
+  font-size: 10px;
+}
+
+.chat-tarot-history-detail strong {
+  color: #5d5962;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chat-tarot-history-detail button {
+  padding: 0 3px;
+}
+
+.chat-tarot-history-empty {
+  margin: 65px 0;
+  color: #9d99a0;
+  font-size: 11px;
+  text-align: center;
+}
+
+.chat-page .tarot-study-overlay {
+  z-index: 1500;
+}
+
+.chat-page .tarot-study-overlay-panel .tarot-face-art {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid rgba(76, 79, 87, 0.12);
+  color: #595b62;
+}
+
+.chat-page .tarot-study-overlay-panel .face-number {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  color: #9799a0;
+  font-size: 10px;
+}
+
+.chat-page .tarot-study-overlay-panel .face-symbol {
+  text-align: center;
+}
+
+.chat-page .tarot-study-overlay-panel .face-name-en {
+  color: #8b8d94;
+  font-family: Georgia, serif;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 767px) {
+  .chat-tarot-mode-viewport {
+    width: calc(100% + max(32px, env(safe-area-inset-left) + env(safe-area-inset-right)));
+    margin-right: calc(max(16px, env(safe-area-inset-right)) * -1);
+    margin-left: calc(max(16px, env(safe-area-inset-left)) * -1);
+  }
+
+  .chat-tarot-mode-page {
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-left: max(16px, env(safe-area-inset-left));
+  }
+}
+
+@media (max-width: 430px) {
+  .chat-tarot-sheet {
+    max-height: calc(100dvh - max(8px, env(safe-area-inset-top)));
+  }
+
+  .chat-tarot-mode-page {
+    min-height: 365px;
+  }
+
+  .chat-tarot-card-stage {
+    min-height: 236px;
+  }
+
+  .chat-tarot-card-stage.is-single {
+    grid-template-columns: minmax(132px, 158px);
+  }
+
+  .chat-tarot-card-stage.is-triple {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-position,
+  .chat-tarot-card-stage.is-triple .chat-quick-study-button {
+    font-size: 8px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-side {
+    border-radius: 10px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-face {
+    padding: 6px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-face-art {
+    gap: 4px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-face-art b {
+    font-size: 23px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-face-art strong {
+    font-size: 10px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-meaning {
+    gap: 4px;
+    padding: 7px 5px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-meaning > strong {
+    font-size: 10px;
+  }
+
+  .chat-tarot-card-stage.is-triple .chat-quick-card-summary {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 374px) {
+  .chat-tarot-intro {
+    display: none;
+  }
+
+  .chat-tarot-question {
+    margin-top: 10px;
+  }
+
+  .chat-tarot-mode-page {
+    min-height: 350px;
+  }
+}
+
 body.more-panel-open .chat-messages {
   padding-bottom: calc(390px + env(safe-area-inset-bottom));
 }
