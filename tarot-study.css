@@ -1,0 +1,698 @@
+:root {
+  --study-paper: rgba(253, 252, 248, 0.72);
+  --study-paper-solid: #f8f6f1;
+  --study-lilac: #aaa4b3;
+  --study-blue: #a3adb8;
+  --study-line: rgba(75, 78, 87, 0.12);
+}
+
+body.tarot-study-page {
+  overflow-y: auto;
+}
+
+body.is-study-open {
+  overflow: hidden;
+}
+
+.tarot-study-app {
+  width: min(100%, 980px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(22px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(38px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+
+.study-page-header {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 0 24px;
+}
+
+.study-page-header h1 {
+  margin: 0;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(27px, 6vw, 40px);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.study-intro {
+  width: min(100%, 660px);
+  margin: 0 0 23px 62px;
+  color: var(--tarot-muted);
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+.study-intro p {
+  margin: 0;
+}
+
+.study-search {
+  display: flex;
+  width: 100%;
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border: 1px solid var(--study-line);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 12px 35px rgba(72, 70, 75, 0.045);
+}
+
+.study-search:focus-within {
+  border-color: rgba(116, 118, 132, 0.38);
+  box-shadow: 0 0 0 3px rgba(148, 145, 160, 0.1);
+}
+
+.study-search-icon {
+  flex: 0 0 auto;
+  color: var(--tarot-muted);
+  font-family: Georgia, serif;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.study-search input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--tarot-ink);
+  font: inherit;
+  font-size: 15px;
+}
+
+.study-search input::placeholder {
+  color: #a4a3a7;
+}
+
+.study-search input::-webkit-search-cancel-button {
+  opacity: 0.5;
+}
+
+.study-filters {
+  display: flex;
+  width: calc(100% + 40px);
+  margin: 18px -20px 0;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 2px 20px 8px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.study-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.study-filter {
+  min-height: 44px;
+  flex: 0 0 auto;
+  padding: 10px 17px;
+  border: 1px solid var(--study-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--tarot-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  touch-action: manipulation;
+}
+
+.study-filter.is-active {
+  border-color: rgba(104, 107, 118, 0.26);
+  background: #747982;
+  color: #f8f6f2;
+  box-shadow: 0 7px 18px rgba(70, 73, 81, 0.13);
+}
+
+.study-filter:focus-visible,
+.study-card-item:focus-visible,
+.study-overlay-close:focus-visible {
+  outline: 2px solid rgba(94, 99, 109, 0.58);
+  outline-offset: 3px;
+}
+
+.study-suit-note {
+  min-height: 1.7em;
+  margin: 7px 2px 25px;
+  color: var(--tarot-muted);
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.study-list-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 2px 14px;
+}
+
+.study-list-heading p,
+.study-list-heading span {
+  margin: 0;
+}
+
+.study-list-heading p {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.study-list-heading span {
+  color: var(--tarot-faint);
+  font-size: 11px;
+}
+
+.study-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.study-card-item {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  padding: 12px;
+  border: 1px solid var(--study-line);
+  border-radius: 20px;
+  background: var(--study-paper);
+  color: var(--tarot-ink);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 12px 36px rgba(70, 68, 72, 0.055);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  touch-action: manipulation;
+}
+
+.study-card-item:hover {
+  border-color: rgba(83, 86, 95, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 17px 40px rgba(70, 68, 72, 0.08);
+}
+
+.study-card-item:active {
+  transform: scale(0.985);
+}
+
+.study-card-visual {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 0.67;
+  overflow: hidden;
+  padding: 10px 8px;
+  border: 1px solid rgba(76, 79, 87, 0.11);
+  border-radius: 13px;
+  background: linear-gradient(155deg, #faf9f5, #eceae7);
+}
+
+.study-card-visual .tarot-face-art {
+  padding: 8px 5px;
+  border-radius: 8px;
+}
+
+.study-card-visual .face-symbol {
+  width: 58%;
+  font-size: clamp(26px, 5vw, 40px);
+}
+
+.study-card-visual .face-name-zh {
+  font-size: clamp(14px, 2vw, 18px);
+  text-align: center;
+}
+
+.study-card-visual .face-name-en {
+  overflow-wrap: anywhere;
+  font-size: 8px;
+  text-align: center;
+}
+
+.study-card-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 13px 3px 4px;
+}
+
+.study-card-text strong {
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.study-card-en {
+  min-height: 2.7em;
+  margin-top: 4px;
+  color: var(--tarot-muted);
+  font-family: Georgia, serif;
+  font-size: 9px;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
+}
+
+.study-card-structure {
+  margin-top: 10px;
+  color: #929097;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.study-card-keywords {
+  margin-top: 8px;
+  color: #6e7076;
+  font-size: 11px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.study-empty,
+.study-load-error {
+  padding: 68px 20px;
+  color: var(--tarot-muted);
+  text-align: center;
+}
+
+.study-empty p,
+.study-load-error p {
+  margin: 0 0 10px;
+  color: var(--tarot-ink);
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 18px;
+}
+
+.study-empty span {
+  font-size: 13px;
+}
+
+.study-load-error a {
+  color: var(--tarot-ink);
+}
+
+/* Shared card detail: standalone page and the in-reading overlay use one renderer. */
+
+.study-detail-content {
+  width: min(100%, 820px);
+  margin: 0 auto;
+}
+
+.study-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(190px, 250px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 6vw, 66px);
+  padding: 22px clamp(0px, 3vw, 24px) 43px;
+}
+
+.study-detail-visual {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 0.62;
+  overflow: hidden;
+  padding: 18px 14px;
+  border: 1px solid var(--study-line);
+  border-radius: 18px;
+  background: linear-gradient(155deg, #faf9f5, #e9e8e5);
+  box-shadow: 0 24px 55px rgba(64, 64, 70, 0.1);
+}
+
+.study-detail-visual .tarot-face-art {
+  padding: 16px 10px;
+}
+
+.study-detail-visual .face-symbol {
+  font-size: clamp(38px, 8vw, 62px);
+}
+
+.study-detail-visual .face-name-zh {
+  font-size: clamp(22px, 4vw, 29px);
+}
+
+.study-detail-identity {
+  min-width: 0;
+}
+
+.study-detail-arcana {
+  margin: 0 0 14px;
+  color: var(--tarot-muted);
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 0.1em;
+}
+
+.study-detail-identity h2 {
+  margin: 0;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(31px, 7vw, 48px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.study-detail-en {
+  margin: 7px 0 25px;
+  color: var(--tarot-muted);
+  font-family: Georgia, serif;
+  font-size: 12px;
+  letter-spacing: 0.13em;
+}
+
+.study-detail-summary {
+  margin: 0;
+  color: #666970;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 16px;
+  line-height: 2;
+}
+
+.study-meaning-space {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.study-meaning-section,
+.study-reversed-summary,
+.study-context-note {
+  min-width: 0;
+  padding: 23px;
+  border: 1px solid var(--study-line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.study-meaning-section h3,
+.study-reversed-summary > p:first-child {
+  margin: 0 0 16px;
+  color: #777981;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+.study-meaning-section ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.study-meaning-section li {
+  position: relative;
+  padding-left: 14px;
+  color: #5e6167;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.study-meaning-section li::before {
+  position: absolute;
+  top: 0.78em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--study-lilac);
+  content: "";
+}
+
+.study-keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.study-keyword-list span {
+  padding: 7px 10px;
+  border: 1px solid rgba(112, 113, 123, 0.1);
+  border-radius: 999px;
+  background: rgba(163, 173, 184, 0.09);
+  color: #64676e;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.study-meaning-coreKeywords,
+.study-reversed-summary,
+.study-context-note {
+  grid-column: 1 / -1;
+}
+
+.study-meaning-shadow {
+  background: rgba(168, 162, 177, 0.075);
+}
+
+.study-meaning-reversedHints,
+.study-reversed-summary {
+  background: linear-gradient(145deg, rgba(167, 162, 178, 0.09), rgba(158, 171, 184, 0.07));
+}
+
+.study-reversed-copy {
+  margin: 18px 0 0;
+  color: #62656d;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.study-context-note {
+  margin: 6px 0 0;
+  background: transparent;
+  color: var(--tarot-muted);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.85;
+  text-align: center;
+}
+
+/* Read-only detail overlay keeps the current draw or history DOM alive underneath. */
+
+.tarot-study-overlay {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+}
+
+.tarot-study-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(49, 50, 54, 0.25);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.tarot-study-overlay-panel {
+  position: absolute;
+  inset: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  width: min(calc(100% - 20px), 880px);
+  margin: 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 18px clamp(17px, 4vw, 38px) max(35px, env(safe-area-inset-bottom));
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(157, 152, 167, 0.09), transparent 28%),
+    #f2f0eb;
+  box-shadow: 0 28px 80px rgba(49, 50, 54, 0.2);
+  -webkit-overflow-scrolling: touch;
+}
+
+.study-overlay-header {
+  position: sticky;
+  z-index: 2;
+  top: -18px;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 46px;
+  align-items: center;
+  gap: 12px;
+  margin: 0 calc(clamp(17px, 4vw, 38px) * -1) 15px;
+  padding: 18px clamp(17px, 4vw, 38px) 14px;
+  background: linear-gradient(#f2f0eb 72%, rgba(242, 240, 235, 0));
+}
+
+.study-overlay-header h2 {
+  margin: 0;
+  overflow: hidden;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.study-overlay-close {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--study-line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--tarot-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 23px;
+}
+
+.study-overlay-spacer {
+  width: 44px;
+}
+
+@media (max-width: 720px) {
+  .tarot-study-app {
+    padding-inline: max(16px, env(safe-area-inset-left));
+  }
+
+  .study-intro {
+    margin-left: 0;
+  }
+
+  .study-filters {
+    width: calc(100% + 32px);
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
+  .study-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .study-card-item {
+    padding: 9px;
+    border-radius: 17px;
+  }
+
+  .study-detail-hero {
+    grid-template-columns: minmax(120px, 42%) minmax(0, 1fr);
+    gap: 22px;
+    padding: 10px 0 34px;
+  }
+
+  .study-detail-summary {
+    font-size: 14px;
+    line-height: 1.85;
+  }
+
+  .study-meaning-space {
+    grid-template-columns: 1fr;
+  }
+
+  .study-meaning-coreKeywords,
+  .study-reversed-summary,
+  .study-context-note {
+    grid-column: auto;
+  }
+
+  .study-meaning-section,
+  .study-reversed-summary,
+  .study-context-note {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 430px) {
+  .study-page-header {
+    gap: 10px;
+    padding-bottom: 20px;
+  }
+
+  .study-page-header h1 {
+    font-size: 28px;
+  }
+
+  .study-intro {
+    font-size: 12px;
+  }
+
+  .study-card-text strong {
+    font-size: 16px;
+  }
+
+  .study-card-en {
+    min-height: 2.9em;
+  }
+
+  .study-detail-hero {
+    align-items: start;
+    gap: 17px;
+  }
+
+  .study-detail-visual {
+    padding: 10px 8px;
+    border-radius: 14px;
+  }
+
+  .study-detail-visual .tarot-face-art {
+    padding: 9px 5px;
+  }
+
+  .study-detail-visual .face-name-zh {
+    font-size: 18px;
+  }
+
+  .study-detail-identity h2 {
+    font-size: 29px;
+  }
+
+  .study-detail-en {
+    margin-bottom: 16px;
+    overflow-wrap: anywhere;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .tarot-study-overlay-panel {
+    inset: env(safe-area-inset-top) 0 0;
+    width: 100%;
+    padding-inline: 16px;
+    border-width: 0;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .study-overlay-header {
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 374px) {
+  .study-card-grid {
+    gap: 9px;
+  }
+
+  .study-card-item {
+    padding: 7px;
+  }
+
+  .study-detail-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .study-detail-visual {
+    width: min(62vw, 210px);
+    margin: 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .study-card-item {
+    transition: none;
+  }
+}

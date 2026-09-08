@@ -337,6 +337,238 @@ button {
     #a56f6f;
 }
 
+/* =========================
+   Avatar settings
+   ========================= */
+
+.settings-person-avatar {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  background: #e5e3dd;
+  color: #65625c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.avatar-settings-item {
+  min-height: 64px;
+}
+
+body.avatar-editor-open {
+  overflow: hidden;
+}
+
+.avatar-editor {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.avatar-editor-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: rgba(60, 58, 53, .24);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.avatar-editor-sheet {
+  position: relative;
+  width: min(100%, 560px);
+  max-height: calc(100dvh - max(14px, env(safe-area-inset-top)));
+  overflow-y: auto;
+  padding: 11px 20px calc(24px + env(safe-area-inset-bottom));
+  border-radius: 25px 25px 0 0;
+  background: #f4f3f0;
+  box-shadow: 0 -18px 54px rgba(53, 51, 47, .12);
+  -webkit-overflow-scrolling: touch;
+}
+
+.avatar-editor-handle {
+  width: 38px;
+  height: 4px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: #d1cec7;
+}
+
+.avatar-editor-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-editor-header span {
+  color: #aaa79f;
+  font-size: 8px;
+  letter-spacing: .14em;
+}
+
+.avatar-editor-header h2 {
+  margin: 3px 0 0;
+  color: #4f4c46;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.avatar-editor-close {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(70, 68, 62, .08);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .55);
+  color: #77736c;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.avatar-editor-preview {
+  display: flex;
+  width: 132px;
+  height: 132px;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  margin: 25px auto 13px;
+  overflow: hidden;
+  border: 5px solid rgba(255, 255, 255, .7);
+  border-radius: 50%;
+  background: #e2e0da;
+  color: #65625c;
+  font-size: 30px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(53, 51, 47, .08);
+}
+
+.avatar-editor-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+}
+
+.avatar-editor-help {
+  width: min(100%, 350px);
+  margin: 0 auto 19px;
+  color: #9b9890;
+  font-size: 10px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.avatar-file-button {
+  position: relative;
+  display: grid;
+  width: min(100%, 350px);
+  min-height: 48px;
+  margin: 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(70, 68, 62, .08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .72);
+  color: #66625c;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.avatar-file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.avatar-editor-status {
+  min-height: 1.5em;
+  margin: 9px 0;
+  color: #918e87;
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.avatar-editor-status.is-error {
+  color: #a56f6f;
+}
+
+.avatar-editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 350px);
+  margin: 0 auto;
+}
+
+.avatar-editor-secondary,
+.avatar-editor-primary,
+.avatar-reset-button {
+  min-height: 48px;
+  border-radius: 14px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  touch-action: manipulation;
+}
+
+.avatar-editor-secondary {
+  border: 1px solid rgba(70, 68, 62, .08);
+  background: rgba(255, 255, 255, .55);
+  color: #6f6b65;
+}
+
+.avatar-editor-primary {
+  border: 0;
+  background: #6c6962;
+  color: #faf9f6;
+}
+
+.avatar-editor-primary:disabled {
+  cursor: default;
+  opacity: .4;
+}
+
+.avatar-reset-button {
+  display: block;
+  width: min(100%, 350px);
+  margin: 10px auto 0;
+  border: 0;
+  background: transparent;
+  color: #9d7772;
+}
+
+.avatar-reset-button:disabled {
+  color: #b7b3ac;
+  cursor: default;
+}
+
+.avatar-settings-item:focus-visible,
+.avatar-editor-close:focus-visible,
+.avatar-file-button:focus-within,
+.avatar-editor-secondary:focus-visible,
+.avatar-editor-primary:focus-visible,
+.avatar-reset-button:focus-visible {
+  outline: 2px solid rgba(96, 93, 86, .45);
+  outline-offset: 2px;
+}
+
 
 /* =========================
    Mobile · Phase 1

@@ -42,6 +42,27 @@ const returnPerson =
   );
 
 
+function getFavoritePersonId(
+  favorite
+) {
+
+  if (
+    favorite.personId === "luzhen" ||
+    favorite.personId === "jasper"
+  ) {
+
+    return favorite.personId;
+
+  }
+
+
+  return favorite.personName === "Jasper"
+    ? "jasper"
+    : "luzhen";
+
+}
+
+
 /* =========================
    返回聊天
    ========================= */
@@ -291,14 +312,23 @@ function createFavoriteMessage(
     "favorite-message-avatar";
 
 
-  avatar.textContent =
+  const avatarPersonId =
+    direction === "incoming"
+      ? getFavoritePersonId(favorite)
+      : "keshi";
+
+
+  window.LiminalAvatars.render(
+    avatar,
+    avatarPersonId,
     direction === "incoming"
       ? (
           favorite.personAvatar ||
           favorite.personName?.charAt(0) ||
           "?"
         )
-      : "K";
+      : "K"
+  );
 
 
   const content =
@@ -553,14 +583,13 @@ function createFavoriteCard(
   `;
 
 
-  main
-    .querySelector(
-      ".favorite-person-avatar"
-    )
-    .textContent =
-      favorite.personAvatar ||
+  window.LiminalAvatars.render(
+    main.querySelector(".favorite-person-avatar"),
+    getFavoritePersonId(favorite),
+    favorite.personAvatar ||
       favorite.personName?.charAt(0) ||
-      "?";
+      "?"
+  );
 
 
   main

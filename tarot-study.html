@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f0eb">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Liminal">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>塔罗学习 · Liminal</title>
+  <link rel="stylesheet" href="tarot.css">
+  <link rel="stylesheet" href="tarot-study.css">
+  <script src="storage-migrations.js"></script>
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
+</head>
+
+<body class="tarot-study-page">
+  <main class="tarot-study-app" id="tarotStudyApp">
+    <section class="study-library-view" id="tarotStudyLibraryView" aria-labelledby="tarotStudyTitle">
+      <header class="study-page-header">
+        <a class="tarot-back" href="tarot.html" aria-label="返回 Tarot">‹</a>
+        <div>
+          <p class="tarot-kicker">TAROT STUDY</p>
+          <h1 id="tarotStudyTitle">塔罗学习</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">◇</span>
+      </header>
+
+      <div class="study-intro">
+        <p>牌义提供的是可以探索的语义空间。问题、牌位、正逆位与周围牌，会让同一张牌显出不同方向。</p>
+      </div>
+
+      <label class="study-search" for="tarotStudySearch">
+        <span class="study-search-icon" aria-hidden="true">⌕</span>
+        <input id="tarotStudySearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="搜索牌名 / 英文 / 关键词">
+      </label>
+
+      <div class="study-filters" id="tarotStudyFilters" role="group" aria-label="塔罗牌分类"></div>
+      <div class="study-suit-note" id="tarotStudySuitNote" aria-live="polite"></div>
+
+      <div class="study-list-heading">
+        <p id="tarotStudyCount">78 张牌</p>
+        <span>按标准牌组顺序</span>
+      </div>
+      <section class="study-card-grid" id="tarotStudyGrid" aria-label="塔罗学习牌卡"></section>
+      <div class="study-empty" id="tarotStudyEmpty" hidden>
+        <p>没有找到对应的牌</p>
+        <span>可以试试牌名、英文名或关键词。</span>
+      </div>
+    </section>
+
+    <section class="study-detail-view" id="tarotStudyDetailView" aria-labelledby="tarotStudyDetailTitle" hidden>
+      <header class="study-page-header study-detail-header">
+        <button class="tarot-back" type="button" data-study-action="back-library" aria-label="返回塔罗学习列表">‹</button>
+        <div>
+          <p class="tarot-kicker">CARD STUDY</p>
+          <h1 id="tarotStudyDetailTitle">牌义学习</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">◇</span>
+      </header>
+      <article class="study-detail-content" id="tarotStudyDetail"></article>
+    </section>
+
+    <div class="study-load-error" id="tarotStudyError" hidden>
+      <p>塔罗学习资料未能完整加载。</p>
+      <a href="tarot.html">返回 Tarot</a>
+    </div>
+  </main>
+
+  <script src="tarot-data.js"></script>
+  <script src="tarot-study-data.js"></script>
+  <script src="tarot-study.js"></script>
+</body>
+
+</html>

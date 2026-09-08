@@ -17,6 +17,7 @@
     <title>聊天设置 · Liminal</title>
 
     <link rel="stylesheet" href="chat-settings.css">
+    <link rel="stylesheet" href="avatar-store.css">
   <script src="storage-migrations.js"></script>
   <link rel="stylesheet" href="interaction.css">
   <script src="interaction.js" defer></script>
@@ -76,6 +77,34 @@
                 </span>
 
             </div>
+
+        </section>
+
+        <!-- AVATAR -->
+
+        <section class="settings-group avatar-settings-group">
+
+            <div class="group-label">
+                PROFILE
+            </div>
+
+            <button class="settings-item avatar-settings-item" id="partnerAvatarSetting" type="button">
+                <span class="settings-person-avatar" id="partnerAvatarPreview">L</span>
+                <span class="settings-text">
+                    <strong id="partnerAvatarLabel">更换榛榛头像</strong>
+                    <span>当前聊天对象</span>
+                </span>
+                <span class="settings-arrow">›</span>
+            </button>
+
+            <button class="settings-item avatar-settings-item" id="userAvatarSetting" type="button">
+                <span class="settings-person-avatar" id="userAvatarPreview" data-avatar-person="keshi" data-avatar-fallback="K">K</span>
+                <span class="settings-text">
+                    <strong>更换 Keshi 头像</strong>
+                    <span>我的头像</span>
+                </span>
+                <span class="settings-arrow">›</span>
+            </button>
 
         </section>
 
@@ -256,7 +285,38 @@
 
     </main>
 
+    <div class="avatar-editor" id="avatarEditor" hidden>
+        <button class="avatar-editor-backdrop" id="avatarEditorBackdrop" type="button" aria-label="取消更换头像"></button>
+        <section class="avatar-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="avatarEditorTitle">
+            <div class="avatar-editor-handle" aria-hidden="true"></div>
+            <header class="avatar-editor-header">
+                <div>
+                    <span>PROFILE IMAGE</span>
+                    <h2 id="avatarEditorTitle">更换头像</h2>
+                </div>
+                <button class="avatar-editor-close" id="avatarEditorClose" type="button" aria-label="取消">×</button>
+            </header>
 
+            <div class="avatar-editor-preview" id="avatarEditorPreview">L</div>
+            <p class="avatar-editor-help">图片会从中心裁成正方形，并压缩后仅保存在这台设备。</p>
+
+            <label class="avatar-file-button" for="avatarFileInput">
+                <span>从相册选择图片</span>
+                <input id="avatarFileInput" type="file" accept="image/*">
+            </label>
+
+            <p class="avatar-editor-status" id="avatarEditorStatus" aria-live="polite"></p>
+
+            <div class="avatar-editor-actions">
+                <button class="avatar-editor-secondary" id="avatarEditorCancel" type="button">取消</button>
+                <button class="avatar-editor-primary" id="avatarEditorSave" type="button" disabled>保存</button>
+            </div>
+
+            <button class="avatar-reset-button" id="avatarResetButton" type="button">恢复默认头像</button>
+        </section>
+    </div>
+
+    <script src="avatar-store.js"></script>
     <script src="chat-settings-page.js"></script>
 
     <script src="call-global.js"></script>

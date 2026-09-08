@@ -84,37 +84,8 @@
     });
   });
 
-  const interpretations = Object.freeze({
-    "major-00": {
-      upright: ["开始", "开放", "尝试", "信任脚步"],
-      reversed: ["迟疑", "冒进", "重新确认", "留意边界"],
-      hint: "眼前像是一段尚未被定义的路，可以先留意自己愿意怎样迈出第一步。"
-    },
-    "major-02": {
-      upright: ["直觉", "静观", "内在知晓", "等待"],
-      reversed: ["杂音", "回避直觉", "信息未明", "沉淀"],
-      hint: "答案也许不急于出现，先为尚未说清的感受留出安静的位置。"
-    },
-    "major-06": {
-      upright: ["选择", "联结", "价值一致", "靠近"],
-      reversed: ["分歧", "失衡", "选择压力", "重新对齐"],
-      hint: "这张牌邀请你看见关系与选择之间，哪些价值对自己真正重要。"
-    },
-    "cups-knight": {
-      upright: ["情感表达", "浪漫", "邀约", "主动靠近"],
-      reversed: ["情绪摇摆", "理想化", "表达受阻", "放慢"],
-      hint: "情感正在寻找一种表达或行动方式，可以观察它准备如何靠近现实。"
-    },
-    "major-17": {
-      upright: ["希望", "修复", "坦然", "重新连接"],
-      reversed: ["信心微弱", "恢复缓慢", "暂时失焦", "照顾自己"],
-      hint: "微小但持续的照顾，可能比急着得到结论更接近此刻需要的方向。"
-    }
-  });
-
   window.LiminalTarotData = Object.freeze({
     cards: Object.freeze(cards.slice()),
-    cardCount: cards.length,
-    interpretations: interpretations
+    cardCount: cards.length
   });
 })();

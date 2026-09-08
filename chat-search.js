@@ -395,6 +395,11 @@ if (message.id) {
       : "你";
 
 
+  const avatarPersonId =
+    incoming
+      ? currentPerson.id
+      : "keshi";
+
   const avatarText =
     incoming
       ? currentPerson.avatar
@@ -435,12 +440,11 @@ if (message.id) {
   `;
 
 
-  item
-    .querySelector(
-      ".result-avatar"
-    )
-    .textContent =
-      avatarText;
+  window.LiminalAvatars.render(
+    item.querySelector(".result-avatar"),
+    avatarPersonId,
+    avatarText
+  );
 
 
   item

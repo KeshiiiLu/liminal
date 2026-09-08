@@ -108,10 +108,11 @@ document.getElementById(
   currentPerson.displayName;
 
 
-document.getElementById(
-  "frequencyAvatar"
-).textContent =
-  currentPerson.avatar;
+window.LiminalAvatars.render(
+  document.getElementById("frequencyAvatar"),
+  currentPerson.id,
+  currentPerson.avatar
+);
 
 
 document.title =

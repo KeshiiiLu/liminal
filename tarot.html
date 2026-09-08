@@ -12,6 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Tarot · Liminal</title>
   <link rel="stylesheet" href="tarot.css">
+  <link rel="stylesheet" href="tarot-study.css">
   <script src="storage-migrations.js"></script>
   <link rel="stylesheet" href="interaction.css">
   <script src="interaction.js" defer></script>
@@ -47,24 +48,31 @@
         <span class="header-mark" aria-hidden="true">✦</span>
       </header>
 
-      <div class="mode-grid">
-        <button class="mode-card mode-card-primary" type="button" data-mode="single">
-          <span class="mode-index">01</span>
-          <span class="mode-title">单张回应</span>
-          <span class="mode-copy">为此刻抽取一张回应牌</span>
-          <span class="mode-arrow" aria-hidden="true">→</span>
-        </button>
-        <button class="mode-card" type="button" data-mode="triple">
-          <span class="mode-index">02</span>
-          <span class="mode-title">三张补充</span>
-          <span class="mode-copy">让三张牌依次补充同一个问题</span>
-          <span class="mode-arrow" aria-hidden="true">→</span>
-        </button>
-      </div>
+      <div class="mode-sections" id="tarotModeSections"></div>
 
-      <div class="future-modes" aria-label="以后开放的模式">
-        <span>今日运势</span><span>本周运势</span><span>Ta 的状态</span><span>爱情指引</span>
-      </div>
+      <section class="mode-group" aria-labelledby="tarotStudyGroup">
+        <p class="mode-group-label" id="tarotStudyGroup">STUDY</p>
+        <div class="mode-grid">
+          <a class="mode-card" href="tarot-study.html">
+            <span class="mode-index">STUDY</span>
+            <span class="mode-title">塔罗学习</span>
+            <span class="mode-copy">浏览 78 张牌的象征、语义方向与逆位提示</span>
+            <span class="mode-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="mode-group" aria-labelledby="tarotHistoryGroup">
+        <p class="mode-group-label" id="tarotHistoryGroup">HISTORY</p>
+        <div class="mode-grid">
+          <button class="mode-card" type="button" data-action="open-all-history">
+            <span class="mode-index">ALL</span>
+            <span class="mode-title">全部牌局</span>
+            <span class="mode-copy">查看所有已完成的 Tarot 牌局</span>
+            <span class="mode-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
     </section>
 
     <section class="tarot-stage question-stage" data-stage="question" aria-labelledby="questionTitle" hidden>
@@ -74,10 +82,17 @@
           <p class="tarot-kicker">QUESTION</p>
           <h1 id="questionTitle">单张回应</h1>
         </div>
-        <span class="header-mark" aria-hidden="true">○</span>
+        <button class="history-link" id="questionHistoryButton" type="button" data-action="open-mode-history">历史</button>
       </header>
 
       <div class="question-panel">
+        <div class="person-field" id="tarotPersonField" hidden>
+          <label for="tarotPerson">当前人物</label>
+          <select id="tarotPerson">
+            <option value="luzhen">陆榛 · 榛榛</option>
+            <option value="jasper">Jasper</option>
+          </select>
+        </div>
         <label for="tarotQuestion">问题 <span>（可选）</span></label>
         <textarea id="tarotQuestion" rows="5" maxlength="280" placeholder="输入问题……"></textarea>
         <p>问题可以留空。牌池不会根据问题内容改变。</p>
@@ -141,9 +156,67 @@
         <button class="tarot-primary-button" id="restartReadingButton" type="button">重新抽牌</button>
       </div>
     </section>
+
+    <section class="tarot-stage history-stage" data-stage="history" aria-labelledby="historyTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="close-history" aria-label="返回">‹</button>
+        <div>
+          <p class="tarot-kicker">HISTORY</p>
+          <h1 id="historyTitle">全部牌局</h1>
+        </div>
+        <span class="header-mark" aria-hidden="true">○</span>
+      </header>
+
+      <div class="history-filters" id="historyFilters" role="group" aria-label="按占卜模式筛选"></div>
+      <div class="history-list" id="historyList"></div>
+      <div class="history-empty" id="historyEmpty" hidden>
+        <p>还没有牌局</p>
+        <span>完成一次占卜后，它会自动出现在这里。</span>
+      </div>
+    </section>
+
+    <section class="tarot-stage history-detail-stage" data-stage="historyDetail" aria-labelledby="historyDetailTitle" hidden>
+      <header class="tarot-header compact-header">
+        <button class="tarot-back" type="button" data-action="back-history-list" aria-label="返回历史列表">‹</button>
+        <div>
+          <p class="tarot-kicker">READING</p>
+          <h1 id="historyDetailTitle">牌局详情</h1>
+        </div>
+        <button class="history-delete-header" type="button" data-action="delete-current-history">删除</button>
+      </header>
+      <div class="history-detail" id="historyDetail"></div>
+    </section>
   </main>
 
+  <div class="tarot-confirm" id="tarotDeleteConfirm" hidden>
+    <div class="tarot-confirm-backdrop" data-action="cancel-delete"></div>
+    <div class="tarot-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="tarotDeleteTitle">
+      <p class="tarot-kicker">DELETE</p>
+      <h2 id="tarotDeleteTitle">删除这次牌局？</h2>
+      <p>确认后，这条本地历史会立即删除。</p>
+      <div class="tarot-confirm-actions">
+        <button class="tarot-secondary-button" type="button" data-action="cancel-delete">取消</button>
+        <button class="tarot-danger-button" id="confirmDeleteButton" type="button">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tarot-study-overlay" data-tarot-study-overlay hidden>
+    <div class="tarot-study-overlay-backdrop" data-study-action="close-overlay"></div>
+    <section class="tarot-study-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="tarotStudyOverlayTitle">
+      <header class="study-overlay-header">
+        <button class="study-overlay-close" type="button" data-study-action="close-overlay" aria-label="关闭完整牌义">×</button>
+        <h2 id="tarotStudyOverlayTitle" data-study-overlay-title>完整牌义</h2>
+        <span class="study-overlay-spacer" aria-hidden="true"></span>
+      </header>
+      <article class="study-detail-content" data-study-overlay-detail></article>
+    </section>
+  </div>
+
   <script src="tarot-data.js"></script>
+  <script src="tarot-study-data.js"></script>
+  <script src="tarot-history.js"></script>
+  <script src="tarot-study.js"></script>
   <script src="tarot.js"></script>
 </body>
 

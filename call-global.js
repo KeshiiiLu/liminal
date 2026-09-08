@@ -1261,12 +1261,11 @@ function globalShowIncomingCall(
   `;
 
 
-  panel
-    .querySelector(
-      ".global-incoming-call-avatar"
-    )
-    .textContent =
-      person.avatar;
+  window.LiminalAvatars.render(
+    panel.querySelector(".global-incoming-call-avatar"),
+    person.id,
+    person.avatar
+  );
 
 
   panel

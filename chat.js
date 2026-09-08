@@ -272,6 +272,21 @@ const currentPerson =
   CHAT_PEOPLE.luzhen;
 
 
+function renderChatAvatar(
+  element,
+  personId,
+  fallbackText
+) {
+
+  window.LiminalAvatars.render(
+    element,
+    personId,
+    fallbackText
+  );
+
+}
+
+
 const CHAT_STORAGE_KEY =
   currentPerson.storageKey;
 
@@ -3424,8 +3439,11 @@ function resumeGlobalAnsweredCall() {
     true;
 
 
-  activeCallRemoteAvatar.textContent =
-    currentPerson.avatar;
+  renderChatAvatar(
+    activeCallRemoteAvatar,
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
   activeCallRemoteName.textContent =
     currentPerson.name;
@@ -3515,8 +3533,11 @@ function restoreLiveCallSession() {
     true;
 
 
-  activeCallRemoteAvatar.textContent =
-    currentPerson.avatar;
+  renderChatAvatar(
+    activeCallRemoteAvatar,
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
   activeCallRemoteName.textContent =
     currentPerson.name;
@@ -3818,8 +3839,11 @@ function startOutgoingCall() {
     "outgoing";
 
 
-  outgoingCallAvatar.textContent =
-    currentPerson.avatar;
+  renderChatAvatar(
+    outgoingCallAvatar,
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
   outgoingCallName.textContent =
     currentPerson.name;
@@ -3955,8 +3979,11 @@ function startOutgoingCall() {
               true;
 
 
-            activeCallRemoteAvatar.textContent =
-              currentPerson.avatar;
+            renderChatAvatar(
+              activeCallRemoteAvatar,
+              currentPerson.id,
+              currentPerson.avatar
+            );
 
             activeCallRemoteName.textContent =
               currentPerson.name;
@@ -4103,8 +4130,11 @@ function showIncomingCall() {
     "incoming";
 
 
-  incomingCallAvatar.textContent =
-    currentPerson.avatar;
+  renderChatAvatar(
+    incomingCallAvatar,
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
   incomingCallName.textContent =
     currentPerson.name;
@@ -4210,8 +4240,11 @@ function answerCurrentCall() {
     true;
 
 
-  activeCallRemoteAvatar.textContent =
-    currentPerson.avatar;
+  renderChatAvatar(
+    activeCallRemoteAvatar,
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
   activeCallRemoteName.textContent =
     currentPerson.name;
@@ -6389,6 +6422,13 @@ function addOutgoingMessage(
   `;
 
 
+  renderChatAvatar(
+    row.querySelector(".message-avatar"),
+    "keshi",
+    "K"
+  );
+
+
   row
     .querySelector(
       ".message-bubble"
@@ -6523,6 +6563,13 @@ function addIncomingMessage(
     </div>
 
   `;
+
+
+  renderChatAvatar(
+    row.querySelector(".message-avatar"),
+    currentPerson.id,
+    currentPerson.avatar
+  );
 
 
   row
@@ -6667,10 +6714,15 @@ function addCallMessage(
   avatar.className =
     "message-avatar";
 
-  avatar.textContent =
+  renderChatAvatar(
+    avatar,
+    direction === "incoming"
+      ? currentPerson.id
+      : "keshi",
     direction === "incoming"
       ? currentPerson.avatar
-      : "K";
+      : "K"
+  );
 
 
   if (
@@ -6983,10 +7035,15 @@ function addGiftMessage(
   avatar.className =
     "message-avatar";
 
-  avatar.textContent =
+  renderChatAvatar(
+    avatar,
+    direction === "incoming"
+      ? currentPerson.id
+      : "keshi",
     direction === "incoming"
       ? currentPerson.avatar
-      : "K";
+      : "K"
+  );
 
 
   if (
