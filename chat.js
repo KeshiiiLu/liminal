@@ -310,12 +310,221 @@ const chatPersonStatus =
     "chatPersonStatus"
   );
 
+const personStateEngine =
+  window.LiminalChatPersonState ||
+  null;
+
+
+const personRuntimeState = {
+
+  presence:
+    "online",
+
+  activity:
+    null,
+
+  mood:
+    null,
+
+  transient:
+    null
+
+};
+
+
+function getCurrentPersonState(
+  now = new Date()
+) {
+
+  if (!personStateEngine) {
+
+    return {
+      personId:
+        currentPerson.id,
+      calculatedAt:
+        now.toISOString(),
+      presence: {
+        code:
+          "online",
+        displayText:
+          "在线",
+        source:
+          "fallback"
+      },
+      activity:
+        null,
+      mood:
+        null,
+      transient:
+        null
+    };
+
+  }
+
+
+  return personStateEngine
+    .getCurrentPersonState(
+      currentPerson.id,
+      {
+        now,
+        runtime:
+          personRuntimeState
+      }
+    );
+
+}
+
+
+function resolveDisplayedStatus(
+  state
+) {
+
+  if (
+    personStateEngine &&
+    typeof personStateEngine
+      .resolveDisplayedStatus ===
+      "function"
+  ) {
+
+    return personStateEngine
+      .resolveDisplayedStatus(
+        state
+      );
+
+  }
+
+
+  return (
+    state.transient ||
+    state.activity ||
+    state.mood ||
+    state.presence ||
+    {
+      code:
+        "offline",
+      displayText:
+        "离线"
+    }
+  );
+
+}
+
+
+function renderPersonStatus() {
+
+  const state =
+    getCurrentPersonState();
+
+
+  const displayed =
+    resolveDisplayedStatus(
+      state
+    );
+
+
+  chatPersonStatus.textContent =
+    displayed.displayText ||
+    "在线";
+
+
+  chatPersonStatus.dataset.statusCode =
+    displayed.code ||
+    "online";
+
+
+  chatPersonStatus.dataset.statusLayer =
+    displayed.layer ||
+    "presence";
+
+
+  chatPersonStatus.dataset.statusSource =
+    displayed.source ||
+    "default";
+
+
+  return {
+    state,
+    displayed
+  };
+
+}
+
+
+function setPersonStateLayer(
+  layer,
+  value
+) {
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      personRuntimeState,
+      layer
+    )
+  ) {
+
+    return null;
+
+  }
+
+
+  personRuntimeState[layer] =
+    value || null;
+
+
+  return renderPersonStatus();
+
+}
+
+
+function setPersonTransientStatus(
+  value
+) {
+
+  return setPersonStateLayer(
+    "transient",
+    value
+  );
+
+}
+
+
+function clearPersonTransientStatus(
+  expectedCode = null
+) {
+
+  const current =
+    personRuntimeState.transient;
+
+
+  const currentCode =
+    typeof current === "string"
+      ? current
+      : current?.code;
+
+
+  if (
+    expectedCode &&
+    currentCode !== expectedCode
+  ) {
+
+    return renderPersonStatus();
+
+  }
+
+
+  personRuntimeState.transient =
+    null;
+
+
+  return renderPersonStatus();
+
+}
+
 
 chatPersonName.textContent =
   currentPerson.name;
 
-chatPersonStatus.textContent =
-  "在线";
+renderPersonStatus();
 
 document.title =
   `${currentPerson.name} · Liminal`;
@@ -326,6 +535,36 @@ let chatHistory =
 
 let lastMessageTime =
   null;
+
+
+window.LiminalChatStatus =
+  Object.freeze({
+    getCurrentPersonState,
+    resolveDisplayedStatus,
+    renderPersonStatus,
+    setPresence:
+      value =>
+        setPersonStateLayer(
+          "presence",
+          value
+        ),
+    setActivity:
+      value =>
+        setPersonStateLayer(
+          "activity",
+          value
+        ),
+    setMood:
+      value =>
+        setPersonStateLayer(
+          "mood",
+          value
+        ),
+    setTransient:
+      setPersonTransientStatus,
+    clearTransient:
+      clearPersonTransientStatus
+  });
 
 /* =========================
    读取当前人物的回复规则
@@ -3506,6 +3745,11 @@ function startCallDurationTimer(
       : Date.now();
 
 
+  setPersonTransientStatus(
+    "calling"
+  );
+
+
   updateCallDuration();
 
 
@@ -4224,6 +4468,10 @@ clearCallDeviceState();
 
 callStartedAt =
   null;
+
+clearPersonTransientStatus(
+  "calling"
+);
 
 
   /*
@@ -5117,6 +5365,64 @@ function saveChatHistory() {
 }
 
 
+function createChatMessageId(
+  date = new Date()
+) {
+
+  return (
+    `chat_${currentPerson.id}_` +
+    `${date.getTime()}_` +
+    Math.random()
+      .toString(36)
+      .slice(2, 9)
+  );
+
+}
+
+
+function createOutgoingDeliveryFields(
+  date = new Date(),
+  options = {}
+) {
+
+  const state =
+    getCurrentPersonState(
+      date
+    );
+
+
+  const readDelay =
+    personStateEngine &&
+    typeof personStateEngine
+      .getReadDelayMilliseconds ===
+      "function"
+      ? personStateEngine
+          .getReadDelayMilliseconds(
+            state
+          )
+      : 8000;
+
+
+  return {
+    sentAt:
+      date.toISOString(),
+    readAt:
+      null,
+    readDueAt:
+      new Date(
+        date.getTime() +
+        readDelay
+      ).toISOString(),
+    replyEligible:
+      options.replyEligible !==
+      false,
+    replyEvaluatedAt:
+      null
+  };
+
+}
+
+
 /* =========================
    保存普通文字消息
    ========================= */
@@ -5124,10 +5430,17 @@ function saveChatHistory() {
 function saveMessage(
   direction,
   text,
-  date
+  date,
+  extra = {}
 ) {
 
-  chatHistory.push({
+  const message = {
+
+    id:
+      extra.id ||
+      createChatMessageId(
+        date
+      ),
 
     type:
       "text",
@@ -5139,14 +5452,360 @@ function saveMessage(
       text,
 
     time:
-      date.toISOString()
+      date.toISOString(),
 
-  });
+    ...extra
+
+  };
+
+
+  if (
+    direction === "outgoing"
+  ) {
+
+    Object.assign(
+      message,
+      createOutgoingDeliveryFields(
+        date,
+        extra
+      ),
+      extra
+    );
+
+  }
+
+
+  chatHistory.push(
+    message
+  );
+
 
 
   saveChatHistory();
 
+
+  return message;
+
 }
+
+
+const messageReadTimers =
+  new Map();
+
+
+function hasReadReceipt(
+  message
+) {
+
+  if (!message?.readAt) {
+
+    return false;
+
+  }
+
+
+  return !Number.isNaN(
+    new Date(
+      message.readAt
+    ).getTime()
+  );
+
+}
+
+
+function renderMessageReceipt(
+  timeElement,
+  message
+) {
+
+  if (!timeElement) return;
+
+
+  let receipt =
+    timeElement.querySelector(
+      ".message-receipt"
+    );
+
+
+  if (!receipt) {
+
+    receipt =
+      document.createElement(
+        "span"
+      );
+
+
+    receipt.className =
+      "message-receipt";
+
+
+    timeElement.appendChild(
+      receipt
+    );
+
+  }
+
+
+  const read =
+    hasReadReceipt(
+      message
+    );
+
+
+  receipt.textContent =
+    read
+      ? "✓✓"
+      : "✓";
+
+
+  receipt.setAttribute(
+    "aria-label",
+    read
+      ? "已读"
+      : "已发送"
+  );
+
+
+  receipt.title =
+    read
+      ? "已读"
+      : "已发送";
+
+}
+
+
+function updateMessageReceipt(
+  message
+) {
+
+  if (!message?.id) return;
+
+
+  chatMessages
+    .querySelectorAll(
+      ".message-row.outgoing[data-message-id]"
+    )
+    .forEach(
+      function (row) {
+
+        if (
+          row.dataset.messageId !==
+          message.id
+        ) {
+
+          return;
+
+        }
+
+
+        renderMessageReceipt(
+          row.querySelector(
+            ".message-time"
+          ),
+          message
+        );
+
+      }
+    );
+
+}
+
+
+function clearMessageReadTimer(
+  messageId
+) {
+
+  const timer =
+    messageReadTimers.get(
+      messageId
+    );
+
+
+  if (timer !== undefined) {
+
+    clearTimeout(
+      timer
+    );
+
+
+    messageReadTimers.delete(
+      messageId
+    );
+
+  }
+
+
+}
+
+
+function markMessageAsRead(
+  messageId,
+  readDate = new Date()
+) {
+
+  const message =
+    chatHistory.find(
+      item =>
+        item?.id === messageId
+    );
+
+
+  if (
+    !message ||
+    message.direction !==
+      "outgoing" ||
+    hasReadReceipt(
+      message
+    )
+  ) {
+
+    clearMessageReadTimer(
+      messageId
+    );
+
+
+    return message || null;
+
+  }
+
+
+  const shouldEvaluateReply =
+    message.replyEligible !==
+      false &&
+    !message.replyEvaluatedAt;
+
+
+  message.readAt =
+    readDate.toISOString();
+
+
+  message.readDueAt =
+    null;
+
+
+  if (shouldEvaluateReply) {
+
+    message.replyEvaluatedAt =
+      message.readAt;
+
+  }
+
+
+  saveChatHistory();
+
+
+  clearMessageReadTimer(
+    messageId
+  );
+
+
+  updateMessageReceipt(
+    message
+  );
+
+
+  if (shouldEvaluateReply) {
+
+    createTestReply();
+
+  }
+
+
+  return message;
+
+}
+
+
+function scheduleMessageRead(
+  message
+) {
+
+  if (
+    !message?.id ||
+    message.direction !==
+      "outgoing" ||
+    !message.sentAt ||
+    hasReadReceipt(
+      message
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  clearMessageReadTimer(
+    message.id
+  );
+
+
+  const sentAt =
+    new Date(
+      message.sentAt ||
+      message.time
+    );
+
+
+  const dueAt =
+    message.readDueAt
+      ? new Date(
+          message.readDueAt
+        )
+      : new Date(
+          sentAt.getTime() +
+          8000
+        );
+
+
+  if (
+    Number.isNaN(
+      dueAt.getTime()
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const remaining =
+    Math.max(
+      0,
+      dueAt.getTime() -
+      Date.now()
+    );
+
+
+  const timer =
+    setTimeout(
+      function () {
+
+        markMessageAsRead(
+          message.id,
+          new Date()
+        );
+
+      },
+      remaining
+    );
+
+
+  messageReadTimers.set(
+    message.id,
+    timer
+  );
+
+}
+
+
+window.LiminalChatDelivery =
+  Object.freeze({
+    createOutgoingDeliveryFields,
+    hasReadReceipt,
+    markMessageAsRead,
+    scheduleMessageRead
+  });
 
 
 /* =========================
@@ -5683,7 +6342,8 @@ chatMessages.addEventListener(
 function addOutgoingMessage(
   text,
   date,
-  shouldSave = true
+  shouldSave = true,
+  messageRecord = null
 ) {
 
   if (
@@ -5717,7 +6377,7 @@ function addOutgoingMessage(
       </div>
 
       <div class="message-time">
-        ${formatMessageTime(date)}
+        <span class="message-clock">${formatMessageTime(date)}</span>
       </div>
 
     </div>
@@ -5746,9 +6406,14 @@ function addOutgoingMessage(
     date;
 
 
+  let storedMessage =
+    messageRecord;
+
+
   if (shouldSave) {
 
-    saveMessage(
+    storedMessage =
+      saveMessage(
       "outgoing",
       text,
       date
@@ -5765,7 +6430,41 @@ function addOutgoingMessage(
   }
 
 
+  if (storedMessage?.id) {
+
+    row.dataset.messageId =
+      storedMessage.id;
+
+  }
+
+
+  renderMessageReceipt(
+    row.querySelector(
+      ".message-time"
+    ),
+    storedMessage ||
+    {
+      direction:
+        "outgoing",
+      time:
+        date.toISOString()
+    }
+  );
+
+
+  if (storedMessage) {
+
+    scheduleMessageRead(
+      storedMessage
+    );
+
+  }
+
+
   scrollToBottom();
+
+
+  return storedMessage;
 
 }
 
@@ -6742,9 +7441,6 @@ function sendMessage() {
 
   chatInput.focus();
 
-
-  createTestReply();
-
 }
 
 
@@ -6976,16 +7672,13 @@ continueSayButton.addEventListener(
   true
 );
 
-const originalPersonName =
-  currentPerson.name;
-
-
 /* 显示正在输入 */
 
 function showTypingStatus() {
 
-  chatPersonName.textContent =
-    "对方正在输入…";
+  setPersonTransientStatus(
+    "typing"
+  );
 
 }
 
@@ -6994,8 +7687,25 @@ function showTypingStatus() {
 
 function hideTypingStatus() {
 
-  chatPersonName.textContent =
-    originalPersonName;
+  if (
+    typeof callStartedAt !==
+      "undefined" &&
+    callStartedAt
+  ) {
+
+    setPersonTransientStatus(
+      "calling"
+    );
+
+
+    return;
+
+  }
+
+
+  clearPersonTransientStatus(
+    "typing"
+  );
 
 }
 
@@ -7347,7 +8057,8 @@ function loadChatHistory() {
         addOutgoingMessage(
           message.text || "",
           date,
-          false
+          false,
+          message
         );
 
       } else {
@@ -7402,6 +8113,53 @@ window.addEventListener(
 
 
     loadChatHistory();
+
+  }
+);
+
+
+window.addEventListener(
+  "storage",
+  function (event) {
+
+    if (
+      !personStateEngine ||
+      ![
+        personStateEngine
+          .CALENDAR_STORAGE_KEY,
+        personStateEngine
+          .HOME_LIFE_STORAGE_KEY
+      ].includes(
+        event.key
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    renderPersonStatus();
+
+  }
+);
+
+
+setInterval(
+  renderPersonStatus,
+  30000
+);
+
+
+document.addEventListener(
+  "visibilitychange",
+  function () {
+
+    if (!document.hidden) {
+
+      renderPersonStatus();
+
+    }
 
   }
 );
@@ -7545,6 +8303,9 @@ openChatAtLatestMessage();
 window.addEventListener(
   "pageshow",
   function () {
+
+    renderPersonStatus();
+
 
     openChatAtLatestMessage();
 

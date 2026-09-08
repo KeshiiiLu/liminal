@@ -570,6 +570,11 @@ h1 {
   color: #9a9a94;
 
   font-size: 11px;
+
+  max-width: min(52vw, 240px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 
@@ -716,10 +721,24 @@ h1 {
   color: #aaa9a4;
 
   font-size: 9px;
+
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .message-row.outgoing .message-time {
+  justify-content: flex-end;
   text-align: right;
+}
+
+.message-receipt {
+  color: #9e9d98;
+  font-size: 9px;
+  letter-spacing: -1px;
+  line-height: 1;
 }
 
 

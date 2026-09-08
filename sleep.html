@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#222731">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Liminal">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Sleep · Liminal</title>
+  <link rel="stylesheet" href="sleep.css">
+  <script src="storage-migrations.js"></script>
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
+</head>
+
+<body data-phase="idle">
+  <main class="sleep-shell">
+    <header class="sleep-header">
+      <a class="sleep-back" href="index.html?page=2" aria-label="返回首页">‹</a>
+      <div>
+        <span>SLEEP</span>
+        <h1>和榛榛一起慢下来</h1>
+      </div>
+      <span class="sleep-moon" aria-hidden="true">☾</span>
+    </header>
+
+    <section id="sleepApp" class="sleep-stage" aria-live="polite"></section>
+
+    <footer class="sleep-footer">
+      <span id="sleepLocationLabel">Liminal · quiet hours</span>
+      <span id="sleepClock" aria-label="当前时间"></span>
+    </footer>
+  </main>
+
+  <script src="liminal-time.js"></script>
+  <script src="sleep-data.js"></script>
+  <script src="sleep-corpus-data.js"></script>
+  <script src="sleep-core.js"></script>
+  <script src="sleep.js"></script>
+</body>
+
+</html>

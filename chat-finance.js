@@ -86,12 +86,30 @@
       createdAt: now.toISOString()
     });
 
+    const delivery = outgoing
+      ? (
+          window.LiminalChatDelivery
+            ?.createOutgoingDeliveryFields(
+              now,
+              { replyEligible: false }
+            ) ||
+          {
+            sentAt: now.toISOString(),
+            readAt: null,
+            readDueAt: new Date(now.getTime() + 8000).toISOString(),
+            replyEligible: false,
+            replyEvaluatedAt: null
+          }
+        )
+      : {};
+
     chatHistory.push({
       id: finance.createId("message"),
       type: "text",
       direction: outgoing ? "outgoing" : "incoming",
       text: `${label} ${formatAmount(amount)}${note ? ` · ${note}` : ""}`,
       time: now.toISOString(),
+      ...delivery,
       finance: { transactionId: transaction.transactionId, action, amount }
     });
     saveChatHistory();

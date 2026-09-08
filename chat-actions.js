@@ -1662,17 +1662,20 @@ addOutgoingMessage =
   function (
     text,
     date,
-    shouldSave = true
+    shouldSave = true,
+    messageRecord = null
   ) {
 
     const before =
       chatHistory.length;
 
 
-    actionOriginalOutgoing(
+    const storedMessage =
+      actionOriginalOutgoing(
       text,
       date,
-      shouldSave
+      shouldSave,
+      messageRecord
     );
 
 
@@ -1720,6 +1723,9 @@ addOutgoingMessage =
     requestAnimationFrame(
       actionSyncRows
     );
+
+
+    return storedMessage;
 
   };
 
@@ -1828,9 +1834,6 @@ sendMessage =
 
 
     chatInput.focus();
-
-
-    createTestReply();
 
   };
 

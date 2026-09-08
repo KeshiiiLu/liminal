@@ -10095,9 +10095,23 @@ sleepEditorSave.addEventListener(
       );
 
 
+    const existingRecord =
+      library[
+        dateKey
+      ];
+
+
     library[
       dateKey
     ] = {
+
+      ...(
+        existingRecord &&
+        typeof existingRecord ===
+          "object"
+          ? existingRecord
+          : {}
+      ),
 
       start:
         start,
@@ -12837,10 +12851,205 @@ function formatSleepRecord(
     [];
 
 
+  const sleepApp =
+    record.liminalSleep &&
+    typeof record.liminalSleep ===
+      "object"
+      ? record.liminalSleep
+      : null;
+
+
+  function formatAppTime(
+    value
+  ) {
+
+    if (!value) return "";
+
+
+    const date =
+      new Date(value);
+
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return "";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+      "zh-CN",
+      {
+        timeZone:
+          "Asia/Shanghai",
+        hour:
+          "2-digit",
+        minute:
+          "2-digit",
+        hourCycle:
+          "h23"
+      }
+    ).format(date);
+
+  }
+
+
+  if (
+    sleepApp
+  ) {
+
+    lines.push(
+      sleepApp.dateSpanLabel ||
+      "睡眠记录"
+    );
+
+
+    if (
+      personId ===
+        "luzhen"
+    ) {
+
+      if (
+        sleepApp.estimatedSleepAt
+      ) {
+
+        lines.push(
+          `≈${formatAppTime(sleepApp.estimatedSleepAt)} 入睡`
+        );
+
+      }
+
+
+      if (
+        sleepApp.wakeAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.wakeAt)} 醒来`
+        );
+
+      }
+
+    } else {
+
+      if (
+        sleepApp.entryMode ===
+          "direct"
+      ) {
+
+        lines.push(
+          "今晚：直接睡了"
+        );
+
+      }
+
+
+      if (
+        sleepApp.sleepSessionStartedAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.sleepSessionStartedAt)} 进入 Sleep`
+        );
+
+      }
+
+
+      if (
+        sleepApp.entryMode ===
+          "delay" &&
+        sleepApp.delayFinishedAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.sleepSessionStartedAt)}–` +
+          `${formatAppTime(sleepApp.delayFinishedAt)} 稍微拖延`
+        );
+
+      }
+
+
+      if (
+        sleepApp.soothingStartedAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.soothingStartedAt)} 开始哄睡`
+        );
+
+      }
+
+
+      if (
+        sleepApp.estimatedSleepAt
+      ) {
+
+        lines.push(
+          `≈${formatAppTime(sleepApp.estimatedSleepAt)} 推定入睡`
+        );
+
+      }
+
+
+      if (
+        Array.isArray(
+          sleepApp.nightWakeEvents
+        ) &&
+        sleepApp.nightWakeEvents.length
+      ) {
+
+        lines.push(
+          `夜里醒来 ${sleepApp.nightWakeEvents.length} 次`
+        );
+
+      }
+
+
+      if (
+        sleepApp.wakeStartedAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.wakeStartedAt)} 开始唤醒`
+        );
+
+      }
+
+
+      if (
+        sleepApp.wakeConfirmedAt
+      ) {
+
+        lines.push(
+          `${formatAppTime(sleepApp.wakeConfirmedAt)} 确认起床`
+        );
+
+      }
+
+    }
+
+  }
+
+
   if (
     record.start ||
     record.end
   ) {
+
+    if (
+      sleepApp
+    ) {
+
+      lines.push(
+        "",
+        "手动记录"
+      );
+
+    }
 
     lines.push(
       `${record.start || "—"} – ${record.end || "—"}`
