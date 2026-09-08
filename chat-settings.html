@@ -285,7 +285,7 @@
 
     </main>
 
-    <div class="avatar-editor" id="avatarEditor" hidden>
+    <div class="avatar-editor" id="avatarEditor" aria-hidden="true" inert hidden>
         <button class="avatar-editor-backdrop" id="avatarEditorBackdrop" type="button" aria-label="取消更换头像"></button>
         <section class="avatar-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="avatarEditorTitle">
             <div class="avatar-editor-handle" aria-hidden="true"></div>
@@ -309,7 +309,7 @@
 
             <div class="avatar-editor-actions">
                 <button class="avatar-editor-secondary" id="avatarEditorCancel" type="button">取消</button>
-                <button class="avatar-editor-primary" id="avatarEditorSave" type="button" disabled>保存</button>
+                <button class="avatar-editor-primary" id="avatarEditorSave" type="button" data-liminal-allow-repeat disabled>保存</button>
             </div>
 
             <button class="avatar-reset-button" id="avatarResetButton" type="button">恢复默认头像</button>
