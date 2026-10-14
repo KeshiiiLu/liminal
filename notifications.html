@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/liminal-icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Liminal">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#f4f3f0">
+  <title>通知与来电 · Liminal</title>
+  <link rel="stylesheet" href="world.css">
+  <link rel="stylesheet" href="notifications.css">
+  <link rel="stylesheet" href="interaction.css">
+  <script src="interaction.js" defer></script>
+  <script src="notifications.js" defer></script>
+</head>
+<body>
+  <main class="world-shell notification-shell">
+    <header class="world-header">
+      <a class="back-button" href="settings.html" aria-label="返回设置">‹</a>
+      <div><span>LIMINAL NOTIFICATIONS</span><h1>通知与来电</h1></div>
+    </header>
+
+    <section class="notification-card" aria-labelledby="pushHeading">
+      <span class="notification-eyebrow">WEB PUSH · PHASE 1</span>
+      <h2 id="pushHeading">本设备通知</h2>
+      <p>开启后可接收测试通知。iPhone 请先将本站添加到主屏幕，再从主屏幕图标打开并点击开启。</p>
+      <p class="notification-status" id="pushStatus" role="status">正在检查通知服务…</p>
+      <div class="notification-buttons">
+        <button class="primary-button" id="enablePush" type="button" disabled>开启通知</button>
+        <button class="notification-secondary" id="disablePush" type="button" disabled>关闭本设备通知</button>
+      </div>
+      <p class="notification-small">关闭会撤销本设备订阅；系统通知权限仍可在 iPhone 设置中管理。本阶段尚未接入主动消息和来电通知。</p>
+    </section>
+
+    <section class="notification-card" aria-labelledby="testHeading">
+      <span class="notification-eyebrow">TEST DELIVERY</span>
+      <h2 id="testHeading">测试通知</h2>
+      <label class="notification-label" for="testPerson">点击通知后进入</label>
+      <select id="testPerson"><option value="luzhen">榛榛 · Chat</option><option value="jasper">Jasper · Chat</option></select>
+      <div class="notification-buttons">
+        <button class="notification-secondary" id="testPushNow" type="button" disabled>立即发送一条测试通知</button>
+        <button class="primary-button" id="testPushLater" type="button" disabled>20 秒后发送 · 用于锁屏测试</button>
+      </div>
+      <p>延迟测试由服务器触发。点击后可以立即切换 App 或锁屏，不需要保持本页打开。</p>
+      <p class="notification-small">测试通知不会写入聊天记录，也不影响抽取概率和主动发送。服务器接收成功与手机实际送达是两个状态。</p>
+      <p id="testStatus" class="notification-status" role="status"></p>
+    </section>
+
+    <section class="notification-card notification-origin-note">
+      <span class="notification-eyebrow">THIS INSTALLATION</span>
+      <h2>当前站点</h2>
+      <p class="notification-origin" id="currentOrigin"></p>
+      <p>GitHub Pages 与 Cloudflare 地址的本地数据、登录和通知订阅相互独立。如果原主屏幕图标来自 GitHub Pages，请先在那里导出备份，再在 Cloudflare 地址恢复并重新添加到主屏幕。</p>
+      <a class="secondary-link" href="data-management.html">打开数据备份与恢复</a>
+      <p class="notification-small">本页不会自动迁移、清除或重写任何 localStorage 数据。</p>
+    </section>
+  </main>
+</body>
+</html>

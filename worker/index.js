@@ -1,3 +1,6 @@
+import { isPushApi, handlePushApi, revokeDeviceOnLogout, expirePushDeviceCookie } from "./push-api.js";
+export { LiminalPushDevice } from "./push-device.js";
+
 const SESSION_COOKIE = "__Host-liminal_session";
 const SESSION_VERSION = 1;
 const SESSION_LIFETIME_SECONDS = 30 * 24 * 60 * 60;
@@ -31,6 +34,11 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === LOGOUT_PATH) {
+      try {
+        await revokeDeviceOnLogout(request, env);
+      } catch {
+        return textResponse("无法撤销本设备通知，请重试退出或先在系统设置中关闭通知。", 503);
+      }
       return logoutResponse();
     }
 
@@ -41,7 +49,14 @@ export default {
     }
 
     if (!sessionIsValid) {
+      if (isPushApi(url)) {
+        return textResponse("Authentication required.", 401);
+      }
       return unauthenticatedResponse(request, url);
+    }
+
+    if (isPushApi(url)) {
+      return protectedAssetResponse(await handlePushApi(request, env));
     }
 
     return fetchProtectedAsset(request, env, url);
@@ -351,6 +366,7 @@ function expiredSessionCookie() {
 function logoutResponse() {
   const response = htmlResponse(loginPage({}), 200);
   response.headers.append("Set-Cookie", expiredSessionCookie());
+  response.headers.append("Set-Cookie", expirePushDeviceCookie());
   return response;
 }
 

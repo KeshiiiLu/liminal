@@ -5,11 +5,13 @@
 .gitattributes
 .assetsignore
 README.md
+WEB-PUSH-SETUP.md
 AGENTS.md
 
 # Cloudflare Worker server code and deployment configuration
 worker/
 wrangler.jsonc
+.wrangler/
 
 # Local secrets and optional package-manager tooling
 .dev.vars*

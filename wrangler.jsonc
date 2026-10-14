@@ -1,6 +1,7 @@
 // Private repository deployment verification · 2026-09-05
 {
   "name": "liminal-private",
+  "keep_vars": true,
   "compatibility_date": "2026-09-05",
   "main": "worker/index.js",
   "assets": {
@@ -15,5 +16,13 @@
       "LIMINAL_ACCESS_PASSWORD",
       "LIMINAL_SESSION_SECRET"
     ]
-  }
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "PUSH_DEVICES", "class_name": "LiminalPushDevice" }
+    ]
+  },
+  "migrations": [
+    { "tag": "push-device-v1", "new_sqlite_classes": ["LiminalPushDevice"] }
+  ]
 }
